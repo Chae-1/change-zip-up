@@ -22,17 +22,21 @@ public class RefreshToken {
 
     private LocalDateTime expireDateTime;
 
-    @OneToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
-
-    private RefreshToken(String token, LocalDateTime expireDateTime, Account account) {
+    private RefreshToken(String token, LocalDateTime expireDateTime) {
         this.expireDateTime = expireDateTime;
         this.token = token;
-        this.account = account;
     }
 
-    public static RefreshToken of(String token, LocalDateTime expireDateTime, Account account) {
-        return new RefreshToken(token, expireDateTime, account);
+    public static RefreshToken of(String token, LocalDateTime expireDateTime) {
+        return new RefreshToken(token, expireDateTime);
+    }
+
+    public boolean isExpired() {
+        return false;
+    }
+
+    public void updateToken(String token, LocalDateTime expireDateTime) {
+        this.token = token;
+        this.expireDateTime = expireDateTime;
     }
 }

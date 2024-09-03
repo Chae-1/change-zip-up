@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.domain.account;
 
 import com.kosa.chanzipup.domain.BaseEntity;
+import com.kosa.chanzipup.domain.account.token.RefreshToken;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,10 @@ public abstract class Account extends BaseEntity {
 
     private boolean isVerified;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "refresh_token_id")
+    private RefreshToken refreshToken;
+
     protected Account(AccountRole accountRole, String email, String password, String phoneNumber) {
         this(accountRole, email, password, phoneNumber, false);
     }
@@ -36,5 +41,9 @@ public abstract class Account extends BaseEntity {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.isVerified = isVerified;
+    }
+
+    public void addRefreshToken(RefreshToken refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
