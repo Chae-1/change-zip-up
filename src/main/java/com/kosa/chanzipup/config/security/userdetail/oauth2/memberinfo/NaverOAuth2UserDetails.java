@@ -1,6 +1,6 @@
 package com.kosa.chanzipup.config.security.userdetail.oauth2.memberinfo;
 
-import com.kosa.chanzipup.config.security.userdetail.DetailedUser;
+import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.account.AccountRole;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.SocialType;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class NaverOAuth2User implements DetailedUser {
+public class NaverOAuth2UserDetails implements UnifiedUserDetails {
 
     private final Map<String, Object> attributes;
     private final String registrationId; // kakao, naver 식별자.
@@ -33,14 +33,15 @@ public class NaverOAuth2User implements DetailedUser {
         return String.valueOf(attributes.get("email"));
     }
 
-    @Override
-    public String getEmail() {
-        return String.valueOf(attributes.get("email"));
-    }
 
     @Override
     public String getPassword() {
         return String.format("%s_%s", registrationId, attributes.get("id"));
+    }
+
+    @Override
+    public String getUsername() {
+        return String.valueOf(attributes.get("email"));
     }
 
     @Override

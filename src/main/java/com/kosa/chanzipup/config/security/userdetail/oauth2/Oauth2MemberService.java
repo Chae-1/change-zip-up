@@ -1,7 +1,6 @@
 package com.kosa.chanzipup.config.security.userdetail.oauth2;
 
-import com.kosa.chanzipup.config.security.userdetail.DetailedUser;
-import com.kosa.chanzipup.config.security.userdetail.oauth2.memberinfo.NaverOAuth2User;
+import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
 import com.kosa.chanzipup.domain.account.member.SocialType;
@@ -15,11 +14,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Optional;
-
-import static com.kosa.chanzipup.domain.account.member.SocialType.KAKAO;
-import static com.kosa.chanzipup.domain.account.member.SocialType.NAVER;
 
 @Service
 @RequiredArgsConstructor
@@ -39,18 +34,18 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
         // OAuth2User Interface가 제공하는 것이 너무 부족하다.
         // DetailedUser 인터페이스를 통해 확장하자.
         String registrationId = clientRegistration.getRegistrationId();
-        DetailedUser detailedUser = SocialType.convertToSocialUser(oAuth2User.getAttributes(), registrationId);
+        UnifiedUserDetails unifiedUserDetails = SocialType.convertToSocialUser(oAuth2User.getAttributes(), registrationId);
 
         // 1. 기존 회원일 경우, 그대로 반환한다.
-        Optional<Member> findMember = memberRepository.findByEmail(detailedUser.getEmail());
+        Optional<Member> findMember = memberRepository.findByEmail(unifiedUserDetails.getUsername());
         if (findMember.isPresent()) {
-            return detailedUser;
+            return unifiedUserDetails;
         }
 
         // 2. 새로운 회원일 경우, 가입을 수행한 뒤 OAuth2User 를 반환한다.
-        String encodedPassword = passwordEncoder.encode(detailedUser.getPassword());
-        Member member = detailedUser.toEntity(encodedPassword);
+        String encodedPassword = passwordEncoder.encode(unifiedUserDetails.getPassword());
+        Member member = unifiedUserDetails.toEntity(encodedPassword);
         memberRepository.save(member);
-        return detailedUser;
+        return unifiedUserDetails;
     }
 }

@@ -2,10 +2,12 @@ package com.kosa.chanzipup.domain.account;
 
 import com.kosa.chanzipup.domain.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
+@Getter
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "account_type")
 public abstract class Account extends BaseEntity {

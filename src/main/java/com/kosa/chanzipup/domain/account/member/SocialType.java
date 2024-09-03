@@ -1,7 +1,7 @@
 package com.kosa.chanzipup.domain.account.member;
 
-import com.kosa.chanzipup.config.security.userdetail.DetailedUser;
-import com.kosa.chanzipup.config.security.userdetail.oauth2.memberinfo.NaverOAuth2User;
+import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
+import com.kosa.chanzipup.config.security.userdetail.oauth2.memberinfo.NaverOAuth2UserDetails;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -20,10 +20,10 @@ public enum SocialType {
         return null;
     }
 
-    public static DetailedUser convertToSocialUser(Map<String, Object> attributes, String registrationId) {
+    public static UnifiedUserDetails convertToSocialUser(Map<String, Object> attributes, String registrationId) {
         if (NAVER.getRegistrationId().equals(registrationId)) {
             // 현재 전달된 회원 정보가 naver 정보이면,
-            return new NaverOAuth2User((Map<String, Object>) attributes.get("response"), registrationId);
+            return new NaverOAuth2UserDetails((Map<String, Object>) attributes.get("response"), registrationId);
         } else if (KAKAO.getRegistrationId().equals(registrationId)) {
             // 현재 전달된 회원 정보가 kakao 정보이면,
         }

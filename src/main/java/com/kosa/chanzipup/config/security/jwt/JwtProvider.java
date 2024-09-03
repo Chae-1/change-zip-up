@@ -46,7 +46,7 @@ public class JwtProvider {
     private Claims extractAllClaims(String token, TokenType type) {
 
         return Jwts.parser()
-                .setSigningKey(getSignKey(keyMap.get(type)))
+                .setSigningKey(getSignKey(token))
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -58,7 +58,7 @@ public class JwtProvider {
         return extractExpiration.before(now);
     }
 
-    public Boolean validateToken(String token, TokenType type, UserDetails userDetails) {
+    public Boolean validateToken(String token, UserDetails userDetails, TokenType type) {
         final String email = extractEmail(token, type);
         return (email.equals(userDetails.getUsername()) && !isTokenExpired(token, type));
     }
