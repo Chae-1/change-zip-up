@@ -9,5 +9,4 @@ public class ChanzipupApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ChanzipupApplication.class, args);
 	}
-
 }

@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.kosa.chanzipup.domain.QHello.hello;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
@@ -21,7 +21,6 @@ class HelloTest {
 
     @Autowired
     EntityManager em;
-
 
     @Test
     @DisplayName("Querydsl 기본 동작 확인")
@@ -37,8 +36,6 @@ class HelloTest {
                 .fetchFirst();
 
         // then
-        Assertions.assertThat(hello.getId()).isEqualTo(hello1.getId());
+        assertThat(hello.getId()).isEqualTo(hello1.getId());
     }
-
-
 }
