@@ -43,6 +43,7 @@ public class Member extends Account {
                 .build();
     }
 
+    // 로컬 로그인으로 가입할 경우 이메일 인증이 필요하다.
     public static Member ofLocal(AccountRole accountRole, String email, String password,
                                  String phoneNumber, SocialType socialType, String nickName, String name) {
         return Member.builder()

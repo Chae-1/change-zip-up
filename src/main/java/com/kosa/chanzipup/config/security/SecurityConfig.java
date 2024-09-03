@@ -56,7 +56,8 @@ public class SecurityConfig {
                 .redirectionEndpoint(redirection ->
                         redirection.baseUri("/api/members/oauth/*"))
                 .userInfoEndpoint(userInfoEndpoint ->
-                        userInfoEndpoint.userService(oauth2MemberService)
+                        userInfoEndpoint
+                                .userService(oauth2MemberService)
                 )
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .permitAll());
