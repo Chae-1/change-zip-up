@@ -1,6 +1,5 @@
 package com.kosa.chanzipup.config.security.userdetail.oauth2.success;
 
-
 import com.kosa.chanzipup.api.token.service.RefreshTokenService;
 import com.kosa.chanzipup.config.security.jwt.JwtProvider;
 import com.kosa.chanzipup.config.security.jwt.TokenType;
@@ -34,17 +33,24 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         // 1. 엑세스 토큰 발급은, 기존 리프레시 토큰을 가지고 있는 회원인지에 상관없이 발급한다.
         String email = authentication.getName();
-        createAndSendAccessTokenInHeader(response, email);
+        String accessToken = createAndSendAccessTokenInHeader(email);
 
-        // 2. 리프레시 토큰을 발급한다.
-        // - todo:
+        // todo:
         String refreshToken = createAndSaveRefreshToken(email);
         sendRefreshTokenUsingCookie(refreshToken, response);
+
+        // todo: 토큰 전달 방식을 수정하자.
+        response.sendRedirect(redirectURI(accessToken));
     }
 
-    private void createAndSendAccessTokenInHeader(HttpServletResponse response, String email) {
+    private String redirectURI(String accessToken) {
+        String fullAccessToken = String.format("Bearer %s", accessToken);
+        return String.format("http://localhost:3000/oauth/redirect?authroziation=%s", fullAccessToken);
+    }
+
+    private String createAndSendAccessTokenInHeader(String email) {
         String accessToken = jwtProvider.generateToken(email, TokenType.ACCESS, LocalDateTime.now());
-        response.setHeader("Authorization", String.format("Bearer %s", accessToken));
+        return accessToken;
     }
 
     private String createAndSaveRefreshToken(String email) {
@@ -52,7 +58,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         return refreshToken.getToken();
     }
 
-    // 2.
     private void sendRefreshTokenUsingCookie(String refreshToken, HttpServletResponse response) {
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setPath("/"); // 쿠키의 유효 범위

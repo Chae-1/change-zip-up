@@ -1,0 +1,103 @@
+package com.kosa.chanzipup.api.email.service;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class MailSendClient {
+
+    private final JavaMailSender mailSender;
+
+    @Value("${target.address}")
+    private final String target;
+
+    // 회원 가입을 수행했을 때 가입 당시 이메일에 verificationCode 링크를 전송한다.
+    public void sendVerificationCode(String toEmail, String verificationCode) {
+        log.info("Message 전송 중");
+        String clientUrl = "http://localhost:3000/verify-email";  // 프론트엔드 URL
+        String verificationLink = clientUrl + "?code=" + verificationCode;
+
+        // 이메일 내용
+        String subject = "체인집업: 회원 인증";
+        String htmlContent = """
+                <html>
+                    <head>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                background-color: #f4f4f4;
+                                margin: 0;
+                                padding: 0;
+                                -webkit-text-size-adjust: none;
+                            }
+                            table {
+                                border-collapse: collapse;
+                            }
+                            .email-container {
+                                max-width: 600px;
+                                margin: 0 auto;
+                                background-color: #ffffff;
+                                padding: 20px;
+                                border-radius: 8px;
+                                box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+                            }
+                            h1 {
+                                color: #333333;
+                                font-size: 24px;
+                            }
+                            p {
+                                color: #666666;
+                                font-size: 16px;
+                            }
+                            .verify-btn {
+                                display: inline-block;
+                                padding: 10px 20px;
+                                margin-top: 20px;
+                                background-color: #4CAF50;
+                                color: #ffffff;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                font-size: 16px;
+                            }
+                            .verify-btn:hover {
+                                background-color: #45a049;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <table class="email-container">
+                            <tr>
+                                <td>
+                                    <h1>안녕하세요, %s님!</h1>
+                                    <p>아래의 링크를 클릭하면 인증이 수행됩니다. 이후 로그인하실 수 있습니다.</p>
+                                    <a href="%s?code=123456" class="verify-btn">Verify your email</a>
+                                    <p>If you did not request this email, please ignore it.</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </body>
+                </html>
+                """.formatted(toEmail, target);  // address 값을 URL에 삽입
+
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
+            helper.setTo(toEmail);  // 수신자 이메일 주소
+            helper.setSubject(subject);  // 이메일 제목
+            helper.setText(htmlContent, true);  // true는 HTML 콘텐츠를 의미함
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+}

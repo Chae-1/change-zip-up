@@ -14,18 +14,15 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -57,12 +54,11 @@ public class SecurityConfig {
 
         // Oauth2 Login 설정
         http.oauth2Login(oauth2 -> oauth2
-                .redirectionEndpoint(redirection ->
-                        redirection.baseUri("/api/members/oauth/*"))
+                .authorizationEndpoint(authorization -> authorization
+                        .baseUri("/oauth2/authorization/**"))
                 .userInfoEndpoint(userInfoEndpoint ->
                         userInfoEndpoint
-                                .userService(oauth2MemberService)
-                )
+                                .userService(oauth2MemberService))
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .permitAll());
 
