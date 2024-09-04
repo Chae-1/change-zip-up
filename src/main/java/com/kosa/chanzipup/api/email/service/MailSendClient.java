@@ -10,19 +10,21 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class MailSendClient {
 
     private final JavaMailSender mailSender;
 
-    @Value("${target.address}")
     private final String target;
+
+    public MailSendClient(JavaMailSender mailSender, @Value("${target.address}") String target) {
+        this.mailSender = mailSender;
+        this.target = target;
+    }
 
     // 회원 가입을 수행했을 때 가입 당시 이메일에 verificationCode 링크를 전송한다.
     public void sendVerificationCode(String toEmail, String verificationCode) {
-        log.info("Message 전송 중");
-        String clientUrl = "http://localhost:3000/verify-email";  // 프론트엔드 URL
+        String clientUrl = String.format("%s/verify-email", target);  // 프론트엔드 URL
         String verificationLink = clientUrl + "?code=" + verificationCode;
 
         // 이메일 내용
@@ -85,7 +87,7 @@ public class MailSendClient {
                         </table>
                     </body>
                 </html>
-                """.formatted(toEmail, target);  // address 값을 URL에 삽입
+                """.formatted(toEmail, verificationLink);  // address 값을 URL에 삽입
 
         MimeMessage message = mailSender.createMimeMessage();
         try {
