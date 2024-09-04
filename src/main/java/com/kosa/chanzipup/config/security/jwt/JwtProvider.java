@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class JwtProvider {
     private Claims extractAllClaims(String token, TokenType type) {
 
         return Jwts.parser()
-                .setSigningKey(getSignKey(token))
+                .setSigningKey(getSignKey(keyMap.get(type)))
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -63,12 +64,15 @@ public class JwtProvider {
         return (email.equals(userDetails.getUsername()) && !isTokenExpired(token, type));
     }
 
-    public String generateToken(String username, TokenType tokenType) {
+    public String generateToken(String username,
+                                TokenType tokenType,
+                                LocalDateTime expireDate) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username, tokenType);
+        return createToken(claims, username, expireDate, tokenType);
     }
 
-    private String createToken(Map<String, Object> claims, String username, TokenType tokenType) {
+    private String createToken(Map<String, Object> claims, String username,
+                               LocalDateTime expireDate, TokenType tokenType) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
