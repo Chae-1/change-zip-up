@@ -2,6 +2,7 @@ package com.kosa.chanzipup.api.email.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,11 +32,11 @@ public class MailSendClient {
         return sendToLocalUserAuthenticationCode(toEmail, subject, htmlContent);
     }
 
-    private static String makeSubject() {
+    private String makeSubject() {
         return "체인집업: 회원 인증";
     }
 
-    private static String makeVerificationContent(String toEmail, String verificationLink) {
+    private String makeVerificationContent(String toEmail, String verificationLink) {
         String htmlContent = """
                 <html>
                     <head>

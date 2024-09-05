@@ -28,7 +28,7 @@ out/
 !**/src/test/**/out/
 
 /src/main/resources/application-secrets-prod.yml
-
+/src/test/java/com/kosa/chanzipup/etc
 
 ### NetBeans ###
 /nbproject/private/
