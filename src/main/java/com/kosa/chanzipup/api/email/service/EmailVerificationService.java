@@ -18,8 +18,8 @@ public class EmailVerificationService {
 
     private final MailSendClient mailSendClient;
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void init() {
-        mailSendClient.sendVerificationCode("coguddlf1000@naver.com", "oh,my, god");
-    }
+//    @EventListener(ApplicationReadyEvent.class)
+//    public void init() {
+//        mailSendClient.sendVerificationCode("coguddlf1000@naver.com", "oh,my, god");
+//    }
 }
