@@ -2,7 +2,6 @@ package com.kosa.chanzipup.api.email.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 public class MailSendClient {
 
     private final JavaMailSender mailSender;
-
     private final String target;
 
     public MailSendClient(JavaMailSender mailSender, @Value("${target.address}") String target) {
@@ -22,13 +20,22 @@ public class MailSendClient {
         this.target = target;
     }
 
-    // 회원 가입을 수행했을 때 가입 당시 이메일에 verificationCode 링크를 전송한다.
-    public void sendVerificationCode(String toEmail, String verificationCode) {
+    // todo: 메일 전송을 비동기 처리하는 것도 고려해봐야한다.
+    public boolean sendVerificationCode(String toEmail, String verificationCode) {
         String clientUrl = String.format("%s/verify-email", target);  // 프론트엔드 URL
-        String verificationLink = clientUrl + "?code=" + verificationCode;
+        String verificationLink = String.format("%s?verificationCode=%s", clientUrl, verificationCode);
 
-        // 이메일 내용
-        String subject = "체인집업: 회원 인증";
+        String subject = makeSubject();
+        String htmlContent = makeVerificationContent(toEmail, verificationLink);
+
+        return sendToLocalUserAuthenticationCode(toEmail, subject, htmlContent);
+    }
+
+    private static String makeSubject() {
+        return "체인집업: 회원 인증";
+    }
+
+    private static String makeVerificationContent(String toEmail, String verificationLink) {
         String htmlContent = """
                 <html>
                     <head>
@@ -80,7 +87,7 @@ public class MailSendClient {
                                 <td>
                                     <h1>안녕하세요, %s님!</h1>
                                     <p>아래의 링크를 클릭하면 인증이 수행됩니다. 이후 로그인하실 수 있습니다.</p>
-                                    <a href="%s?code=123456" class="verify-btn">Verify your email</a>
+                                    <a href="%s" class="verify-btn">이메일 인증 하기</a>
                                     <p>If you did not request this email, please ignore it.</p>
                                 </td>
                             </tr>
@@ -88,7 +95,10 @@ public class MailSendClient {
                     </body>
                 </html>
                 """.formatted(toEmail, verificationLink);  // address 값을 URL에 삽입
+        return htmlContent;
+    }
 
+    private boolean sendToLocalUserAuthenticationCode(String toEmail, String subject, String htmlContent) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
@@ -96,10 +106,9 @@ public class MailSendClient {
             helper.setSubject(subject);  // 이메일 제목
             helper.setText(htmlContent, true);  // true는 HTML 콘텐츠를 의미함
             mailSender.send(message);
+            return true;
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("인증 메시지를 전송하지 못했습니다.", e);
         }
     }
-
-
 }
