@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.domain.membership;
+package com.kosa.chanzipup.domain.membershipinternal;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -8,18 +8,19 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class MemberShip {
+public class MembershipInternal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int price;
-
     @Enumerated(EnumType.STRING)
     private MemberShipType type;
 
-    public MemberShip(int price, MemberShipType type) {
-        this.price = price;
+    private int price;
+
+    public MembershipInternal(int price,
+                              MemberShipType type) {
         this.type = type;
+        this.price = price;
     }
 }
