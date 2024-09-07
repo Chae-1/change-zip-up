@@ -23,6 +23,12 @@ public class CompanyService {
 
     @Transactional
     public CompanyRegisterResponse registerCompany(CompanyRegisterRequest request) {
+
+        // 이메일 중복 확인
+        if(!isEmailDuplicated(request.getEmail())) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
+
         Company company = Company.ofNewCompany(request.getEmail(), request.getCompanyName(), request.getPassword(),
                 request.getPhoneNumber(), request.getOwner(), request.getCompanyNumber(), request.getPublishDate(),
                 request.getAddress(), request.getCompanyDesc());
@@ -41,5 +47,8 @@ public class CompanyService {
         return CompanyRegisterResponse.of(request.getEmail(), request.getCompanyName());
     }
 
-
+    // 이메일 중복 확인
+    public boolean isEmailDuplicated(String email) {
+        return companyRepository.existsByEmail(email);
+    }
 }

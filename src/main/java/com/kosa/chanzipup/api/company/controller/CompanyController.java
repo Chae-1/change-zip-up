@@ -5,10 +5,7 @@ import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterRespons
 import com.kosa.chanzipup.api.company.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,5 +21,12 @@ public class CompanyController {
 
         CompanyRegisterResponse savedCompany = companyService.registerCompany(registerRequest);
         return ResponseEntity.ok(savedCompany);
+    }
+
+    // 이메일 중복 확인
+    @GetMapping("/check-email")
+    public ResponseEntity<Boolean> checkEmail(@RequestParam String email) {
+        boolean isDuplicated = companyService.isEmailDuplicated(email);
+        return ResponseEntity.ok(isDuplicated);
     }
 }
