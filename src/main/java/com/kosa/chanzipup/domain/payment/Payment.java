@@ -48,7 +48,7 @@ public class Payment extends BaseEntity {
 
     private String createMerchantUid(LocalDateTime requestDateTime) {
         return String.format("%s.%s", requestDateTime.format(DateTimeFormatter.ISO_DATE),
-                UUID.randomUUID());
+                UUID.randomUUID().toString().substring(0, 20));
     }
 
     public static Payment create(MembershipInternal membershipInternal, LocalDateTime paymentRequestDateTime) {
@@ -56,11 +56,8 @@ public class Payment extends BaseEntity {
     }
 
     // 결제를 성공적으로 체결하면 상태를 변경시킨다.
-    public void success() {
-
-    }
-
-    public void fail() {
-
+    public void success(String impUid, LocalDateTime completeDate) {
+        this.impUid = impUid;
+        this.completeDate = completeDate;
     }
 }

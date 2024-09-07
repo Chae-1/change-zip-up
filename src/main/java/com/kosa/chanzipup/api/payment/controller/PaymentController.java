@@ -6,7 +6,10 @@ import com.kosa.chanzipup.api.payment.controller.request.PaymentResult;
 import com.kosa.chanzipup.api.payment.controller.response.PaymentPrepareResponse;
 import com.kosa.chanzipup.api.payment.service.PaymentService;
 import com.kosa.chanzipup.api.payment.service.query.PaymentQueryService;
+import com.kosa.chanzipup.domain.membershipinternal.MembershipId;
+import com.kosa.chanzipup.domain.payment.RefundService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,21 +25,27 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final RefundService refundService;
 
     @PostMapping("/api/payment/prepare")
-    public ApiResponse<PaymentPrepareResponse> generatePaymentInfoForClient(@RequestBody Long membershipId) {
+    public ApiResponse<PaymentPrepareResponse> generatePaymentInfoForClient(@RequestBody MembershipId membershipId) {
         // 1. 일단 회원 정보를 조회해서 이 회원이 기업 회원이나 ADMIN 권한이 존재하는지 확인한다.
+        // -> AOP
 
         // 2. 확인 이후, 결제정보를 생성한다.
-        return ApiResponse.ok(paymentService.createNewPayment("Auth@email.com", membershipId));
+        return ApiResponse.ok(paymentService.createNewPayment("Auth@email.com", 1L));
     }
 
     @PostMapping("/api/payment/complete")
     public ApiResponse<String> confirmPayment(@RequestBody @Validated PaymentResult paymentResult) {
-
+        // paymentResult.impUId는 결제 성공시에만 저장하자.
+        //
+        log.info("{}, {}, {}", paymentResult.getImpUid(), paymentResult.getMerchantUid(), paymentResult.isSuccess());
+        paymentService.processPayment(paymentResult);
         return ApiResponse.ok(null);
     }
 }
