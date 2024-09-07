@@ -15,11 +15,13 @@ public class RefundService {
 
     private final IamportClient iamportClient;
 
-    public void cancelPayment(String impUid) {
+    public void refundBy(String impUid) {
         CancelData cancelData = new CancelData(impUid, true);
         try {
             IamportResponse<Payment> response = iamportClient.cancelPaymentByImpUid(cancelData);
-
+            System.out.println(response.getResponse());
+            System.out.println(response.getMessage());
+            System.out.println(response.getCode());
         } catch (IamportResponseException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {

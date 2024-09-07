@@ -6,6 +6,7 @@ import com.kosa.chanzipup.domain.membershipinternal.MembershipInternal;
 import com.kosa.chanzipup.domain.membershipinternal.MembershipInternalRepository;
 import com.kosa.chanzipup.domain.payment.Payment;
 import com.kosa.chanzipup.domain.payment.PaymentRepository;
+import com.kosa.chanzipup.domain.payment.PaymentValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
     private final MembershipInternalRepository membershipInternalRepository;
+
+    private final PaymentValidator paymentValidator;
 
 
     @Transactional
@@ -48,31 +51,50 @@ public class PaymentService {
     // -> 이를 관리하고 있어도 의미가 없기 때문이다.
     
     // todo: 향후, 어떤 DTO를 반환해야하는지 논의가 필요함
-    @Transactional
-    public void processPayment(PaymentResult paymentResult) {
-        String merchantUid = paymentResult.getMerchantUid();
-        log.info("merchantUid, {}", merchantUid);
-        Payment payment = paymentRepository.findByMerchantUid(merchantUid)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 결제 정보입니다."));
-
-        // 결제 성공 여부
-        boolean success = paymentResult.isSuccess();
-        LocalDateTime completeDate = LocalDateTime.now();
-
-        if (success) {
-            // 결제를 조회해서 complete 호출
-            handleSuccessfulPayment(paymentResult, payment, completeDate);
-        }
-        // 삭제 처리 되면?
-        handleFailedPayment(payment);
-    }
+//    public boolean processPayment(PaymentResult paymentResult) {
+//        Payment payment = paymentRepository.findByMerchantUid(paymentResult.getMerchantUid())
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 결제 정보입니다."));
+//
+//        LocalDateTime completeDate = LocalDateTime.now();
+//        boolean isSuccess = paymentResult.isSuccess(); // 결제 성공 여부
+//        if (isSuccess) {
+//            payment.success(paymentResult, completeDate);
+//            return true;
+//        }
+//
+//        // 사용자가 결제를 취소하면, 서버에 있는 결제 내역을 삭제한다.
+//        handleFailedPayment(payment);
+//        return false;
+//    }
 
     private void handleFailedPayment(Payment payment) {
         paymentRepository.delete(payment);
     }
 
-    private void handleSuccessfulPayment(PaymentResult paymentResult, Payment payment,
-                                                LocalDateTime completeDate) {
-        payment.success(paymentResult.getImpUid(), completeDate);
+    @Transactional
+    public String cancelPayment(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 결제 정보입니다."));
+        payment.cancel();
+        return payment.getImpUid();
+    }
+
+    @Transactional
+    public boolean processPayment(String impUid, String merchantUid,
+                                  int paidAmount, boolean isSuccess) {
+        Payment payment = paymentRepository.findByMerchantUid(merchantUid)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 결제 정보입니다."));
+
+
+        LocalDateTime completeDate = LocalDateTime.now();
+        // 실제 pg사를 통해 결제가 처리되었을 경우 isSuccess == true
+        if (isSuccess) {
+            payment.success(impUid, paidAmount, completeDate);
+            return true;
+        }
+
+        // 사용자가 결제를 취소하면, 서버에 있는 결제 내역을 삭제한다.
+        handleFailedPayment(payment);
+        return false;
     }
 }

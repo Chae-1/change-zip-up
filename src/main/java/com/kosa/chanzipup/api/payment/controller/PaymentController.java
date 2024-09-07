@@ -7,6 +7,8 @@ import com.kosa.chanzipup.api.payment.controller.response.PaymentPrepareResponse
 import com.kosa.chanzipup.api.payment.service.PaymentService;
 import com.kosa.chanzipup.api.payment.service.query.PaymentQueryService;
 import com.kosa.chanzipup.domain.membershipinternal.MembershipId;
+import com.kosa.chanzipup.domain.payment.PaymentId;
+import com.kosa.chanzipup.domain.payment.PaymentValidator;
 import com.kosa.chanzipup.domain.payment.RefundService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,18 +36,25 @@ public class PaymentController {
     @PostMapping("/api/payment/prepare")
     public ApiResponse<PaymentPrepareResponse> generatePaymentInfoForClient(@RequestBody MembershipId membershipId) {
         // 1. 일단 회원 정보를 조회해서 이 회원이 기업 회원이나 ADMIN 권한이 존재하는지 확인한다.
-        // -> AOP
 
         // 2. 확인 이후, 결제정보를 생성한다.
-        return ApiResponse.ok(paymentService.createNewPayment("Auth@email.com", 1L));
+        return ApiResponse.ok(paymentService.createNewPayment("Auth@email.com", membershipId.getMembershipId()));
     }
 
     @PostMapping("/api/payment/complete")
-    public ApiResponse<String> confirmPayment(@RequestBody @Validated PaymentResult paymentResult) {
+    public ApiResponse<Boolean> confirmPayment(@RequestBody @Validated PaymentResult paymentResult) {
+
         // paymentResult.impUId는 결제 성공시에만 저장하자.
-        //
         log.info("{}, {}, {}", paymentResult.getImpUid(), paymentResult.getMerchantUid(), paymentResult.isSuccess());
-        paymentService.processPayment(paymentResult);
-        return ApiResponse.ok(null);
+        return ApiResponse.ok(paymentService.processPayment(paymentResult.getImpUid(), paymentResult.getMerchantUid(),
+                paymentResult.getPaidAmount(), paymentResult.isSuccess()));
     }
+
+    @PostMapping("/api/payment/refund")
+    public ApiResponse<String> refundPayment(@RequestBody PaymentId paymentId) {
+        String impUid = paymentService.cancelPayment(paymentId.getId());
+        refundService.refundBy(impUid);
+        return ApiResponse.ok("정상적으로 환불이 처리되었습니다.");
+    }
+
 }
