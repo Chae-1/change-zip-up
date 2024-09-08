@@ -7,6 +7,7 @@ import com.kosa.chanzipup.domain.companyConstructionType.CompanyConstructionType
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
 @DiscriminatorValue("company")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Company extends Account {
@@ -63,5 +65,9 @@ public class Company extends Account {
 
     public void addConstructionType(CompanyConstructionType constructionType) {
         constructionTypes.add(constructionType);
+    }
+
+    public String getPhoneNumber() {
+        return super.getPhoneNumber();
     }
 }

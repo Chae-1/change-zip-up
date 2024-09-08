@@ -1,6 +1,8 @@
 package com.kosa.chanzipup.api.company.service;
 
 import com.kosa.chanzipup.api.company.controller.request.CompanyRegisterRequest;
+import com.kosa.chanzipup.api.company.controller.response.CompanyDetailResponse;
+import com.kosa.chanzipup.api.company.controller.response.CompanyListResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterResponse;
 import com.kosa.chanzipup.domain.ConstructionType.ConstructionType;
 import com.kosa.chanzipup.domain.ConstructionType.ConstructionTypeRepository;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +28,7 @@ public class CompanyService {
     public CompanyRegisterResponse registerCompany(CompanyRegisterRequest request) {
 
         // 이메일 중복 확인
-        if(!isEmailDuplicated(request.getEmail())) {
+        if(isEmailDuplicated(request.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
@@ -50,5 +53,46 @@ public class CompanyService {
     // 이메일 중복 확인
     public boolean isEmailDuplicated(String email) {
         return companyRepository.existsByEmail(email);
+    }
+
+    // 업체 리스트 조회
+    @Transactional
+    public List<CompanyListResponse> getAllCompanies() {
+        return companyRepository.findAll().stream()
+                .map(company -> new CompanyListResponse(
+                        company.getId(),
+                        company.getCompanyName(),
+                        company.getCompanyLogoUrl(),
+                        company.getRating(),
+                        company.getConstructionTypes().stream()
+                                .map(constructionType -> constructionType.getConstructionType().getName())
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
+    }
+
+    // 업체 상세 조회
+    @Transactional
+    public CompanyDetailResponse getCompanyById(Long companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new IllegalArgumentException("Company not found"));
+
+        List<String> services = company.getConstructionTypes().stream()
+                .map(constructionType -> constructionType.getConstructionType().getName())
+                .collect(Collectors.toList());
+
+        return new CompanyDetailResponse(
+                company.getId(),
+                company.getCompanyName(),
+                company.getCompanyNumber(),
+                company.getOwner(),
+                company.getAddress(),
+                company.getCompanyLogoUrl(),
+                company.getPhoneNumber(),
+                company.getCompanyDesc(),
+                company.getPublishDate(),
+                company.getRating(),
+                services
+        );
     }
 }
