@@ -42,10 +42,11 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         // todo: 토큰 전달 방식을 수정하자.
         response.sendRedirect(redirectURI(accessToken));
     }
+// Authorization
 
     private String redirectURI(String accessToken) {
         String fullAccessToken = String.format("Bearer %s", accessToken);
-        return String.format("http://localhost:3000/oauth/redirect?authroziation=%s", fullAccessToken);
+        return String.format("http://localhost:3000/oauth/redirect?authorization=%s", fullAccessToken);
     }
 
     private String createAndSendAccessTokenInHeader(String email) {
