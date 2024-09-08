@@ -12,6 +12,8 @@ public class CompanyListResponse {
 
     private String companyName;
 
+    private String companyDesc;
+
     private String companyLogoUrl;
 
     private float rating;
