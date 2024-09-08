@@ -64,6 +64,7 @@ public class CompanyService {
                 .map(company -> new CompanyListResponse(
                         company.getId(),
                         company.getCompanyName(),
+                        company.getCompanyDesc(),
                         company.getCompanyLogoUrl(),
                         company.getRating(),
                         company.getConstructionTypes().stream()
