@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class MailSendClient {
 
     private final JavaMailSender mailSender;
+
     private final String target;
 
     public MailSendClient(JavaMailSender mailSender, @Value("${target.address}") String target) {
@@ -21,13 +22,10 @@ public class MailSendClient {
         this.target = target;
     }
 
-    // todo: 메일 전송을 비동기 처리하는 것도 고려해봐야한다.
-    public boolean sendVerificationCode(String toEmail, String verificationCode) {
+    // 회원 가입을 수행했을 때 가입 당시 이메일에 verificationCode 링크를 전송한다.
+    public void sendVerificationCode(String toEmail, String verificationCode) {
         String clientUrl = String.format("%s/verify-email", target);  // 프론트엔드 URL
-        String verificationLink = String.format("%s?verificationCode=%s", clientUrl, verificationCode);
-
-        String subject = makeSubject();
-        String htmlContent = makeVerificationContent(toEmail, verificationLink);
+        String verificationLink = clientUrl + "?code=" + verificationCode;
 
         return sendToLocalUserAuthenticationCode(toEmail, subject, htmlContent);
     }
@@ -99,7 +97,7 @@ public class MailSendClient {
         return htmlContent;
     }
 
-    private boolean sendToLocalUserAuthenticationCode(String toEmail, String subject, String htmlContent) {
+  private boolean sendToLocalUserAuthenticationCode(String toEmail, String subject, String htmlContent) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
@@ -112,4 +110,5 @@ public class MailSendClient {
             throw new IllegalStateException("인증 메시지를 전송하지 못했습니다.", e);
         }
     }
+   
 }
