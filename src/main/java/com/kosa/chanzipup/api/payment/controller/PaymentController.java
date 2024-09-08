@@ -23,17 +23,17 @@ import org.springframework.web.bind.annotation.*;
 // -> Payment 테이블에 데이터를 생성
 // -> PG사에 결제를 요청하기 위해서는 서버에서 유지하는 상품번호가 존재해야한다.
 // ->
-// 3.
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/payment")
 @Slf4j
 public class PaymentController {
 
     private final PaymentService paymentService;
     private final RefundService refundService;
 
-    @PostMapping("/api/payment/prepare")
+    @PostMapping("/prepare")
     public ApiResponse<PaymentPrepareResponse> generatePaymentInfoForClient(@RequestBody MembershipId membershipId) {
         // 1. 일단 회원 정보를 조회해서 이 회원이 기업 회원이나 ADMIN 권한이 존재하는지 확인한다.
 
@@ -41,16 +41,16 @@ public class PaymentController {
         return ApiResponse.ok(paymentService.createNewPayment("Auth@email.com", membershipId.getMembershipId()));
     }
 
-    @PostMapping("/api/payment/complete")
+    @PostMapping("/complete")
     public ApiResponse<Boolean> confirmPayment(@RequestBody @Validated PaymentResult paymentResult) {
 
         // paymentResult.impUId는 결제 성공시에만 저장하자.
-        log.info("{}, {}, {}", paymentResult.getImpUid(), paymentResult.getMerchantUid(), paymentResult.isSuccess());
+        log.info("{}, {}, {}", paymentResult.getImpUid(), paymentResult.getMerchantUid(), paymentResult.getSuccess());
         return ApiResponse.ok(paymentService.processPayment(paymentResult.getImpUid(), paymentResult.getMerchantUid(),
-                paymentResult.getPaidAmount(), paymentResult.isSuccess()));
+                paymentResult.getPaidAmount(), paymentResult.getSuccess()));
     }
 
-    @PostMapping("/api/payment/refund")
+    @PostMapping("/refund")
     public ApiResponse<String> refundPayment(@RequestBody PaymentId paymentId) {
         String impUid = paymentService.cancelPayment(paymentId.getId());
         refundService.refundBy(impUid);

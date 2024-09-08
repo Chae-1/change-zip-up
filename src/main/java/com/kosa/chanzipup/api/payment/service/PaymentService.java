@@ -24,9 +24,6 @@ public class PaymentService {
 
     private final MembershipInternalRepository membershipInternalRepository;
 
-    private final PaymentValidator paymentValidator;
-
-
     @Transactional
     public PaymentPrepareResponse createNewPayment(String email, Long membershipId) {
         // 1. 고객이 선택한 멤버십을 조회한다.
@@ -73,6 +70,7 @@ public class PaymentService {
 
     @Transactional
     public String cancelPayment(Long paymentId) {
+        log.info("paymentId = {}", paymentId);
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 결제 정보입니다."));
         payment.cancel();

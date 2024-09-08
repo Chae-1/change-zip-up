@@ -81,22 +81,7 @@ public class Payment extends BaseEntity {
 
     // 실제 결제 금액과
     public boolean isNotMatchPaymentPrice(int paymentPrice) {
-        return membershipInternal.getPrice() == paymentPrice;
-    }
-
-    private boolean validate(PaymentResult paymentResult) {
-        if (isNotMatchPaymentPrice(paymentResult.getPaidAmount())) {
-            throw new PaymentException("유효하지 않은 결제 요청입니다.", impUid, id);
-        }
-        return true;
-    }
-
-    public void success(PaymentResult paymentResult, LocalDateTime completeDate) {
-        if (validate(paymentResult)) {
-            this.impUid = paymentResult.getImpUid();
-            this.completeDate = completeDate;
-            this.status = COMPLETE;
-        }
+        return membershipInternal.getPrice() != paymentPrice;
     }
 
     public void cancel() {

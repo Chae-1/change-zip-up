@@ -18,6 +18,7 @@ public class MemberShipInternalService {
 
     private final MembershipInternalRepository membershipInternalRepository;
 
+    // query
     public List<MemberShipInternalResponse> getAllMemberShips() {
         return membershipInternalRepository.findAll()
                 .stream()
