@@ -4,6 +4,7 @@ import com.kosa.chanzipup.api.company.controller.request.CompanyRegisterRequest;
 import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterResponse;
 import com.kosa.chanzipup.domain.ConstructionType.ConstructionType;
 import com.kosa.chanzipup.domain.ConstructionType.ConstructionTypeRepository;
+import com.kosa.chanzipup.domain.account.AccountRepository;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.companyConstructionType.CompanyConstructionType;
@@ -20,6 +21,7 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final ConstructionTypeRepository constructionTypeRepository;
+    private final AccountRepository accountRepository;
 
     @Transactional
     public CompanyRegisterResponse registerCompany(CompanyRegisterRequest request) {
@@ -49,6 +51,6 @@ public class CompanyService {
 
     // 이메일 중복 확인
     public boolean isEmailDuplicated(String email) {
-        return companyRepository.existsByEmail(email);
+        return accountRepository.existsByEmail(email);
     }
 }
