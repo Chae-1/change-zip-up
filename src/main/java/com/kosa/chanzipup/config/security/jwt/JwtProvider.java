@@ -72,7 +72,7 @@ public class JwtProvider {
     }
 
     private String createToken(Map<String, Object> claims, String username,
-                               LocalDateTime expireDate, TokenType tokenType) {
+                               LocalDateTime createDate, TokenType tokenType) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)

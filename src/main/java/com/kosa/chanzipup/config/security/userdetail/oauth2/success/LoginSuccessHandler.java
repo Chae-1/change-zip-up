@@ -71,8 +71,14 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         // 2. 멤버 로그인이면, accessToken을 Authorization Header로 전달.
         String successDto = mapper.writeValueAsString(new LoginSuccessResponse(nickName));
         response.addHeader("Authorization", accessToken);
-        response.setContentType("application/json");
+        response.setContentType("application/json;charset=utf-8");
         response.setStatus(HttpStatus.OK.value());
+
+        // CORS 설정
+        response.setHeader("Access-Control-Allow-Origin", "*");  // 또는 특정 도메인 설정
+        response.setHeader("Access-Control-Allow-Credentials", "true");  // 쿠키 및 인증정보 허용
+        response.setHeader("Access-Control-Expose-Headers", "Authorization");  // Authorization 헤더를 클라이언트에서 노출 허용
+
         response.getWriter().write(successDto);
     }
 // Authorization
@@ -83,7 +89,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     private String createAccessToken(String email) {
-        String accessToken = jwtProvider.generateToken(email, TokenType.ACCESS, LocalDateTime.now());
+        String accessToken = String.format("Bearer %s", jwtProvider.generateToken(email, TokenType.ACCESS, LocalDateTime.now()));
         return accessToken;
     }
 

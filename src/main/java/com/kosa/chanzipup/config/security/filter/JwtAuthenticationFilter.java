@@ -32,7 +32,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         // jwt 조회
         String accessToken = getJwtFromRequest(request);
-
         // jwt 안에 있는 email을 조회한다.
         // email로 Account 정보를 조회한다.
         if (accessToken != null) {
@@ -59,6 +58,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
-
-
 }
