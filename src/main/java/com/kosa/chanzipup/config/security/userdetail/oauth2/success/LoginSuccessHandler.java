@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
-public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private static final int REFRESH_EXPIRY_DURATION = 7 * 24 * 60 * 60;
 

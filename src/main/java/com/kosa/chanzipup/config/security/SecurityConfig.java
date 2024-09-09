@@ -2,9 +2,10 @@ package com.kosa.chanzipup.config.security;
 
 import com.kosa.chanzipup.config.security.filter.FormLoginAuthenticationFilter;
 import com.kosa.chanzipup.config.security.filter.JwtAuthenticationFilter;
+import com.kosa.chanzipup.config.security.provider.LoginAuthenticationProvider;
 import com.kosa.chanzipup.config.security.userdetail.oauth2.Oauth2MemberService;
-import com.kosa.chanzipup.config.security.userdetail.oauth2.success.OAuth2AuthenticationSuccessHandler;
 
+import com.kosa.chanzipup.config.security.userdetail.oauth2.success.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -12,15 +13,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -35,24 +40,38 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Slf4j
 public class SecurityConfig {
 
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final LoginSuccessHandler LoginSuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   Oauth2MemberService oauth2MemberService) throws Exception {
+                                                   Oauth2MemberService oauth2MemberService,
+                                                   LoginAuthenticationProvider provider, LoginSuccessHandler loginSuccessHandler) throws Exception {
+
+
+
+        AuthenticationManager manager = new ProviderManager(List.of(provider));
+
+        FormLoginAuthenticationFilter formLoginAuthenticationFilter = new FormLoginAuthenticationFilter();
+        formLoginAuthenticationFilter.setFilterProcessesUrl("/form/login");
+        formLoginAuthenticationFilter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/form/login/**", "POST"));
+
+        formLoginAuthenticationFilter.setUsernameParameter("email");
+        formLoginAuthenticationFilter.setPasswordParameter("password");
+        formLoginAuthenticationFilter.setAuthenticationManager(manager);
+        formLoginAuthenticationFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
+
         // 기본 설정
         http
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/test").authenticated()
                         .requestMatchers("/api/**", "/", "/oauth2/**").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .anyRequest().permitAll())
-                .formLogin(Customizer.withDefaults()) //
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfiguration()))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(formLoginAuthenticationFilter, OAuth2LoginAuthenticationFilter.class)
+                .addFilterAfter(jwtAuthenticationFilter, FormLoginAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
 
 
@@ -63,7 +82,7 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfoEndpoint ->
                         userInfoEndpoint
                                 .userService(oauth2MemberService))
-                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .successHandler(LoginSuccessHandler)
                 .permitAll());
 
         return http.build();
