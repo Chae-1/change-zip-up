@@ -57,6 +57,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         afterLoginProcess(response, accessToken, registeredId, nickName);
     }
 
+
     private void afterLoginProcess(HttpServletResponse response,
                                    String accessToken,
                                    String registeredId, String nickName) throws IOException {
