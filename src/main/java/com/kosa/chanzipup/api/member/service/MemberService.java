@@ -29,7 +29,7 @@ public class MemberService {
         // 이 메서드는 회원이 보낸 등록 요청을 파라미터로 받고 서버에서 정상적으로 가입이 되었다는 응답을 반환타입으로 받는다
 
         // 이메일 확인
-        if (isEmailDuplicated(request.getEmail()).isPresent()) {
+        if (isEmailDuplicated(request.getEmail())) {
         // Optional의 isPresent()메서드를 활용하여 값이 존재하는지 확인
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
             // 잘못된 인수나 부적절한 값이 전달되었을 때 이 예외 처리를 사용하여 에외처리시 메세지를 남길 수 있다.
@@ -42,7 +42,8 @@ public class MemberService {
     }
 
     // 이메일 중복 확인
-    public Optional<Member> isEmailDuplicated(String email) {
-        return memberRepository.findByEmail(email);
+    public boolean isEmailDuplicated(String email) {
+        return memberRepository.findByEmail(email)
+                .isPresent();
     }
 }
