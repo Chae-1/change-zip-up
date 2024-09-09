@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.config.security;
 
+import com.kosa.chanzipup.config.security.filter.FormLoginAuthenticationFilter;
 import com.kosa.chanzipup.config.security.filter.JwtAuthenticationFilter;
 import com.kosa.chanzipup.config.security.userdetail.oauth2.Oauth2MemberService;
 import com.kosa.chanzipup.config.security.userdetail.oauth2.success.OAuth2AuthenticationSuccessHandler;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -36,6 +38,7 @@ public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    Oauth2MemberService oauth2MemberService) throws Exception {
@@ -46,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/**", "/", "/oauth2/**").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .anyRequest().permitAll())
+                .formLogin(Customizer.withDefaults()) //
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfiguration()))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

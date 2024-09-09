@@ -27,7 +27,7 @@ public class MailSendClient {
         String clientUrl = String.format("%s/verify-email", target);  // 프론트엔드 URL
         String verificationLink = clientUrl + "?code=" + verificationCode;
         String subject = makeSubject();
-        String makeVerificationContent = makeVerificationContent(toEmail, verificationCode);
+        String makeVerificationContent = makeVerificationContent(toEmail, verificationLink);
         return sendToLocalUserAuthenticationCode(toEmail, subject, makeVerificationContent);
     }
 

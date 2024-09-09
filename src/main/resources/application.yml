@@ -5,5 +5,5 @@ spring:
     active: dev
 
 target:
-  address: http://localhost:3001
+  address: http://localhost:3000
 
