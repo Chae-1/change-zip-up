@@ -46,4 +46,6 @@ public abstract class Account extends BaseEntity {
     public void addRefreshToken(RefreshToken refreshToken) {
         this.refreshToken = refreshToken;
     }
+
+    public abstract String getNickName();
 }

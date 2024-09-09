@@ -5,13 +5,10 @@ import com.kosa.chanzipup.api.member.response.MemberRegisterResponse;
 import com.kosa.chanzipup.domain.account.AccountRole;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
-import io.jsonwebtoken.security.Password;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +33,7 @@ public class MemberService {
         }
 
         Member member =  Member.ofLocal(AccountRole.USER, request.getEmail(), encoder.encode(request.getPassword()), request.getPhoneNumber(),
-                request.getSocialType(), request.getNickName(), request.getName());
+                request.getMemberType(), request.getNickName(), request.getName());
         memberRepository.save(member);
         return MemberRegisterResponse.of(member.getEmail(), request.getName());
     }

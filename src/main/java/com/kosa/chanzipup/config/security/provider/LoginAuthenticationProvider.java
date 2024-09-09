@@ -1,34 +1,45 @@
 package com.kosa.chanzipup.config.security.provider;
 
-import com.kosa.chanzipup.config.security.jwt.JwtProvider;
-import com.kosa.chanzipup.config.security.userdetail.oauth2.success.LoginSuccessHandler;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class LoginAuthenticationProvider implements AuthenticationProvider {
+public class LoginAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        if (authentication.getCredentials() == null) {
+            this.logger.debug("Failed to authenticate since no credentials provided");
+            throw new BadCredentialsException(this.messages
+                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+        }
+        String presentedPassword = authentication.getCredentials().toString();
+        if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
+            this.logger.debug("Failed to authenticate since password does not match stored value");
+            throw new BadCredentialsException(this.messages
+                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+        }
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = determineUsername(authentication);
+        // db에 저장된 실제 유저를 조회
         UserDetails user = null;
         try {
             user = retrieveUser(username, authentication);
@@ -36,6 +47,7 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Form 로그인 실패");
         }
 
+        // 현재 요청인 Authentication과 Db에서 조회한 실제 정보인 UserDetails를 비교하여 검증 수행
         return UsernamePasswordAuthenticationToken.authenticated(user, authentication.getCredentials(),
                 user.getAuthorities());
     }
@@ -70,4 +82,8 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
         return (authentication.getPrincipal() == null) ? "NONE_PROVIDED" : authentication.getName();
     }
 
+    @Override
+    protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        return null;
+    }
 }

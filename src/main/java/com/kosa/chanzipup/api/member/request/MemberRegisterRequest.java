@@ -1,6 +1,6 @@
 package com.kosa.chanzipup.api.member.request;
 
-import com.kosa.chanzipup.domain.account.member.SocialType;
+import com.kosa.chanzipup.domain.account.member.MemberType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -22,5 +22,5 @@ public class MemberRegisterRequest {
     private String name;
     @NotBlank(message = "닉네임을 필수 입력 항목입니다")
     private String nickName;
-    private SocialType socialType;
+    private MemberType memberType;
 }

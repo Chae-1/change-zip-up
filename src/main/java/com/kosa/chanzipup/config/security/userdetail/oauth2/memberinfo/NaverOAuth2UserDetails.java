@@ -3,7 +3,7 @@ package com.kosa.chanzipup.config.security.userdetail.oauth2.memberinfo;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.account.AccountRole;
 import com.kosa.chanzipup.domain.account.member.Member;
-import com.kosa.chanzipup.domain.account.member.SocialType;
+import com.kosa.chanzipup.domain.account.member.MemberType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,8 +35,18 @@ public class NaverOAuth2UserDetails implements UnifiedUserDetails {
 
 
     @Override
+    public String nickName() {
+        return String.valueOf(attributes.get("nickName"));
+    }
+
+    @Override
     public String getPassword() {
         return String.format("%s_%s", registrationId, attributes.get("id"));
+    }
+
+    @Override
+    public String getRegisteredId() {
+        return registrationId;
     }
 
     @Override
@@ -52,6 +62,6 @@ public class NaverOAuth2UserDetails implements UnifiedUserDetails {
         String mobile = String.valueOf(attributes.get("mobile"));
 
         return Member.ofSocial(AccountRole.USER, email, encodedPassword, mobile,
-                SocialType.NAVER, nickName, name);
+                MemberType.NAVER, nickName, name);
     }
 }

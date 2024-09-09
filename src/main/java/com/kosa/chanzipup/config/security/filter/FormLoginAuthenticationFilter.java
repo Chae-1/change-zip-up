@@ -65,6 +65,7 @@ public class FormLoginAuthenticationFilter extends AbstractAuthenticationProcess
                 password);
         // Allow subclasses to set the "details" property
         setDetails(request, authRequest);
+
         return this.getAuthenticationManager().authenticate(authRequest);
     }
 

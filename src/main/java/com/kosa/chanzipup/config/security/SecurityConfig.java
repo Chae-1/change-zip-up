@@ -8,6 +8,7 @@ import com.kosa.chanzipup.config.security.userdetail.oauth2.Oauth2MemberService;
 import com.kosa.chanzipup.config.security.userdetail.oauth2.success.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +16,6 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -49,18 +48,9 @@ public class SecurityConfig {
                                                    Oauth2MemberService oauth2MemberService,
                                                    LoginAuthenticationProvider provider, LoginSuccessHandler loginSuccessHandler) throws Exception {
 
-
-
         AuthenticationManager manager = new ProviderManager(List.of(provider));
 
-        FormLoginAuthenticationFilter formLoginAuthenticationFilter = new FormLoginAuthenticationFilter();
-        formLoginAuthenticationFilter.setFilterProcessesUrl("/form/login");
-        formLoginAuthenticationFilter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/form/login/**", "POST"));
-
-        formLoginAuthenticationFilter.setUsernameParameter("email");
-        formLoginAuthenticationFilter.setPasswordParameter("password");
-        formLoginAuthenticationFilter.setAuthenticationManager(manager);
-        formLoginAuthenticationFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
+        FormLoginAuthenticationFilter formLoginAuthenticationFilter = setFormLoginAuthentication(loginSuccessHandler, manager);
 
         // 기본 설정
         http
@@ -88,11 +78,23 @@ public class SecurityConfig {
         return http.build();
     }
 
+    private FormLoginAuthenticationFilter setFormLoginAuthentication(com.kosa.chanzipup.config.security.userdetail.oauth2.success.LoginSuccessHandler loginSuccessHandler, AuthenticationManager manager) {
+        FormLoginAuthenticationFilter formLoginAuthenticationFilter = new FormLoginAuthenticationFilter();
+        formLoginAuthenticationFilter.setFilterProcessesUrl("/form/login");
+        formLoginAuthenticationFilter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/form/login/**", "POST"));
+
+        formLoginAuthenticationFilter.setUsernameParameter("email");
+        formLoginAuthenticationFilter.setPasswordParameter("password");
+        formLoginAuthenticationFilter.setAuthenticationManager(manager);
+        formLoginAuthenticationFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
+        return formLoginAuthenticationFilter;
+    }
+
     @Bean
     public CorsConfigurationSource corsConfiguration() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.setAllowedMethods(List.of("GET", "POST", "DELETE", "UPDATE", "PATCH"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "DELETE", "UPDATE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Content-Type"));
         configuration.setAllowCredentials(true);
 

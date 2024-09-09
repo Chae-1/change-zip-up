@@ -1,13 +1,13 @@
 package com.kosa.chanzipup.domain.account;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.kosa.chanzipup.domain.account.member.Member;
-import com.kosa.chanzipup.domain.account.member.SocialType;
+import com.kosa.chanzipup.domain.account.member.MemberType;
+
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +24,11 @@ class AccountRepositoryTest {
     void findByEmail() {
         // given
         Member member1 = Member.ofLocal(AccountRole.USER, "hyeongil@naver.com3", "1234",
-                "010-1919-1919", SocialType.LOCAL, "hyengil", "형일1");
+                "010-1919-1919", MemberType.LOCAL, "hyengil", "형일1");
         Member member2 = Member.ofLocal(AccountRole.USER, "hyeongil@naver.com1", "1234",
-                "010-1919-1919", SocialType.LOCAL, "hyengil", "형일2");
+                "010-1919-1919", MemberType.LOCAL, "hyengil", "형일2");
         Member member3 = Member.ofLocal(AccountRole.USER, "hyeongil@naver.com2", "1234",
-                "010-1919-1919", SocialType.LOCAL, "hyengil", "형일3");
+                "010-1919-1919", MemberType.LOCAL, "hyengil", "형일3");
         accountRepository.saveAll(List.of(member1, member2, member3));
         // when
         Optional<Account> findAccount = accountRepository.findByEmail("hyeongil@naver.com1");
