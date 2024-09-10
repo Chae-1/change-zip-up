@@ -1,6 +1,5 @@
 package com.kosa.chanzipup.config.security.filter;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,15 +9,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
 
 public class FormLoginAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
@@ -31,7 +29,7 @@ public class FormLoginAuthenticationFilter extends AbstractAuthenticationProcess
             "/login",
             "POST");
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private String usernameParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
 
@@ -76,7 +74,7 @@ public class FormLoginAuthenticationFilter extends AbstractAuthenticationProcess
             while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
-            LoginRequest loginRequest = mapper.readValue(sb.toString(), LoginRequest.class);
+            LoginRequest loginRequest = MAPPER.readValue(sb.toString(), LoginRequest.class);
             request.setAttribute(usernameParameter, loginRequest.email);
             request.setAttribute(passwordParameter, loginRequest.password);
         } catch (IOException e) {

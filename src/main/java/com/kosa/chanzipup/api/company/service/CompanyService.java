@@ -50,7 +50,6 @@ public class CompanyService {
         });
 
         companyRepository.save(company);
-
         return CompanyRegisterResponse.of(request.getEmail(), request.getCompanyName());
     }
 

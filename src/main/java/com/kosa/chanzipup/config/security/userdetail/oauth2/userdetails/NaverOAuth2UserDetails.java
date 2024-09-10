@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.config.security.userdetail.oauth2.memberinfo;
+package com.kosa.chanzipup.config.security.userdetail.oauth2.userdetails;
 
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.account.AccountRole;
@@ -64,4 +64,5 @@ public class NaverOAuth2UserDetails implements UnifiedUserDetails {
         return Member.ofSocial(AccountRole.USER, email, encodedPassword, mobile,
                 MemberType.NAVER, nickName, name);
     }
+
 }
