@@ -31,7 +31,7 @@ public class FormLoginAuthenticationFilter extends AbstractAuthenticationProcess
             "/login",
             "POST");
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private String usernameParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
 
@@ -76,7 +76,7 @@ public class FormLoginAuthenticationFilter extends AbstractAuthenticationProcess
             while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
-            LoginRequest loginRequest = mapper.readValue(sb.toString(), LoginRequest.class);
+            LoginRequest loginRequest = MAPPER.readValue(sb.toString(), LoginRequest.class);
             request.setAttribute(usernameParameter, loginRequest.email);
             request.setAttribute(passwordParameter, loginRequest.password);
         } catch (IOException e) {

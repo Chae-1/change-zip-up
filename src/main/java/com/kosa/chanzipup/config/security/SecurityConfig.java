@@ -2,13 +2,12 @@ package com.kosa.chanzipup.config.security;
 
 import com.kosa.chanzipup.config.security.filter.FormLoginAuthenticationFilter;
 import com.kosa.chanzipup.config.security.filter.JwtAuthenticationFilter;
-import com.kosa.chanzipup.config.security.provider.LoginAuthenticationProvider;
+
 import com.kosa.chanzipup.config.security.userdetail.oauth2.Oauth2MemberService;
 
-import com.kosa.chanzipup.config.security.userdetail.oauth2.success.LoginSuccessHandler;
+import com.kosa.chanzipup.config.security.userdetail.success.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +15,18 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.ProviderManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -46,9 +49,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    Oauth2MemberService oauth2MemberService,
-                                                   LoginAuthenticationProvider provider, LoginSuccessHandler loginSuccessHandler) throws Exception {
-
-        AuthenticationManager manager = new ProviderManager(List.of(provider));
+                                                   ProviderManagerBuilder builder, LoginSuccessHandler loginSuccessHandler,
+                                                   AuthenticationManager manager) throws Exception {
 
         FormLoginAuthenticationFilter formLoginAuthenticationFilter = setFormLoginAuthentication(loginSuccessHandler, manager);
 
@@ -60,7 +62,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfiguration()))
-                .addFilterAt(formLoginAuthenticationFilter, OAuth2LoginAuthenticationFilter.class)
+                .addFilterAt(formLoginAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(jwtAuthenticationFilter, FormLoginAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
 
@@ -78,13 +80,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-    private FormLoginAuthenticationFilter setFormLoginAuthentication(com.kosa.chanzipup.config.security.userdetail.oauth2.success.LoginSuccessHandler loginSuccessHandler, AuthenticationManager manager) {
+    private FormLoginAuthenticationFilter setFormLoginAuthentication(com.kosa.chanzipup.config.security.userdetail.success.LoginSuccessHandler loginSuccessHandler, AuthenticationManager manager) {
         FormLoginAuthenticationFilter formLoginAuthenticationFilter = new FormLoginAuthenticationFilter();
-        formLoginAuthenticationFilter.setFilterProcessesUrl("/form/login");
         formLoginAuthenticationFilter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/form/login/**", "POST"));
 
-        formLoginAuthenticationFilter.setUsernameParameter("email");
-        formLoginAuthenticationFilter.setPasswordParameter("password");
+
         formLoginAuthenticationFilter.setAuthenticationManager(manager);
         formLoginAuthenticationFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
         return formLoginAuthenticationFilter;
@@ -112,5 +112,20 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+
+        ProviderManager providerManager = new ProviderManager(authenticationProvider);
+        providerManager.setEraseCredentialsAfterAuthentication(true);
+
+        return providerManager;
     }
 }

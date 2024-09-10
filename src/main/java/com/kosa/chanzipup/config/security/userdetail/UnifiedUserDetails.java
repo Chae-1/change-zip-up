@@ -13,4 +13,14 @@ public interface UnifiedUserDetails extends OAuth2User, UserDetails {
     String getRegisteredId();
 
     Member toEntity(String encodedPassword);
+
+    default String getRole() {
+        String authority = getAuthorities().stream()
+                .findFirst()
+                .get()
+                .getAuthority();
+
+        return authority
+                .substring(authority.indexOf('_'));
+    }
 }
