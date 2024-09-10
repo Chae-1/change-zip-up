@@ -1,7 +1,7 @@
 package com.kosa.chanzipup.domain.account.member;
 
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
-import com.kosa.chanzipup.config.security.userdetail.oauth2.memberinfo.NaverOAuth2UserDetails;
+import com.kosa.chanzipup.config.security.userdetail.oauth2.userdetails.NaverOAuth2UserDetails;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

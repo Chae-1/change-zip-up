@@ -1,13 +1,12 @@
 package com.kosa.chanzipup.domain.account.token;
 
-import com.kosa.chanzipup.domain.account.Account;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+
 import java.time.LocalDateTime;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,8 +33,8 @@ public class RefreshToken {
         return new RefreshToken(token, expireDateTime);
     }
 
-    public boolean isExpired() {
-        return false;
+    public boolean isExpired(LocalDateTime today) {
+        return expireDateTime.isAfter(today);
     }
 
     public void updateToken(String token, LocalDateTime expireDateTime) {

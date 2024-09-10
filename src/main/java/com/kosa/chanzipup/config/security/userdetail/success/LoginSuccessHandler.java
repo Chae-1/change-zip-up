@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.config.security.userdetail.oauth2.success;
+package com.kosa.chanzipup.config.security.userdetail.success;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kosa.chanzipup.api.token.service.RefreshTokenService;
@@ -43,24 +43,27 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // todo: 회원 정보
         String email = userDetails.getName();
-        String accessToken = createAccessToken(email);
         String registeredId = userDetails.getRegisteredId();
         String nickName = userDetails.nickName();
+        String role = userDetails.getRole();
 
         // todo:
+        String accessToken = createAccessToken(email);
         String refreshToken = createAndSaveRefreshToken(email);
-        sendRefreshTokenUsingCookie(refreshToken, response);
+
 
         // todo: 토큰 전달 방식을 수정하자.
         // oauth -> redirect를 해주고
         // formLogin 방식이면, response로 전달한다.
-        afterLoginProcess(response, accessToken, registeredId, nickName);
+        afterLoginProcess(response, accessToken, refreshToken, registeredId, nickName, role);
     }
 
 
     private void afterLoginProcess(HttpServletResponse response,
-                                   String accessToken,
-                                   String registeredId, String nickName) throws IOException {
+                                   String accessToken, String refreshToken,
+                                   String registeredId, String nickName, String role) throws IOException {
+
+        sendRefreshTokenUsingCookie(refreshToken, response);
 
         // 1. 소셜 로그인이면 리다이렉트
         if (MemberType.isSocial(registeredId)) {
@@ -69,7 +72,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         }
 
         // 2. 멤버 로그인이면, accessToken을 Authorization Header로 전달.
-        String successDto = mapper.writeValueAsString(new LoginSuccessResponse(nickName));
+        String successDto = mapper.writeValueAsString(new LoginSuccessResponse(nickName, role));
         response.addHeader("Authorization", accessToken);
         response.setContentType("application/json;charset=utf-8");
         response.setStatus(HttpStatus.OK.value());
@@ -81,7 +84,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         response.getWriter().write(successDto);
     }
-// Authorization
 
     private String redirectURI(String accessToken) {
         String fullAccessToken = String.format("Bearer %s", accessToken);
@@ -110,5 +112,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     @AllArgsConstructor
     static class LoginSuccessResponse {
         private String nickName;
+        private String role;
     }
 }

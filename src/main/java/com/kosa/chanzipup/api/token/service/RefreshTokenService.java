@@ -33,16 +33,19 @@ public class RefreshTokenService {
         LocalDateTime expireDate = LocalDateTime.now();
         String token = jwtProvider.generateToken(email, TokenType.REFRESH, expireDate);
 
+        // 3. 토큰이 발급되지 않았으면 발급요청
         RefreshToken accountRefreshToken = findAccount.getRefreshToken();
-        if (accountRefreshToken != null && accountRefreshToken.isExpired()) {
-            accountRefreshToken.updateToken(token, expireDate);
-            return accountRefreshToken;
+        if (accountRefreshToken == null) {
+            RefreshToken savedRefreshToken = refreshTokenRepository.save(RefreshToken.of(token, expireDate));
+            findAccount.addRefreshToken(savedRefreshToken); // todo: 메서드 명 수정
+            return savedRefreshToken;
         }
 
-        // 3. 만약 기존에 토큰이 존재하지 않았다면 새로운 토큰을 발급한다.
-        RefreshToken savedRefreshToken = refreshTokenRepository.save(RefreshToken.of(token, expireDate));
-        findAccount.addRefreshToken(savedRefreshToken); // todo: 메서드 명 수정
-        return savedRefreshToken;
+        // 4. 만약 기존에 토큰이 존재하지 않았다면 새로운 토큰을 발급한다.
+        if (accountRefreshToken.isExpired(LocalDateTime.now())) {
+            accountRefreshToken.updateToken(token, expireDate);
+        }
+        return accountRefreshToken;
     }
 
 }

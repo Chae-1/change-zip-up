@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.config.security.userdetail.oauth2.memberinfo;
+package com.kosa.chanzipup.config.security.userdetail.oauth2.userdetails;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
