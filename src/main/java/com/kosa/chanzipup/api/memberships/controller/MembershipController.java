@@ -31,8 +31,9 @@ public class MembershipController {
         PaymentResult processResult = paymentService.processPayment(paymentResult.getImpUid(), paymentResult.getMerchantUid(),
                 paymentResult.getPaidAmount(), paymentResult.getSuccess(), userDetails.getUsername());
 
-        // 2. 성공적으로 결제하면 이때 부터 한달 간, 멤버십에 가입된다.
-        if (processResult.isSuccess()) {
+        // 2. 성공적으로 결제하면 이때부터 한달 간, 멤버십에 가입된다.
+        // 실패하면 예외가 발생한다.
+        if (!processResult.isSuccess()) {
             throw new MembershipRegisterException("멤버십 등록에 실패하였습니다.");
         }
         return ApiResponse.ok(membershipService.registerMembership(processResult));

@@ -24,12 +24,12 @@ public class MembershipService {
 
     private static final int MEMBERSHIP_EXPIRE_DAY = 31;
 
-
     private final CompanyRepository companyRepository;
     private final MembershipInternalRepository membershipInternalRepository;
     private final MembershipRepository membershipRepository;
 
 
+    @Transactional
     public MembershipResponse registerMembership(PaymentResult paymentResult) {
         // 1. membership을 가입할 수 없다.
         Company company = companyRepository.findById(paymentResult.getCompanyId())
@@ -47,6 +47,12 @@ public class MembershipService {
                 membership.getStartDateTime(), membership.getEndDateTime());
     }
 
+    //
+    public void cancelMembership() {
+
+    }
+
+    // 2. 가입 한 멤버십은 MEMBERSHIP_EXPIRE_DAY 만큼 유지된다.
     private Membership createMembership(Company company, MembershipInternal membershipInternal) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiredDateTime = now.plusDays(MEMBERSHIP_EXPIRE_DAY);
