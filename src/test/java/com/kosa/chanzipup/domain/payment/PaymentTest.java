@@ -1,18 +1,14 @@
 package com.kosa.chanzipup.domain.payment;
 
-import com.kosa.chanzipup.domain.membershipinternal.MemberShipType;
+import com.kosa.chanzipup.domain.membershipinternal.MembershipType;
 import com.kosa.chanzipup.domain.membershipinternal.MembershipInternal;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.jupiter.api.Assertions.*;
 
 class PaymentTest {
 
@@ -21,12 +17,12 @@ class PaymentTest {
     void create() {
         // given
         LocalDateTime now = LocalDateTime.of(2024, 9, 10, 10, 00, 00);
-        MembershipInternal basic = new MembershipInternal(100, MemberShipType.BASIC);
-        MembershipInternal platinum = new MembershipInternal(200, MemberShipType.PLATINUM);
+        MembershipInternal basic = new MembershipInternal(100, MembershipType.BASIC);
+        MembershipInternal platinum = new MembershipInternal(200, MembershipType.PLATINUM);
 
         // when
-        Payment payment1 = Payment.create(basic, now);
-        Payment payment2 = Payment.create(platinum, now);
+        Payment payment1 = Payment.create(basic, company, now);
+        Payment payment2 = Payment.create(platinum, company, now);
 
         // then
         assertThat(payment1.getImpUid()).isNull();
