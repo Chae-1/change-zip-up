@@ -21,8 +21,6 @@ public class CompanyController {
     // 업체 등록
     @PostMapping
     public ResponseEntity<CompanyRegisterResponse> addCompany(@RequestBody CompanyRegisterRequest registerRequest) {
-        System.out.println("Construction Service IDs: " + registerRequest.getConstructionService());
-
         CompanyRegisterResponse savedCompany = companyService.registerCompany(registerRequest);
         return ResponseEntity.ok(savedCompany);
     }
