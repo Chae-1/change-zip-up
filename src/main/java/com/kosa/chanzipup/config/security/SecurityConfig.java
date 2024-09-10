@@ -24,7 +24,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -57,6 +56,7 @@ public class SecurityConfig {
         // 기본 설정
         http
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/api/memberships/**").hasRole("COMPANY")
                         .requestMatchers("/api/**", "/", "/oauth2/**").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .anyRequest().permitAll())
@@ -80,7 +80,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    private FormLoginAuthenticationFilter setFormLoginAuthentication(com.kosa.chanzipup.config.security.userdetail.success.LoginSuccessHandler loginSuccessHandler, AuthenticationManager manager) {
+    private FormLoginAuthenticationFilter setFormLoginAuthentication(LoginSuccessHandler loginSuccessHandler, AuthenticationManager manager) {
         FormLoginAuthenticationFilter formLoginAuthenticationFilter = new FormLoginAuthenticationFilter();
         formLoginAuthenticationFilter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/form/login/**", "POST"));
 

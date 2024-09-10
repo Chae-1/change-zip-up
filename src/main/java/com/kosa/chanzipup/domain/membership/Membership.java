@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.domain.membership;
 
 import com.kosa.chanzipup.domain.BaseEntity;
+import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.membershipinternal.MembershipInternal;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -23,8 +24,8 @@ public class Membership extends BaseEntity {
     @JoinColumn(name = "membership_internal_id")
     private MembershipInternal membershipInternal;
 
-//    @OneToOne
-//    @JoinColumn(name = "company_id")
-//    private Company company
+    @OneToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 
 }

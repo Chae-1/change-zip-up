@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/memberships")
+@RequestMapping("/api/membershiptypes")
 public class MemberShipInternalController {
 
     private final MemberShipInternalService memberShipInternalService;
