@@ -11,11 +11,12 @@ import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.companyConstructionType.CompanyConstructionType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,16 +26,17 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final ConstructionTypeRepository constructionTypeRepository;
     private final AccountRepository accountRepository;
+    private final PasswordEncoder encoder;
 
     @Transactional
     public CompanyRegisterResponse registerCompany(CompanyRegisterRequest request) {
 
         // 이메일 중복 확인
-        if(isEmailDuplicated(request.getEmail())) {
+        if (isEmailDuplicated(request.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        Company company = Company.ofNewCompany(request.getEmail(), request.getCompanyName(), request.getPassword(),
+        Company company = Company.ofNewCompany(request.getEmail(), request.getCompanyName(), encoder.encode(request.getPassword()),
                 request.getPhoneNumber(), request.getOwner(), request.getCompanyNumber(), request.getPublishDate(),
                 request.getAddress(), request.getCompanyDesc());
 
@@ -43,7 +45,7 @@ public class CompanyService {
         selectedTypeIds.forEach(typeId -> {
             ConstructionType constructionType = constructionTypeRepository.findById(typeId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid type ID: " + typeId));
-            CompanyConstructionType companyConstructionType = new CompanyConstructionType(constructionType, company); // 변경
+            CompanyConstructionType companyConstructionType = new CompanyConstructionType(constructionType, company);
             company.addConstructionType(companyConstructionType);  // Company 객체에 추가
         });
 
@@ -57,31 +59,56 @@ public class CompanyService {
     }
 
     // 업체 리스트 조회
-    @Transactional
     public List<CompanyListResponse> getAllCompanies() {
-        return companyRepository.findAll().stream()
-                .map(company -> new CompanyListResponse(
-                        company.getId(),
-                        company.getCompanyName(),
-                        company.getCompanyDesc(),
-                        company.getCompanyLogoUrl(),
-                        company.getRating(),
-                        company.getConstructionTypes().stream()
-                                .map(constructionType -> constructionType.getConstructionType().getName())
-                                .collect(Collectors.toList())
-                ))
-                .collect(Collectors.toList());
+        List<Company> companies = companyRepository.findAll();
+        List<CompanyListResponse> responses = new ArrayList<>();
+
+        for (Company company : companies) {
+            List<String> services = new ArrayList<>();
+            for (CompanyConstructionType constructionType : company.getConstructionTypes()) {
+                services.add(constructionType.getConstructionType().getName());
+            }
+            responses.add(new CompanyListResponse(
+                    company.getId(),
+                    company.getCompanyName(),
+                    company.getCompanyDesc(),
+                    company.getCompanyLogoUrl(),
+                    company.getRating(),
+                    services
+            ));
+        }
+        return responses;
+
+//        List<String> services = new ArrayList<>();
+//
+//        return companyRepository.findAll().stream()
+//                .map(company -> new CompanyListResponse(
+//                        company.getId(),
+//                        company.getCompanyName(),
+//                        company.getCompanyDesc(),
+//                        company.getCompanyLogoUrl(),
+//                        company.getRating(),
+//                        company.getConstructionTypes().stream()
+//                                .map(constructionType -> constructionType.getConstructionType().getName())
+//                                .collect(Collectors.toList())
+//                ))
+//                .collect(Collectors.toList());
+
     }
 
     // 업체 상세 조회
-    @Transactional
     public CompanyDetailResponse getCompanyById(Long companyId) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new IllegalArgumentException("Company not found"));
 
-        List<String> services = company.getConstructionTypes().stream()
-                .map(constructionType -> constructionType.getConstructionType().getName())
-                .collect(Collectors.toList());
+        List<String> services = new ArrayList<>();
+        for (CompanyConstructionType constructionType : company.getConstructionTypes()) {
+            services.add(constructionType.getConstructionType().getName());
+        }
+
+//        List<String> services = company.getConstructionTypes().stream()
+//                .map(constructionType -> constructionType.getConstructionType().getName())
+//                .collect(Collectors.toList());
 
         return new CompanyDetailResponse(
                 company.getId(),
