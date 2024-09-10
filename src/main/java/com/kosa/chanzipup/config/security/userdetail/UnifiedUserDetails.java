@@ -21,6 +21,6 @@ public interface UnifiedUserDetails extends OAuth2User, UserDetails {
                 .getAuthority();
 
         return authority
-                .substring(authority.indexOf('_'));
+                .substring(authority.indexOf('_') + 1);
     }
 }
