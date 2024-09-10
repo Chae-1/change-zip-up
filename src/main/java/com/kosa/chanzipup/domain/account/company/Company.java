@@ -70,4 +70,9 @@ public class Company extends Account {
     public String getPhoneNumber() {
         return super.getPhoneNumber();
     }
+
+    @Override
+    public String getNickName() {
+        return companyName;
+    }
 }

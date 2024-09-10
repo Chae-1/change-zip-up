@@ -3,7 +3,7 @@ package com.kosa.chanzipup.config.security.userdetail.oauth2;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
-import com.kosa.chanzipup.domain.account.member.SocialType;
+import com.kosa.chanzipup.domain.account.member.MemberType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +34,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
         // OAuth2User Interface가 제공하는 것이 너무 부족하다.
         // DetailedUser 인터페이스를 통해 확장하자.
         String registrationId = clientRegistration.getRegistrationId();
-        UnifiedUserDetails unifiedUserDetails = SocialType.convertToSocialUser(oAuth2User.getAttributes(), registrationId);
+        UnifiedUserDetails unifiedUserDetails = MemberType.convertToSocialUser(oAuth2User.getAttributes(), registrationId);
 
         // 1. 기존 회원일 경우, 그대로 반환한다.
         Optional<Member> findMember = memberRepository.findByEmail(unifiedUserDetails.getUsername());

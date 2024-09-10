@@ -16,12 +16,14 @@ public class LocalUserDetailsDetails implements UnifiedUserDetails {
     private final String email;
     private final AccountRole accountRole;
     private final String password;
+    private final String nickName;
 
 
     public LocalUserDetailsDetails(Account account) {
         this.email = account.getEmail();
         this.accountRole = account.getAccountRole();
-        this.password = getPassword();
+        this.password = account.getPassword();
+        this.nickName = account.getNickName();
     }
 
     @Override
@@ -35,8 +37,18 @@ public class LocalUserDetailsDetails implements UnifiedUserDetails {
     }
 
     @Override
+    public String nickName() {
+        return nickName;
+    }
+
+    @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getRegisteredId() {
+        return "LOCAL";
     }
 
     @Override

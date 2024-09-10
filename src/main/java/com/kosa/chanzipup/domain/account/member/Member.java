@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class Member extends Account {
 
     @Enumerated(value = EnumType.STRING)
-    private SocialType socialType;
+    private MemberType memberType;
 
     private String nickName;
 
@@ -20,23 +20,23 @@ public class Member extends Account {
 
     @Builder
     private Member(AccountRole accountRole, String email, String password, boolean isVerified,
-                   String phoneNumber, SocialType socialType, String nickName, String name) {
+                   String phoneNumber, MemberType memberType, String nickName, String name) {
         super(accountRole, email, password, phoneNumber, isVerified);
-        this.socialType = socialType;
+        this.memberType = memberType;
         this.nickName = nickName;
         this.name = name;
     }
 
     // 소셜 로그인으로 가입하는 경우, 별도의 이메일 인증이 필요하지 않다.
     public static Member ofSocial(AccountRole accountRole, String email, String password,
-                                  String phoneNumber, SocialType socialType,
+                                  String phoneNumber, MemberType memberType,
                                   String nickName, String name) {
         return Member.builder()
                 .name(name)
                 .email(email)
                 .password(password)
                 .accountRole(accountRole)
-                .socialType(socialType)
+                .memberType(memberType)
                 .nickName(nickName)
                 .phoneNumber(phoneNumber)
                 .isVerified(true)
@@ -45,16 +45,21 @@ public class Member extends Account {
 
     // 로컬 로그인으로 가입할 경우 이메일 인증이 필요하다.
     public static Member ofLocal(AccountRole accountRole, String email, String password,
-                                 String phoneNumber, SocialType socialType, String nickName, String name) {
+                                 String phoneNumber, MemberType memberType, String nickName, String name) {
         return Member.builder()
                 .name(name)
                 .email(email)
                 .password(password)
                 .accountRole(accountRole)
-                .socialType(socialType)
+                .memberType(memberType)
                 .nickName(nickName)
                 .phoneNumber(phoneNumber)
                 .isVerified(false)
                 .build();
+    }
+
+    @Override
+    public String getNickName() {
+        return nickName;
     }
 }

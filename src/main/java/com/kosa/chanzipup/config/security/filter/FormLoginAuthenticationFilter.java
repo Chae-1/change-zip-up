@@ -23,7 +23,6 @@ import org.springframework.util.Assert;
 
 public class FormLoginAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-
     public static final String SPRING_SECURITY_FORM_USERNAME_KEY = "email";
 
     public static final String SPRING_SECURITY_FORM_PASSWORD_KEY = "password";
@@ -55,7 +54,7 @@ public class FormLoginAuthenticationFilter extends AbstractAuthenticationProcess
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
         }
 
-        setLoginAttribute(request); // 실제 json으로 바꾸고
+        setLoginAttributes(request); // 실제 json으로 바꾸고
 
         String username = obtainUsername(request);
         username = (username != null) ? username.trim() : "";
@@ -66,10 +65,11 @@ public class FormLoginAuthenticationFilter extends AbstractAuthenticationProcess
                 password);
         // Allow subclasses to set the "details" property
         setDetails(request, authRequest);
+
         return this.getAuthenticationManager().authenticate(authRequest);
     }
 
-    private void setLoginAttribute(HttpServletRequest request) {
+    private void setLoginAttributes(HttpServletRequest request) {
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = request.getReader()) {
             String line;
