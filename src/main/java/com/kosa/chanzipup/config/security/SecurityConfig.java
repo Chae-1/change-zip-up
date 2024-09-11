@@ -56,7 +56,11 @@ public class SecurityConfig {
         // 기본 설정
         http
                 .authorizeHttpRequests(request -> request
+<<<<<<< login-feature
                         .requestMatchers("/api/payment/**", "/api/memberships/**").hasRole("COMPANY")
+=======
+                        .requestMatchers("/api/memberships/**").hasRole("COMPANY")
+>>>>>>> main
                         .requestMatchers("/api/**", "/", "/oauth2/**").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .anyRequest().permitAll())
