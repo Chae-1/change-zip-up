@@ -76,7 +76,6 @@ public class Payment extends BaseEntity {
             cancel();
             throw new PaymentNotValidException("실제 결제 금액과 결제해야하는 금액이 다릅니다.", impUid, id);
         }
-
         this.impUid = impUid;
         this.completeDate = completeDate;
         this.status = COMPLETE;
