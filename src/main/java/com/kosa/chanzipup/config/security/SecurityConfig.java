@@ -56,7 +56,7 @@ public class SecurityConfig {
         // 기본 설정
         http
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/payment/**", "/api/memberships/**").hasRole("COMPANY")
+                        .requestMatchers("/api/payment/**", "/api/memberships/**").hasRole("COMPANY") //ROLE_COMPANY Role, Authority
                         .requestMatchers("/api/memberships/**").hasRole("COMPANY")
                         .requestMatchers("/api/**", "/", "/oauth2/**").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
