@@ -6,6 +6,7 @@ import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
 import com.kosa.chanzipup.domain.estimate.Estimate;
 import com.kosa.chanzipup.domain.estimate.EstimateRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +39,7 @@ public class EstimateService {
             // 멤버 정보를 최소한으로 유지하고 있을 경우 사용해하는 방식
             responses.add(EstimateResponse.noWrite("content", false));
         }
-
         return responses;
     }
+
 }

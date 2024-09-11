@@ -25,7 +25,7 @@ public class Membership extends BaseEntity {
     @JoinColumn(name = "membership_internal_id")
     private MembershipType membershipType;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
 
