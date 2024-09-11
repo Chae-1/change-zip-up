@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
     boolean existsByEmail(String email);
+
     List<Company> findAll();
 
     Optional<Company> findByEmail(String email);
