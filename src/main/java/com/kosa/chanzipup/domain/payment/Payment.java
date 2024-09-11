@@ -4,7 +4,7 @@ import static com.kosa.chanzipup.domain.payment.PaymentStatus.*;
 
 import com.kosa.chanzipup.domain.BaseEntity;
 import com.kosa.chanzipup.domain.account.company.Company;
-import com.kosa.chanzipup.domain.membershipinternal.MembershipInternal;
+import com.kosa.chanzipup.domain.membership.MembershipType;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -34,7 +34,7 @@ public class Payment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
-    private MembershipInternal membershipInternal;
+    private MembershipType membershipType;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
@@ -48,9 +48,9 @@ public class Payment extends BaseEntity {
     private LocalDateTime completeDate;
 
 
-    private Payment(MembershipInternal membershipInternal, PaymentStatus status, LocalDateTime paymentRequestDate, Company company) {
+    private Payment(MembershipType membershipType, PaymentStatus status, LocalDateTime paymentRequestDate, Company company) {
         this.status = status;
-        this.membershipInternal = membershipInternal;
+        this.membershipType = membershipType;
         this.merchantUid = createMerchantUid(paymentRequestDate);
         this.requestDate = paymentRequestDate;
         this.company = company;
@@ -61,9 +61,9 @@ public class Payment extends BaseEntity {
                 UUID.randomUUID().toString().substring(0, 20));
     }
 
-    public static Payment create(MembershipInternal membershipInternal,
+    public static Payment create(MembershipType membershipType,
                                  Company company, LocalDateTime paymentRequestDateTime) {
-        return new Payment(membershipInternal, PaymentStatus.CREATE, paymentRequestDateTime, company);
+        return new Payment(membershipType, PaymentStatus.CREATE, paymentRequestDateTime, company);
     }
 
     // 결제를 성공적으로 체결하면 상태를 변경시킨다.
@@ -89,7 +89,7 @@ public class Payment extends BaseEntity {
 
     // 실제 결제 금액과
     public boolean isNotMatchPaymentPrice(int paymentPrice) {
-        return membershipInternal.getPrice() != paymentPrice;
+        return membershipType.getPrice() != paymentPrice;
     }
 
     public void cancel() {

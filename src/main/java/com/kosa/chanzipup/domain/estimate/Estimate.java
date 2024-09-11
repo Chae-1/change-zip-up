@@ -1,7 +1,6 @@
 package com.kosa.chanzipup.domain.estimate;
 
 import com.kosa.chanzipup.domain.account.member.Member;
-import com.kosa.chanzipup.domain.constructionEstimateType.ConstructionEstimateType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,7 +25,7 @@ public class Estimate {
     private String buildingType;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "estimate")
-    private List<ConstructionEstimateType> constructionTypes = new ArrayList<>();
+    private List<EstimateConstructionType> constructionTypes = new ArrayList<>();
 
     @Column(nullable = false)
     private String schedule;
@@ -57,7 +56,7 @@ public class Estimate {
         this.measureDate = measureDate;
     }
 
-    public void addConstructionType(ConstructionEstimateType constructionEstimateType) {
-        constructionTypes.add(constructionEstimateType);
+    public void addConstructionType(EstimateConstructionType estimateConstructionType) {
+        constructionTypes.add(estimateConstructionType);
     }
 }

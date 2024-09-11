@@ -5,8 +5,8 @@ import com.kosa.chanzipup.api.memberships.controller.response.MembershipResponse
 import com.kosa.chanzipup.api.memberships.service.MembershipService;
 import com.kosa.chanzipup.api.payment.controller.request.PaymentConfirmation;
 import com.kosa.chanzipup.api.payment.service.PaymentService;
+import com.kosa.chanzipup.domain.membership.MembershipId;
 import com.kosa.chanzipup.domain.membership.MembershipRegisterException;
-import com.kosa.chanzipup.domain.membershipinternal.MembershipId;
 import com.kosa.chanzipup.domain.payment.PaymentResult;
 
 import jakarta.validation.Valid;

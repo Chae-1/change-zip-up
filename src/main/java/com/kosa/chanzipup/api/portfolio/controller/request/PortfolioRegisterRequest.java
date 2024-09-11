@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 @Getter
 public class PortfolioRegisterRequest {
-
     @NotBlank(message = "제목은 반드시 입력되어야 합니다.")
     private String title;
 

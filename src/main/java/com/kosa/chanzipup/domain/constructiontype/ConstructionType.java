@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.domain.ConstructionType;
+package com.kosa.chanzipup.domain.constructiontype;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,7 +19,7 @@ public class ConstructionType {
 
     private String name;
 
-    public ConstructionType(String s) {
-        this.name = s;
+    public ConstructionType(String name) {
+        this.name = name;
     }
 }

@@ -1,13 +1,13 @@
-package com.kosa.chanzipup.domain.membershipinternal;
+package com.kosa.chanzipup.domain.membership;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum MembershipType {
+public enum MembershipName {
     BASIC(100),
-    PLATINUM(150);
+    PREMIUM(150);
 
     private final int price;
 }

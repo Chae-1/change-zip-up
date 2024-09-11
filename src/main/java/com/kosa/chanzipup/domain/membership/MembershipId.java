@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.domain.membershipinternal;
+package com.kosa.chanzipup.domain.membership;
 
 import lombok.Getter;
 

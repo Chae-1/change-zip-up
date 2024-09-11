@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.api.member.request;
+package com.kosa.chanzipup.api.member.controller.request;
 
 import com.kosa.chanzipup.domain.account.member.MemberType;
 import jakarta.validation.constraints.Email;

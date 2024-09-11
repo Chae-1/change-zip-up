@@ -1,7 +1,7 @@
 package com.kosa.chanzipup.api.member.service;
 
-import com.kosa.chanzipup.api.member.request.MemberRegisterRequest;
-import com.kosa.chanzipup.api.member.response.MemberRegisterResponse;
+import com.kosa.chanzipup.api.member.controller.request.MemberRegisterRequest;
+import com.kosa.chanzipup.api.member.controller.response.MemberRegisterResponse;
 import com.kosa.chanzipup.domain.account.AccountRole;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;

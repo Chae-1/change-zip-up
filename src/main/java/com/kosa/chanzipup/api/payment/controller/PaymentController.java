@@ -6,7 +6,7 @@ import com.kosa.chanzipup.api.payment.controller.request.PaymentConfirmation;
 import com.kosa.chanzipup.api.payment.controller.response.PaymentPrepareResponse;
 import com.kosa.chanzipup.api.payment.service.PaymentService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
-import com.kosa.chanzipup.domain.membershipinternal.MembershipId;
+import com.kosa.chanzipup.domain.membership.MembershipId;
 import com.kosa.chanzipup.domain.payment.PaymentId;
 import com.kosa.chanzipup.domain.payment.PaymentResult;
 import com.kosa.chanzipup.domain.payment.RefundService;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 // 2. 결제 정보를 미리 생성한다.
 // -> Payment 테이블에 데이터를 생성
 // -> PG사에 결제를 요청하기 위해서는 서버에서 유지하는 상품번호가 존재해야한다.
-// ->
 
 @RestController
 @RequiredArgsConstructor

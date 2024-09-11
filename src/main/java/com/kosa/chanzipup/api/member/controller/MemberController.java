@@ -1,8 +1,8 @@
 package com.kosa.chanzipup.api.member.controller;
 
-import com.kosa.chanzipup.api.member.request.EmailDuplicationCheckResponse;
-import com.kosa.chanzipup.api.member.request.MemberRegisterRequest;
-import com.kosa.chanzipup.api.member.response.MemberRegisterResponse;
+import com.kosa.chanzipup.api.member.controller.request.EmailDuplicationCheckResponse;
+import com.kosa.chanzipup.api.member.controller.request.MemberRegisterRequest;
+import com.kosa.chanzipup.api.member.controller.response.MemberRegisterResponse;
 import com.kosa.chanzipup.api.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

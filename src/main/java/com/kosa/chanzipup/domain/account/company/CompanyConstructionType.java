@@ -1,7 +1,6 @@
-package com.kosa.chanzipup.domain.companyConstructionType;
+package com.kosa.chanzipup.domain.account.company;
 
-import com.kosa.chanzipup.domain.account.company.Company;
-import com.kosa.chanzipup.domain.ConstructionType.ConstructionType;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
