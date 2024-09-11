@@ -26,9 +26,4 @@ public class MembershipTypeService {
     }
 
 
-//    @PostConstruct
-    public void init() {
-        membershipTypeRepository.save(new MembershipType(100, MembershipName.BASIC));
-        membershipTypeRepository.save(new MembershipType(150, MembershipName.PREMIUM));
-    }
 }

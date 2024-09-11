@@ -36,7 +36,7 @@ public class PaymentController {
     @PostMapping("/prepare")
     public ApiResponse<PaymentPrepareResponse> generatePaymentInfoForClient(@AuthenticationPrincipal UnifiedUserDetails userDetails,
             @RequestBody MembershipId membershipId) {
-        // 1. 일단 회원 정보를 조회해서 이 회원이 기업 회원이나 ADMIN 권한이 존재하는지 확인한다.
+        // 1. 일단 회원 정보를 조회해서 이 회원이 기업 회원이나 ADMIN 권한이 존재하는지 확인한다. -> 권한 관리를 통해 확인
         String email = userDetails.getUsername();
 
         // 2. 확인 이후, 결제정보를 생성한다.
