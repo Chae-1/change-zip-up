@@ -7,6 +7,7 @@ import com.kosa.chanzipup.config.security.jwt.TokenType;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.account.member.MemberType;
 import com.kosa.chanzipup.domain.account.token.RefreshToken;
+import com.nimbusds.jose.util.Base64;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,7 +59,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         afterLoginProcess(response, accessToken, refreshToken, registeredId, nickName, role);
     }
 
-
+    // todo: accessToken과 RefreshToken을 둘 다, Http Only Cookie로 전달하는 것을 고려해보자.
     private void afterLoginProcess(HttpServletResponse response,
                                    String accessToken, String refreshToken,
                                    String registeredId, String nickName, String role) throws IOException {
@@ -66,13 +67,17 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         sendRefreshTokenUsingCookie(refreshToken, response);
 
         // 1. 소셜 로그인이면 리다이렉트
+        String successDto = mapper.writeValueAsString(new LoginSuccessResponse(nickName, role));
         if (MemberType.isSocial(registeredId)) {
+            Cookie cookie = new Cookie("success", Base64.encode(successDto).toString());
+            cookie.setMaxAge(10000);
+            cookie.setPath("/oauth/redirect");
+            response.addCookie(cookie);
             response.sendRedirect(redirectURI(accessToken));
             return ;
         }
 
         // 2. 멤버 로그인이면, accessToken을 Authorization Header로 전달.
-        String successDto = mapper.writeValueAsString(new LoginSuccessResponse(nickName, role));
         response.addHeader("Authorization", accessToken);
         response.setContentType("application/json;charset=utf-8");
         response.setStatus(HttpStatus.OK.value());
@@ -81,8 +86,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.setHeader("Access-Control-Allow-Origin", "*");  // 또는 특정 도메인 설정
         response.setHeader("Access-Control-Allow-Credentials", "true");  // 쿠키 및 인증정보 허용
         response.setHeader("Access-Control-Expose-Headers", "Authorization");  // Authorization 헤더를 클라이언트에서 노출 허용
-
         response.getWriter().write(successDto);
+
     }
 
     private String redirectURI(String accessToken) {

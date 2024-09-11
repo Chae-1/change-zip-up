@@ -5,12 +5,14 @@ import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.membershipinternal.MembershipInternal;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Membership extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,5 +29,18 @@ public class Membership extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "company_id")
     private Company company;
+
+    private Membership(LocalDateTime startDateTime, LocalDateTime endDateTime, MembershipInternal membershipInternal, Company company) {
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.membershipInternal = membershipInternal;
+        this.company = company;
+    }
+
+    public static Membership ofNewMembership(Company company, MembershipInternal membershipInternal,
+                                             LocalDateTime startDateTime,
+                                             LocalDateTime endDateTime) {
+        return new Membership(startDateTime, endDateTime, membershipInternal, company);
+    }
 
 }
