@@ -44,7 +44,7 @@ public class Estimate {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Member memberId;
+    private Member member;
 
     @Builder
     public Estimate(String buildingType, String schedule, String budget, String address, String detailedAddress, LocalDate measureDate) {

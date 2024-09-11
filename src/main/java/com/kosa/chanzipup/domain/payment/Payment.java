@@ -4,6 +4,7 @@ import static com.kosa.chanzipup.domain.payment.PaymentStatus.*;
 
 import com.kosa.chanzipup.domain.BaseEntity;
 import com.kosa.chanzipup.domain.account.company.Company;
+import com.kosa.chanzipup.domain.membership.Membership;
 import com.kosa.chanzipup.domain.membership.MembershipType;
 import jakarta.persistence.*;
 
@@ -39,7 +40,6 @@ public class Payment extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
-
 
     @Column(name = "request_date")
     private LocalDateTime requestDate;
@@ -87,7 +87,6 @@ public class Payment extends BaseEntity {
         return impUid == null || impUid.isBlank();
     }
 
-    // 실제 결제 금액과
     public boolean isNotMatchPaymentPrice(int paymentPrice) {
         return membershipType.getPrice() != paymentPrice;
     }
