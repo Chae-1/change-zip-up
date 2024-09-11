@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 public class PortfolioRegisterRequest {
@@ -13,8 +14,6 @@ public class PortfolioRegisterRequest {
 
     @NotBlank(message = "내용은 반드시 입력되어야 합니다.")
     private String content;
-
-    private String projectType;
 
     private int projectArea;
 
@@ -26,6 +25,6 @@ public class PortfolioRegisterRequest {
 
     private LocalDate endDate;
 
-    private String address;
+    private List<Long> constructionService;
 
 }

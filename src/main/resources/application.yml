@@ -3,7 +3,13 @@ spring:
     import: "application-secrets-prod.yml"
   profiles:
     active: dev
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 target:
   address: http://localhost:3000
 
+file:
+  upload-dir: src/main/resources/static/images
