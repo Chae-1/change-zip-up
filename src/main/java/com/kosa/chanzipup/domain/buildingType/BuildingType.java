@@ -17,4 +17,8 @@ public class BuildingType {
     private Long id;
 
     private String name;
+
+    public BuildingType(String name) {
+        this.name = name;
+    }
 }
