@@ -14,12 +14,12 @@ public class MembershipInternal {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private MemberShipType type;
+    private MembershipType type;
 
     private int price;
 
     public MembershipInternal(int price,
-                              MemberShipType type) {
+                              MembershipType type) {
         this.type = type;
         this.price = price;
     }

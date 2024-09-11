@@ -11,12 +11,12 @@ import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.companyConstructionType.CompanyConstructionType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +26,7 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final ConstructionTypeRepository constructionTypeRepository;
     private final AccountRepository accountRepository;
+    private final PasswordEncoder encoder;
 
     @Transactional
     public CompanyRegisterResponse registerCompany(CompanyRegisterRequest request) {
@@ -35,7 +36,7 @@ public class CompanyService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        Company company = Company.ofNewCompany(request.getEmail(), request.getCompanyName(), request.getPassword(),
+        Company company = Company.ofNewCompany(request.getEmail(), request.getCompanyName(), encoder.encode(request.getPassword()),
                 request.getPhoneNumber(), request.getOwner(), request.getCompanyNumber(), request.getPublishDate(),
                 request.getAddress(), request.getCompanyDesc());
 

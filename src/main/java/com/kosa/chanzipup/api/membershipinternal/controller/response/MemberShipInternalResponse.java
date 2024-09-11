@@ -1,13 +1,13 @@
 package com.kosa.chanzipup.api.membershipinternal.controller.response;
 
 import com.kosa.chanzipup.domain.membershipinternal.MembershipInternal;
-import com.kosa.chanzipup.domain.membershipinternal.MemberShipType;
+import com.kosa.chanzipup.domain.membershipinternal.MembershipType;
 import lombok.Getter;
 
 @Getter
 public class MemberShipInternalResponse {
     private Long id;
-    private MemberShipType type;
+    private MembershipType type;
     private int price;
 
     public MemberShipInternalResponse(MembershipInternal memberShipInternal) {

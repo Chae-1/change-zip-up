@@ -30,22 +30,21 @@ public class RefreshTokenService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계정입니다."));
 
         // 2. 기존 회원 유저의 리프레시 토큰이 존재하면 새로운 토큰을 발급한다.
-        LocalDateTime expireDate = LocalDateTime.now();
-        String token = jwtProvider.generateToken(email, TokenType.REFRESH, expireDate);
+        LocalDateTime issuedDate = LocalDateTime.now();
+        String token = jwtProvider.generateToken(email, TokenType.REFRESH, issuedDate);
 
         // 3. 토큰이 발급되지 않았으면 발급요청
         RefreshToken accountRefreshToken = findAccount.getRefreshToken();
         if (accountRefreshToken == null) {
-            RefreshToken savedRefreshToken = refreshTokenRepository.save(RefreshToken.of(token, expireDate));
+            RefreshToken savedRefreshToken = refreshTokenRepository.save(RefreshToken.of(token, issuedDate));
             findAccount.addRefreshToken(savedRefreshToken); // todo: 메서드 명 수정
             return savedRefreshToken;
         }
 
         // 4. 만약 기존에 토큰이 존재하지 않았다면 새로운 토큰을 발급한다.
         if (accountRefreshToken.isExpired(LocalDateTime.now())) {
-            accountRefreshToken.updateToken(token, expireDate);
+            accountRefreshToken.updateToken(token, issuedDate);
         }
         return accountRefreshToken;
     }
-
 }
