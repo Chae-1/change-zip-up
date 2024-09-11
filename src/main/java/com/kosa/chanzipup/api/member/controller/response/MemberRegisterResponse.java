@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.api.member.response;
+package com.kosa.chanzipup.api.member.controller.response;
 
 import lombok.Getter;
 

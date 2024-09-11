@@ -3,7 +3,6 @@ package com.kosa.chanzipup.domain.account.company;
 import com.kosa.chanzipup.domain.account.Account;
 import com.kosa.chanzipup.domain.account.AccountRole;
 
-import com.kosa.chanzipup.domain.companyConstructionType.CompanyConstructionType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

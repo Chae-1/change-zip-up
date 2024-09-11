@@ -1,10 +1,12 @@
 package com.kosa.chanzipup.domain.payment;
 
-import com.kosa.chanzipup.domain.membershipinternal.MembershipType;
-import com.kosa.chanzipup.domain.membershipinternal.MembershipInternal;
+import com.kosa.chanzipup.domain.account.company.Company;
+import com.kosa.chanzipup.domain.membership.MembershipType;
+import com.kosa.chanzipup.domain.membership.MembershipName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -17,8 +19,9 @@ class PaymentTest {
     void create() {
         // given
         LocalDateTime now = LocalDateTime.of(2024, 9, 10, 10, 00, 00);
-        MembershipInternal basic = new MembershipInternal(100, MembershipType.BASIC);
-        MembershipInternal platinum = new MembershipInternal(200, MembershipType.PLATINUM);
+        MembershipType basic = new MembershipType(100, MembershipName.BASIC);
+        MembershipType platinum = new MembershipType(200, MembershipName.PREMIUM);
+        Company company = Company.ofNewCompany("email", "123", "123", "123", "123", "123", LocalDate.now(), "asdasd", "di");
 
         // when
         Payment payment1 = Payment.create(basic, company, now);

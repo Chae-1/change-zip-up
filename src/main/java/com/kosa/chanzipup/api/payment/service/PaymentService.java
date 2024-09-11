@@ -4,10 +4,9 @@ import com.kosa.chanzipup.api.payment.controller.response.PaymentPrepareResponse
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyException;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
-import com.kosa.chanzipup.domain.membershipinternal.MembershipInternal;
-import com.kosa.chanzipup.domain.membershipinternal.MembershipInternalRepository;
+import com.kosa.chanzipup.domain.membership.MembershipType;
+import com.kosa.chanzipup.domain.membership.MembershipTypeRepository;
 import com.kosa.chanzipup.domain.payment.Payment;
-import com.kosa.chanzipup.domain.payment.PaymentException;
 import com.kosa.chanzipup.domain.payment.PaymentRepository;
 import com.kosa.chanzipup.domain.payment.PaymentResult;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +26,7 @@ public class PaymentService {
 
     private final CompanyRepository companyRepository;
 
-    private final MembershipInternalRepository membershipInternalRepository;
+    private final MembershipTypeRepository membershipTypeRepository;
 
     @Transactional
     public PaymentPrepareResponse createNewPayment(String email, Long membershipId) {
@@ -37,17 +35,17 @@ public class PaymentService {
         Company company = companyRepository.findByEmail(email)
                 .orElseThrow(() -> new CompanyException("존재하지 않는 회사 정보입니다."));
 
-        MembershipInternal membershipInternal = membershipInternalRepository.findById(membershipId)
+        MembershipType membershipType = membershipTypeRepository.findById(membershipId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 멤버십입니다."));
 
         // 2. 새로운 결제 정보를 생성한다.
-        Payment payment = Payment.create(membershipInternal, company, LocalDateTime.now());
+        Payment payment = Payment.create(membershipType, company, LocalDateTime.now());
         paymentRepository.save(payment);
 
         // 3. 고객에게 결제에 대한 정보(merchant_id를 포함한 정보), 회사의 기본 정보를 전달한다.
         // todo: 회사 정보까지 Dto로 전달.
 
-        return PaymentPrepareResponse.of(payment.getMerchantUid(), membershipInternal.getType(), company);
+        return PaymentPrepareResponse.of(payment.getMerchantUid(), membershipType.getName(), company);
     }
 
     // 성공 시: payment 정보를 조회해서 결과를 업데이트 한다.
@@ -80,20 +78,20 @@ public class PaymentService {
 
         Payment payment = paymentRepository.findByMerchantUid(merchantUid)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 결제 정보입니다."));
-        MembershipInternal membershipInternal = payment.getMembershipInternal();
+        MembershipType membershipType = payment.getMembershipType();
         Company company = payment.getCompany();
 
         LocalDateTime completeDate = LocalDateTime.now();
         // 실제 pg사를 통해 결제가 처리되었을 경우 isSuccess == true
         if (isSuccess) {
             payment.success(impUid, paidAmount, completeDate);
-            return PaymentResult.of(true,membershipInternal.getId(), company.getId());
+            return PaymentResult.of(true, membershipType.getId(), company.getId());
         }
 
         // 사용자가 결제를 취소하면, 서버에 있는 결제 내역을 삭제한다.
         handleFailedPayment(payment);
         // throw new PaymentException("결재에 실패하였습니다.");
-        return PaymentResult.of(false, membershipInternal.getId(), company.getId());
+        return PaymentResult.of(false, membershipType.getId(), company.getId());
 
     }
 }

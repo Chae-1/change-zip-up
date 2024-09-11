@@ -1,7 +1,7 @@
 package com.kosa.chanzipup.api.constructionType.controller;
 
-import com.kosa.chanzipup.domain.ConstructionType.ConstructionType;
-import com.kosa.chanzipup.domain.ConstructionType.ConstructionTypeRepository;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
