@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum MemberShipType {
+public enum MembershipType {
     BASIC(100),
     PLATINUM(150);
 

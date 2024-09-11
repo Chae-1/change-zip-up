@@ -7,13 +7,14 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
-import java.time.Instant;
+import java.time.*;
+
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,12 +23,23 @@ import java.util.function.Function;
 @Component
 public class JwtProvider {
 
+    // accessToken 유효 시간 30분
+    private static final int ACCESS_TOKEN_EXPIRE_AMOUNT = 30;
+    // refreshToken 유효 시간 7일
+    private static final int REFRESH_TOKEN_EXPIRE_AMOUNT = 24 * 60 * 30;
+
     private final Map<TokenType, String> keyMap;
+    private final Map<TokenType, Integer> expireAmount;
 
     public JwtProvider(@Value("${jwt.access.key}") String accessKey, @Value("${jwt.refresh.key}") String refreshKey) {
         keyMap = Map.of(
                 TokenType.ACCESS, accessKey,
                 TokenType.REFRESH, refreshKey
+        );
+
+        expireAmount = Map.of(
+                TokenType.ACCESS, ACCESS_TOKEN_EXPIRE_AMOUNT,
+                TokenType.REFRESH, REFRESH_TOKEN_EXPIRE_AMOUNT
         );
     }
 
@@ -66,19 +78,27 @@ public class JwtProvider {
 
     public String generateToken(String username,
                                 TokenType tokenType,
-                                LocalDateTime expireDate) {
+                                LocalDateTime issuedDate) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username, expireDate, tokenType);
+        return createToken(claims, username, issuedDate, tokenType);
     }
 
     private String createToken(Map<String, Object> claims, String username,
-                               LocalDateTime createDate, TokenType tokenType) {
+                               LocalDateTime issuedDate, TokenType tokenType) {
+        // 1. 기간을 설정해서 발급한다.
+        Date issuedAt = convertDate(issuedDate);
+        Date expriationDate = convertDate(issuedDate.plusMinutes(expireAmount.get(tokenType)));
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(3600))) // 30분동안 토큰 유지
+                .setIssuedAt(issuedAt)
+                .setExpiration(expriationDate) // 30분동안 토큰 유지
                 .signWith(getSignKey(keyMap.get(tokenType)), SignatureAlgorithm.HS256).compact();
+    }
+
+    private Date convertDate(LocalDateTime createDate) {
+        return Date.from(createDate.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     private Key getSignKey(String key) {

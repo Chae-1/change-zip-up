@@ -8,8 +8,8 @@ public class PaymentException extends RuntimeException {
     private Long paymentId;
     private String impUid;
 
-    public PaymentException() {
-        super();
+    public PaymentException(String s) {
+        super(s);
     }
 
     public PaymentException(String message, String impUid, Long paymentId) {

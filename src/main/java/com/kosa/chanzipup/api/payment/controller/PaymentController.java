@@ -2,16 +2,17 @@ package com.kosa.chanzipup.api.payment.controller;
 
 
 import com.kosa.chanzipup.api.ApiResponse;
-import com.kosa.chanzipup.api.payment.controller.request.PaymentResult;
+import com.kosa.chanzipup.api.payment.controller.request.PaymentConfirmation;
 import com.kosa.chanzipup.api.payment.controller.response.PaymentPrepareResponse;
 import com.kosa.chanzipup.api.payment.service.PaymentService;
-import com.kosa.chanzipup.api.payment.service.query.PaymentQueryService;
+import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.membershipinternal.MembershipId;
 import com.kosa.chanzipup.domain.payment.PaymentId;
-import com.kosa.chanzipup.domain.payment.PaymentValidator;
+import com.kosa.chanzipup.domain.payment.PaymentResult;
 import com.kosa.chanzipup.domain.payment.RefundService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,20 +35,23 @@ public class PaymentController {
     private final RefundService refundService;
 
     @PostMapping("/prepare")
-    public ApiResponse<PaymentPrepareResponse> generatePaymentInfoForClient(@RequestBody MembershipId membershipId) {
+    public ApiResponse<PaymentPrepareResponse> generatePaymentInfoForClient(@AuthenticationPrincipal UnifiedUserDetails userDetails,
+            @RequestBody MembershipId membershipId) {
         // 1. 일단 회원 정보를 조회해서 이 회원이 기업 회원이나 ADMIN 권한이 존재하는지 확인한다.
+        String email = userDetails.getUsername();
 
         // 2. 확인 이후, 결제정보를 생성한다.
-        return ApiResponse.ok(paymentService.createNewPayment("Auth@email.com", membershipId.getMembershipId()));
+        return ApiResponse.ok(paymentService.createNewPayment(email, membershipId.getMembershipId()));
     }
 
     @PostMapping("/complete")
-    public ApiResponse<Boolean> confirmPayment(@RequestBody @Validated PaymentResult paymentResult) {
+    public ApiResponse<PaymentResult> confirmPayment(@AuthenticationPrincipal UnifiedUserDetails userDetails,
+                                                     @RequestBody @Validated PaymentConfirmation paymentResult) {
 
         // paymentResult.impUId는 결제 성공시에만 저장하자.
         log.info("{}, {}, {}", paymentResult.getImpUid(), paymentResult.getMerchantUid(), paymentResult.getSuccess());
         return ApiResponse.ok(paymentService.processPayment(paymentResult.getImpUid(), paymentResult.getMerchantUid(),
-                paymentResult.getPaidAmount(), paymentResult.getSuccess()));
+                paymentResult.getPaidAmount(), paymentResult.getSuccess(), userDetails.getUsername()));
     }
 
     @PostMapping("/refund")

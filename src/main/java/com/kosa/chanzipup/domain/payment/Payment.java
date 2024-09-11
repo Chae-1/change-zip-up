@@ -2,8 +2,8 @@ package com.kosa.chanzipup.domain.payment;
 
 import static com.kosa.chanzipup.domain.payment.PaymentStatus.*;
 
-import com.kosa.chanzipup.api.payment.controller.request.PaymentResult;
 import com.kosa.chanzipup.domain.BaseEntity;
+import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.membershipinternal.MembershipInternal;
 import jakarta.persistence.*;
 
@@ -36,17 +36,24 @@ public class Payment extends BaseEntity {
     @JoinColumn
     private MembershipInternal membershipInternal;
 
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+
     @Column(name = "request_date")
     private LocalDateTime requestDate;
 
     @Column(name = "complete_date")
     private LocalDateTime completeDate;
 
-    private Payment(MembershipInternal membershipInternal, PaymentStatus status, LocalDateTime paymentRequestDate) {
+
+    private Payment(MembershipInternal membershipInternal, PaymentStatus status, LocalDateTime paymentRequestDate, Company company) {
         this.status = status;
         this.membershipInternal = membershipInternal;
         this.merchantUid = createMerchantUid(paymentRequestDate);
         this.requestDate = paymentRequestDate;
+        this.company = company;
     }
 
     private String createMerchantUid(LocalDateTime requestDateTime) {
@@ -54,15 +61,16 @@ public class Payment extends BaseEntity {
                 UUID.randomUUID().toString().substring(0, 20));
     }
 
-    public static Payment create(MembershipInternal membershipInternal, LocalDateTime paymentRequestDateTime) {
-        return new Payment(membershipInternal, PaymentStatus.CREATE, paymentRequestDateTime);
+    public static Payment create(MembershipInternal membershipInternal,
+                                 Company company, LocalDateTime paymentRequestDateTime) {
+        return new Payment(membershipInternal, PaymentStatus.CREATE, paymentRequestDateTime, company);
     }
 
     // 결제를 성공적으로 체결하면 상태를 변경시킨다.
     public void success(String impUid, int paidAmount, LocalDateTime completeDate) {
         // 이미 존재하는 결제라면
         if (alreadyPaidPayment(impUid)) {
-            throw new PaymentException();
+            throw new PaymentException("결재에 실패하였습니다.");
         }
 
         if (isNotMatchPaymentPrice(paidAmount)) {
@@ -76,7 +84,7 @@ public class Payment extends BaseEntity {
     }
 
     private boolean alreadyPaidPayment(String impUid) {
-        return impUid == null;
+        return impUid == null || impUid.isBlank();
     }
 
     // 실제 결제 금액과
