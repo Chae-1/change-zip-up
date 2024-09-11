@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.domain.estimate;
 
 import com.kosa.chanzipup.domain.account.member.Member;
+import com.kosa.chanzipup.domain.buildingType.BuildingType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,7 +23,13 @@ public class Estimate {
     private Long id;
 
     @Column(nullable = false)
-    private String buildingType;
+    private LocalDate regDate;
+
+    @Column(nullable = false, unique = true)
+    private String identification;
+
+    @Column(nullable = false)
+    private EstimateStatus estimateStatus;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "estimate")
     private List<EstimateConstructionType> constructionTypes = new ArrayList<>();
@@ -42,13 +49,19 @@ public class Estimate {
     @Column
     private LocalDate measureDate;
 
+    @Column
+    private int floor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "building_type_id")
+    private BuildingType buildingType;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Builder
-    public Estimate(String buildingType, String schedule, String budget, String address, String detailedAddress, LocalDate measureDate) {
-        this.buildingType = buildingType;
+    public Estimate(String schedule, String budget, String address, String detailedAddress, LocalDate measureDate) {
         this.schedule = schedule;
         this.budget = budget;
         this.address = address;
