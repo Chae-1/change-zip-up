@@ -13,6 +13,7 @@ import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import com.kosa.chanzipup.domain.membership.MembershipName;
 import com.kosa.chanzipup.domain.membership.MembershipType;
 import com.kosa.chanzipup.domain.membership.MembershipTypeRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

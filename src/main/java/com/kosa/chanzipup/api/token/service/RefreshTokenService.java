@@ -47,4 +47,16 @@ public class RefreshTokenService {
         }
         return accountRefreshToken;
     }
+
+    public String reIssueAccessToken(String refreshToken) {
+        RefreshToken issuedRefreshToken = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new IllegalArgumentException("재발급 요청 실패"));
+
+        if (issuedRefreshToken.isExpired(LocalDateTime.now())) {
+            throw new IllegalArgumentException("재발급 실패");
+        }
+
+        String accessToken = jwtProvider.generateToken(issuedRefreshToken.getAccount().getEmail(), TokenType.ACCESS, LocalDateTime.now());
+        return accessToken;
+    }
 }

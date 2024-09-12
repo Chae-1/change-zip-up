@@ -1,9 +1,7 @@
 package com.kosa.chanzipup.domain.account.token;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.kosa.chanzipup.domain.account.Account;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -23,6 +21,9 @@ public class RefreshToken {
     private String token;
 
     private LocalDateTime expireDateTime;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "refreshToken")
+    private Account account;
 
     private RefreshToken(String token, LocalDateTime expireDateTime) {
         this.expireDateTime = expireDateTime;

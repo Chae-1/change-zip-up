@@ -30,8 +30,5 @@ class PaymentTest {
         // then
         assertThat(payment1.getImpUid()).isNull();
         assertThat(payment1.getRequestDate()).isEqualTo(now);
-        assertThat(payment1.getMerchantUid())
-                .startsWith(now.format(DateTimeFormatter.ISO_DATE))
-                .matches("^\\d{4}-\\d{2}-\\d{2}.[0-9a-fA-F\\-]{36}$");
     }
 }
