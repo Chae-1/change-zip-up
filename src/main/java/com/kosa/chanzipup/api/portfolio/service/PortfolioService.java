@@ -6,6 +6,8 @@ import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioRegisterRes
 import com.kosa.chanzipup.domain.account.Account;
 import com.kosa.chanzipup.domain.account.AccountRepository;
 
+import com.kosa.chanzipup.domain.buildingtype.BuildingType;
+import com.kosa.chanzipup.domain.buildingtype.BuildingTypeRepository;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import com.kosa.chanzipup.domain.portfolio.PortFolioImageRepository;
@@ -29,13 +31,17 @@ public class PortfolioService {
     private final PortFolioImageRepository portfolioImageRepository;
     private final ConstructionTypeRepository constructionTypeRepository;
     private final PortfolioConstructionTypeRepository portfolioConstructionTypeRepository;
-    private final AccountRepository accountRepository;
+    private final BuildingTypeRepository buildingTypeRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
 
     @Transactional
     public PortfolioRegisterResponse registerPortfolio(PortfolioRegisterRequest request, Account account) throws IOException {
+
+        // 빌딩 타입 조회
+        BuildingType buildingType = buildingTypeRepository.findById(request.getBuildingTypeId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid building type ID: " + request.getBuildingTypeId()));
 
         // Portfolio 저장
         Portfolio portfolio = Portfolio.ofNewPortfolio(
@@ -46,7 +52,8 @@ public class PortfolioService {
                 request.getProjectLocation(),
                 request.getStartDate(),
                 request.getEndDate(),
-                account
+                account,
+                buildingType
         );
 
         Portfolio savedPortfolio = portfolioRepository.save(portfolio);
@@ -61,6 +68,8 @@ public class PortfolioService {
             portfolioConstructionType.setConstructionType(constructionType);
             portfolioConstructionTypeRepository.save(portfolioConstructionType);
         }
+
+
 
 //        // 이미지 저장
 //        for (MultipartFile image : images) {

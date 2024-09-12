@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.domain.portfolio;
 
 import com.kosa.chanzipup.domain.account.Account;
+import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -39,10 +40,14 @@ public class Portfolio {
     @JoinColumn(name = "company_id")
     private Account account;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "building_type_id")
+    private BuildingType buildingType;
+
     @Builder
     private Portfolio(String title, String content, int projectArea, int projectBudget,
                       String projectLocation, LocalDate startDate, LocalDate endDate,
-                      Account account) {
+                      Account account, BuildingType buildingType) {
         this.title = title;
         this.content = content;
         this.projectArea = projectArea;
@@ -51,12 +56,14 @@ public class Portfolio {
         this.startDate = startDate;
         this.endDate = endDate;
         this.account = account;
+        this.buildingType = buildingType;
     }
 
     public static Portfolio ofNewPortfolio(String title, String content,
                                            int projectArea, int projectBudget,
                                            String projectLocation, LocalDate startDate,
-                                           LocalDate endDate, Account account) {
+                                           LocalDate endDate, Account account,
+                                           BuildingType buildingType) {
         return Portfolio.builder()
                 .title(title)
                 .content(content)
@@ -66,6 +73,7 @@ public class Portfolio {
                 .startDate(startDate)
                 .endDate(endDate)
                 .account(account)
+                .buildingType(buildingType)
                 .build();
     }
 

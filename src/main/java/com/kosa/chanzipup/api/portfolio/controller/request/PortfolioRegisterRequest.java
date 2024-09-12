@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.api.portfolio.controller.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -16,18 +17,21 @@ public class PortfolioRegisterRequest {
 
     private int projectArea;
 
-    @NotBlank(message = "예산은 반드시 입력되어야 합니다.")
+    @NotNull(message = "예산은 반드시 입력되어야 합니다.")
     private int projectBudget;
 
     private String projectLocation;
 
-    @NotBlank(message = "시작 날짜는 반드시 입력되어야 합니다.")
+    @NotNull(message = "시작 날짜는 반드시 입력되어야 합니다.")
     private LocalDate startDate;
 
-    @NotBlank(message = "종료 날짜는 반드시 입력되어야 합니다.")
+    @NotNull(message = "종료 날짜는 반드시 입력되어야 합니다.")
     private LocalDate endDate;
 
-    @NotBlank(message = "시공 종류는 반드시 선택되어야 합니다.")
+    @NotNull(message = "시공 종류는 반드시 선택되어야 합니다.")
     private List<Long> constructionService;
+
+    @NotNull(message = "건물 종류는 반드시 선택되어야 합니다.")
+    private Long buildingTypeId;
 
 }
