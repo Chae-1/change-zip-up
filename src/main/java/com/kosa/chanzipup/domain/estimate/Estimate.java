@@ -1,7 +1,7 @@
 package com.kosa.chanzipup.domain.estimate;
 
 import com.kosa.chanzipup.domain.account.member.Member;
-import com.kosa.chanzipup.domain.buildingType.BuildingType;
+import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

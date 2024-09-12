@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.domain.buildingType;
+package com.kosa.chanzipup.domain.buildingtype;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

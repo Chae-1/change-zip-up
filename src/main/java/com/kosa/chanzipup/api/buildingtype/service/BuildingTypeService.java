@@ -1,6 +1,6 @@
-package com.kosa.chanzipup.api.buildingType.service;
+package com.kosa.chanzipup.api.buildingtype.service;
 
-import com.kosa.chanzipup.domain.buildingType.BuildingTypeRepository;
+import com.kosa.chanzipup.domain.buildingtype.BuildingTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
