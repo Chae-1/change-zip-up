@@ -4,7 +4,6 @@ import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioRegisterRequ
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioRegisterResponse;
 
 import com.kosa.chanzipup.domain.account.Account;
-import com.kosa.chanzipup.domain.account.AccountRepository;
 
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.buildingtype.BuildingTypeRepository;
