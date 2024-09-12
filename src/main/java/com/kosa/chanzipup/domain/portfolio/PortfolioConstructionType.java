@@ -1,6 +1,6 @@
 package com.kosa.chanzipup.domain.portfolio;
 
-import com.kosa.chanzipup.domain.ConstructionType.ConstructionType;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import jakarta.persistence.*;
 import lombok.Setter;
 
@@ -12,11 +12,11 @@ public class PortfolioConstructionType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "construction_type_id")
     private ConstructionType constructionType;
 

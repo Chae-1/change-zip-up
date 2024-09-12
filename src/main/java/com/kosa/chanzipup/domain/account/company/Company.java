@@ -28,7 +28,7 @@ public class Company extends Account {
     private String owner;
     private float rating;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "company")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "company", fetch = FetchType.LAZY)
     private List<CompanyConstructionType> constructionTypes = new ArrayList<>();
 
     @Builder

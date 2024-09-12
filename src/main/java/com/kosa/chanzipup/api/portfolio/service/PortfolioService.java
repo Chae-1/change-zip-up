@@ -2,18 +2,17 @@ package com.kosa.chanzipup.api.portfolio.service;
 
 import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioRegisterRequest;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioRegisterResponse;
-import com.kosa.chanzipup.domain.ConstructionType.ConstructionType;
-import com.kosa.chanzipup.domain.ConstructionType.ConstructionTypeRepository;
+
 import com.kosa.chanzipup.domain.account.Account;
 import com.kosa.chanzipup.domain.account.AccountRepository;
-import com.kosa.chanzipup.domain.account.company.Company;
-import com.kosa.chanzipup.domain.account.company.CompanyRepository;
+
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import com.kosa.chanzipup.domain.portfolio.PortFolioImageRepository;
 import com.kosa.chanzipup.domain.portfolio.Portfolio;
-import com.kosa.chanzipup.domain.portfolio.PortfolioConstructionType;
-import com.kosa.chanzipup.domain.portfolio.PortfolioImage;
 import com.kosa.chanzipup.domain.portfolio.PortfolioRepository;
-import com.kosa.chanzipup.domain.portfolioConstructionType.PortfolioConstructionTypeRepository;
+import com.kosa.chanzipup.domain.portfolio.PortfolioConstructionType;
+import com.kosa.chanzipup.domain.portfolio.PortfolioConstructionTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,7 @@ public class PortfolioService {
     private String uploadDir;
 
     @Transactional
-    public PortfolioRegisterResponse registerPortfolio(PortfolioRegisterRequest request, long accountId) throws IOException {
+    public PortfolioRegisterResponse registerPortfolio(PortfolioRegisterRequest request, Account account) throws IOException {
 
         // Portfolio 저장
         Portfolio portfolio = Portfolio.ofNewPortfolio(
@@ -47,7 +46,7 @@ public class PortfolioService {
                 request.getProjectLocation(),
                 request.getStartDate(),
                 request.getEndDate(),
-                accountId
+                account
         );
 
         Portfolio savedPortfolio = portfolioRepository.save(portfolio);

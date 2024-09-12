@@ -20,8 +20,8 @@ public class CompanyConstructionType {
     private Company company;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "type_id")  // ConstructionType의 외래 키로 설정
-    private ConstructionType constructionType; // 변경: Long 대신 ConstructionType
+    @JoinColumn(name = "type_id")
+    private ConstructionType constructionType;
 
     public CompanyConstructionType(ConstructionType constructionType, Company company) {
         this.constructionType = constructionType;

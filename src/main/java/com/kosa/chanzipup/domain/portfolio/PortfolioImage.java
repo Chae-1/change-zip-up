@@ -12,7 +12,7 @@ public class PortfolioImage {
 
     private String imageUrl;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Portfolio portfolio;
 
 }

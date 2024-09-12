@@ -18,8 +18,11 @@ public class Portfolio {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "title")
     private String title;
 
+    @Lob
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     private int projectArea;
@@ -32,16 +35,14 @@ public class Portfolio {
 
     private LocalDate endDate;
 
-    @Column(name = "company_id") // company_id 필드 추가
-    private Long accountId;
-
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
-    private List<PortfolioImage> images;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Account account;
 
     @Builder
     private Portfolio(String title, String content, int projectArea, int projectBudget,
                       String projectLocation, LocalDate startDate, LocalDate endDate,
-                      long accountId) {
+                      Account account) {
         this.title = title;
         this.content = content;
         this.projectArea = projectArea;
@@ -49,13 +50,13 @@ public class Portfolio {
         this.projectLocation = projectLocation;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.accountId = accountId;
+        this.account = account;
     }
 
     public static Portfolio ofNewPortfolio(String title, String content,
                                            int projectArea, int projectBudget,
                                            String projectLocation, LocalDate startDate,
-                                           LocalDate endDate, Long accountId) {
+                                           LocalDate endDate, Account account) {
         return Portfolio.builder()
                 .title(title)
                 .content(content)
@@ -64,7 +65,7 @@ public class Portfolio {
                 .projectLocation(projectLocation)
                 .startDate(startDate)
                 .endDate(endDate)
-                .accountId(accountId)
+                .account(account)
                 .build();
     }
 

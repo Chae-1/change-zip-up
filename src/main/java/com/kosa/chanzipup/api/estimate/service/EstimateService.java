@@ -26,7 +26,7 @@ public class EstimateService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         // 1번 query result == 2000 N개를 조회하는 쿼리가 한번 나간다.
-        List<Estimate> estimates = estimateRepository.findAllWithMember(); // 2000개 조회
+        List<Estimate> estimates = estimateRepository.findAllByMember(findMember); // 2000개 조회
         List<EstimateResponse> responses = new ArrayList<>();
         for (Estimate estimate : estimates) {
             Member member = estimate.getMember(); //
