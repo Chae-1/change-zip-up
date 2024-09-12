@@ -29,7 +29,7 @@ public class Estimate {
     private String identification;
 
     @Column(nullable = false)
-    private EstimateStatus estimateStatus;
+    private String estimateStatus;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "estimate")
     private List<EstimateConstructionType> constructionTypes = new ArrayList<>();
@@ -61,12 +61,20 @@ public class Estimate {
     private Member member;
 
     @Builder
-    public Estimate(String schedule, String budget, String address, String detailedAddress, LocalDate measureDate) {
+    public Estimate(String identification, String estimateStatus, String schedule, String budget,
+                    String address, String detailedAddress, LocalDate measureDate, int floor,
+                    BuildingType buildingType, Member member, LocalDate regDate) {
+        this.identification = identification;
+        this.estimateStatus = estimateStatus;
         this.schedule = schedule;
         this.budget = budget;
         this.address = address;
         this.detailedAddress = detailedAddress;
         this.measureDate = measureDate;
+        this.floor = floor;
+        this.buildingType = buildingType;
+        this.member = member;
+        this.regDate = regDate;
     }
 
     public void addConstructionType(EstimateConstructionType estimateConstructionType) {

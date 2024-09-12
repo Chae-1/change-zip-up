@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class EstimateConstructionType extends BaseEntity {
+public class EstimateConstructionType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
