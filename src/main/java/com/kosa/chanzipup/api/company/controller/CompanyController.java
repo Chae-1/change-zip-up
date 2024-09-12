@@ -5,6 +5,7 @@ import com.kosa.chanzipup.api.company.controller.response.CompanyDetailResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyListResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterResponse;
 import com.kosa.chanzipup.api.company.service.CompanyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class CompanyController {
 
     // 업체 등록
     @PostMapping
-    public ResponseEntity<CompanyRegisterResponse> addCompany(@RequestBody CompanyRegisterRequest registerRequest) {
+    public ResponseEntity<CompanyRegisterResponse> addCompany(@Valid @RequestBody CompanyRegisterRequest registerRequest) {
         CompanyRegisterResponse savedCompany = companyService.registerCompany(registerRequest);
         return ResponseEntity.ok(savedCompany);
     }

@@ -1,29 +1,29 @@
 package com.kosa.chanzipup.domain.portfolio;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.kosa.chanzipup.domain.account.Account;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Portfolio {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
+    @Column(name = "title")
     private String title;
 
+    @Lob
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
-
-    private String projectType;
 
     private int projectArea;
 
@@ -35,32 +35,37 @@ public class Portfolio {
 
     private LocalDate endDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Account account;
+
     @Builder
-    private Portfolio(String title, String content, String projectType, int projectArea,
-                      int projectBudget, String projectLocation, LocalDate startDate, LocalDate endDate) {
+    private Portfolio(String title, String content, int projectArea, int projectBudget,
+                      String projectLocation, LocalDate startDate, LocalDate endDate,
+                      Account account) {
         this.title = title;
         this.content = content;
-        this.projectType = projectType;
         this.projectArea = projectArea;
         this.projectBudget = projectBudget;
         this.projectLocation = projectLocation;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.account = account;
     }
 
     public static Portfolio ofNewPortfolio(String title, String content,
-                                           String projectType, int projectArea,
-                                           int projectBudget, String projectLocation,
-                                           LocalDate startDate, LocalDate endDate) {
+                                           int projectArea, int projectBudget,
+                                           String projectLocation, LocalDate startDate,
+                                           LocalDate endDate, Account account) {
         return Portfolio.builder()
                 .title(title)
                 .content(content)
-                .projectType(projectType)
                 .projectArea(projectArea)
                 .projectBudget(projectBudget)
                 .projectLocation(projectLocation)
                 .startDate(startDate)
                 .endDate(endDate)
+                .account(account)
                 .build();
     }
 

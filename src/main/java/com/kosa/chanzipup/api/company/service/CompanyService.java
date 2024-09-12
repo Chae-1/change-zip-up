@@ -124,4 +124,10 @@ public class CompanyService {
                 services
         );
     }
+
+    public Long findCompanyIdByEmail(String email) {
+        Company company = (Company) companyRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
+        return company.getId();
+    }
 }
