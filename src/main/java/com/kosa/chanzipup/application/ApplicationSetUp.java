@@ -7,6 +7,8 @@ import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
 import com.kosa.chanzipup.domain.account.member.MemberType;
+import com.kosa.chanzipup.domain.buildingType.BuildingType;
+import com.kosa.chanzipup.domain.buildingType.BuildingTypeRepository;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import com.kosa.chanzipup.domain.membership.MembershipName;
@@ -28,6 +30,7 @@ public class ApplicationSetUp {
     private final CompanyRepository companyRepository;
     private final MemberRepository memberRepository;
     private final PasswordEncoder encoder;
+    private final BuildingTypeRepository buildingTypeRepository;
 
 
 //    @PostConstruct
@@ -60,5 +63,15 @@ public class ApplicationSetUp {
         constructionTypeRepository.saveAll(List.of(
                 type1, type2, type3, type4, type5, type6, type7, type8, type9
         ));
+
+        BuildingType buildingType1 = new BuildingType("아파트");
+        BuildingType buildingType2 = new BuildingType("빌라");
+        BuildingType buildingType3 = new BuildingType("주택");
+        BuildingType buildingType4 = new BuildingType("오피스텔");
+        BuildingType buildingType5 = new BuildingType("상업");
+        buildingTypeRepository.saveAll(List.of(
+           buildingType1, buildingType2, buildingType3, buildingType4, buildingType5
+        ));
+
     }
 }
