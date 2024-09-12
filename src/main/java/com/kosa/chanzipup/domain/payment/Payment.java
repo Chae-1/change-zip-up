@@ -4,7 +4,6 @@ import static com.kosa.chanzipup.domain.payment.PaymentStatus.*;
 
 import com.kosa.chanzipup.domain.BaseEntity;
 import com.kosa.chanzipup.domain.account.company.Company;
-import com.kosa.chanzipup.domain.membership.Membership;
 import com.kosa.chanzipup.domain.membership.MembershipType;
 import jakarta.persistence.*;
 
@@ -33,9 +32,6 @@ public class Payment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    private MembershipType membershipType;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
@@ -47,6 +43,9 @@ public class Payment extends BaseEntity {
     @Column(name = "complete_date")
     private LocalDateTime completeDate;
 
+    @ManyToOne
+    @JoinColumn(name = "membership_type_id")
+    private MembershipType membershipType;
 
     private Payment(MembershipType membershipType, PaymentStatus status, LocalDateTime paymentRequestDate, Company company) {
         this.status = status;
@@ -77,7 +76,6 @@ public class Payment extends BaseEntity {
             cancel();
             throw new PaymentNotValidException("실제 결제 금액과 결제해야하는 금액이 다릅니다.", impUid, id);
         }
-
         this.impUid = impUid;
         this.completeDate = completeDate;
         this.status = COMPLETE;

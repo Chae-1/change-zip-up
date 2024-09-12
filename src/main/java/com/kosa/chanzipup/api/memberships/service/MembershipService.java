@@ -34,7 +34,7 @@ public class MembershipService {
         // 1. membership을 가입할 수 없다.
         Company company = companyRepository.findById(paymentResult.getCompanyId())
                 .orElseThrow(() -> new CompanyException("존재하지 않는 회사 정보입니다."));
-        MembershipType membershipType = membershipTypeRepository.findById(paymentResult.getCompanyId())
+        MembershipType membershipType = membershipTypeRepository.findById(paymentResult.getMembershipTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 멤버십 정보입니다."));
 
         // todo : 기존에 가입한 멤버십이 있다면?
@@ -47,10 +47,6 @@ public class MembershipService {
                 membership.getStartDateTime(), membership.getEndDateTime());
     }
 
-    //
-    public void cancelMembership() {
-
-    }
 
     // 2. 가입 한 멤버십은 MEMBERSHIP_EXPIRE_DAY 만큼 유지된다.
     private Membership createMembership(Company company, MembershipType membershipType) {

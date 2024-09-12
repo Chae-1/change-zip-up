@@ -6,6 +6,7 @@ import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
 import com.kosa.chanzipup.domain.estimate.Estimate;
 import com.kosa.chanzipup.domain.estimate.EstimateRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class EstimateService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         // 1번 query result == 2000 N개를 조회하는 쿼리가 한번 나간다.
-        List<Estimate> estimates = estimateRepository.findAllByMember(findMember); // 2000개 조회
+        List<Estimate> estimates = estimateRepository.findAllWithMember(); // 2000개 조회
         List<EstimateResponse> responses = new ArrayList<>();
         for (Estimate estimate : estimates) {
             Member member = estimate.getMember(); //
@@ -38,7 +39,7 @@ public class EstimateService {
             // 멤버 정보를 최소한으로 유지하고 있을 경우 사용해하는 방식
             responses.add(EstimateResponse.noWrite("content", false));
         }
-
         return responses;
     }
+
 }
