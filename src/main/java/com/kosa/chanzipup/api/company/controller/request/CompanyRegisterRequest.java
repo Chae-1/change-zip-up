@@ -30,14 +30,14 @@ public class CompanyRegisterRequest {
     @NotBlank(message = "대표자명은 반드시 입력되어야 합니다.")
     private String owner;
 
-    @NotBlank(message = "개업날짜는 반드시 입력되어야 합니다.")
+    @NotNull(message = "개업날짜는 반드시 입력되어야 합니다.")
     private LocalDate publishDate;
 
     private String address;
 
     private String companyDesc;
 
-    @NotBlank(message = "시공 서비스는 반드시 선택되어야 합니다.")
+    @NotNull(message = "시공 서비스는 반드시 선택되어야 합니다.")
     protected List<Long> constructionService = new ArrayList<>();
 
 }
