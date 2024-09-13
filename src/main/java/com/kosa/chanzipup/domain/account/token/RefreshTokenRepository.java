@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-    @EntityGraph(attributePaths = {"account"})
+    @EntityGraph(attributePaths = { "account" })
     @Query("select r from RefreshToken r where r.token = :token")
     Optional<RefreshToken> findByToken(String token);
 }
