@@ -26,7 +26,7 @@ public class QReview extends EntityPathBase<Review> {
 
     public final StringPath content = createString("content");
 
-    public final com.kosa.chanzipup.domain.estimate.QEstimate estimate;
+    public final com.kosa.chanzipup.domain.estimate.QEstimateRequest estimate;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -60,9 +60,9 @@ public class QReview extends EntityPathBase<Review> {
 
     public QReview(Class<? extends Review> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.company = inits.isInitialized("company") ? new com.kosa.chanzipup.domain.account.company.QCompany(forProperty("company"), inits.get("company")) : null;
-        this.estimate = inits.isInitialized("estimate") ? new com.kosa.chanzipup.domain.estimate.QEstimate(forProperty("estimate"), inits.get("estimate")) : null;
-        this.member = inits.isInitialized("member") ? new com.kosa.chanzipup.domain.account.member.QMember(forProperty("member"), inits.get("member")) : null;
+        this.company = inits.isInitialized("company") ? new com.kosa.chanzipup.domain.account.company.QCompany(forProperty("company")) : null;
+        this.estimate = inits.isInitialized("estimate") ? new com.kosa.chanzipup.domain.estimate.QEstimateRequest(forProperty("estimate"), inits.get("estimate")) : null;
+        this.member = inits.isInitialized("member") ? new com.kosa.chanzipup.domain.account.member.QMember(forProperty("member")) : null;
     }
 
 }
