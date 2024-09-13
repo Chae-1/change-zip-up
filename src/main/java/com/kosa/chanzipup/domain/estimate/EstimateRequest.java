@@ -14,9 +14,9 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "estimate")
+@Table(name = "estimate_request")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Estimate {
+public class EstimateRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class Estimate {
     @Column(nullable = false)
     private String estimateStatus;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "estimate")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "estimateRequest")
     private List<EstimateConstructionType> constructionTypes = new ArrayList<>();
 
     @Column(nullable = false)
@@ -61,7 +61,7 @@ public class Estimate {
     private Member member;
 
     @Builder
-    public Estimate(String identification, String estimateStatus, String schedule, String budget,
+    public EstimateRequest(String identification, String estimateStatus, String schedule, String budget,
                     String address, String detailedAddress, LocalDate measureDate, int floor,
                     BuildingType buildingType, Member member, LocalDate regDate) {
         this.identification = identification;

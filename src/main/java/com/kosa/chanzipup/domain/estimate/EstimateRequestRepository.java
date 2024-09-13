@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface EstimateRepository extends JpaRepository<Estimate, Long> {
+public interface EstimateRequestRepository extends JpaRepository<EstimateRequest, Long> {
     @EntityGraph(attributePaths = { "member" })
-    @Query("select e from Estimate e")
-    List<Estimate> findAllWithMember();
+    @Query("select e from EstimateRequest e")
+    List<EstimateRequest> findAllWithMember();
 }
