@@ -11,7 +11,6 @@ import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import com.kosa.chanzipup.domain.estimate.EstimateConstructionType;
 import com.kosa.chanzipup.domain.estimate.EstimateRequest;
 import com.kosa.chanzipup.domain.estimate.EstimateRequestRepository;
-import com.kosa.chanzipup.domain.estimate.EstimateStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +45,6 @@ public class EstimateRequestService {
         // Estimate 객체 생성
         EstimateRequest estimate = EstimateRequest.builder()
                 .identification(identification)
-                .estimateStatus(EstimateStatus.COUNSELING.getStatus())
                 .schedule(estimateRequestDTO.getSchedule())
                 .budget(estimateRequestDTO.getBudget())
                 .address(estimateRequestDTO.getAddress())
@@ -77,8 +75,12 @@ public class EstimateRequestService {
     // 고유 식별자 생성 메서드 (현재 연도 + 월 + 일 + 5자리 정수)
     private String generateIdentification() {
         LocalDate currentDate = LocalDate.now();
+        // 20241011_99999
         String currentYearMonthDay = currentDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        // 동시성 문제 발생
+        // 락 사용
         long count = estimateRequestRepository.count(); // 현재까지 저장된 견적의 수를 조회
+
         String nextId = String.format("%05d", count + 1); // 000001부터 시작해 하나씩 증가
         return currentYearMonthDay + nextId;
     }
