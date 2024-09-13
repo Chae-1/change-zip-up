@@ -24,7 +24,7 @@ public class QEstimateConstructionType extends EntityPathBase<EstimateConstructi
 
     public final com.kosa.chanzipup.domain.constructiontype.QConstructionType constructionType;
 
-    public final QEstimate estimate;
+    public final QEstimateRequest estimateRequest;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -47,7 +47,7 @@ public class QEstimateConstructionType extends EntityPathBase<EstimateConstructi
     public QEstimateConstructionType(Class<? extends EstimateConstructionType> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.constructionType = inits.isInitialized("constructionType") ? new com.kosa.chanzipup.domain.constructiontype.QConstructionType(forProperty("constructionType")) : null;
-        this.estimate = inits.isInitialized("estimate") ? new QEstimate(forProperty("estimate"), inits.get("estimate")) : null;
+        this.estimateRequest = inits.isInitialized("estimateRequest") ? new QEstimateRequest(forProperty("estimateRequest"), inits.get("estimateRequest")) : null;
     }
 
 }

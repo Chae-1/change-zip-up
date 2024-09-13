@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Getter
-public class EstimateRequest {
+public class EstimateRequestDTO {
 
     @NotBlank(message = "인테리어 할 건물은 반드시 입력되어야 합니다.")
     private Long buildingTypeId;
