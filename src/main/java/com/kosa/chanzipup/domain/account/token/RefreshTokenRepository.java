@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     @EntityGraph(attributePaths = {"account"})
-    @Query("select r from RefreshToken r")
+    @Query("select r from RefreshToken r where r.token = :token")
     Optional<RefreshToken> findByToken(String token);
 }
