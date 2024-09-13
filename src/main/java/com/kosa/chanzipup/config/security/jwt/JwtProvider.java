@@ -24,7 +24,7 @@ import java.util.function.Function;
 public class JwtProvider {
 
     // accessToken 유효 시간 30분
-    private static final int ACCESS_TOKEN_EXPIRE_AMOUNT = 1;
+    private static final int ACCESS_TOKEN_EXPIRE_AMOUNT = 30;
     // refreshToken 유효 시간 7일
     private static final int REFRESH_TOKEN_EXPIRE_AMOUNT = 24 * 60 * 30;
 
@@ -89,12 +89,14 @@ public class JwtProvider {
         Date issuedAt = convertDate(issuedDate);
         Date expriationDate = convertDate(issuedDate.plusMinutes(expireAmount.get(tokenType)));
 
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(issuedAt)
                 .setExpiration(expriationDate) // 30분동안 토큰 유지
                 .signWith(getSignKey(keyMap.get(tokenType)), SignatureAlgorithm.HS256).compact();
+
+        return tokenType.changeToken(token);
     }
 
     private Date convertDate(LocalDateTime createDate) {

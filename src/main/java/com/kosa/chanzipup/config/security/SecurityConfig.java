@@ -47,8 +47,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   Oauth2MemberService oauth2MemberService,
-                                                   ProviderManagerBuilder builder, LoginSuccessHandler loginSuccessHandler,
+                                                   Oauth2MemberService oauth2MemberService, LoginSuccessHandler loginSuccessHandler,
                                                    AuthenticationManager manager) throws Exception {
 
         FormLoginAuthenticationFilter formLoginAuthenticationFilter = setFormLoginAuthentication(loginSuccessHandler, manager);
