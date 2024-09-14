@@ -34,14 +34,14 @@ public class ApplicationSetUp {
 
 //    @PostConstruct
     public void init() {
-        Member member1 =  Member.ofLocal(AccountRole.USER, "test1@test.com", encoder.encode("qweqwe123!"), "010-9393-0303",
+        Member member1 =  Member.ofLocalForTest(AccountRole.USER, "test1@test.com", encoder.encode("qweqwe123!"), "010-9393-0303",
                 MemberType.LOCAL, "testNickName1", "Oh1");
-        Member member2 =  Member.ofLocal(AccountRole.USER, "test2@test.com", encoder.encode("qweqwe123!"), "010-9393-0304",
+        Member member2 =  Member.ofLocalForTest(AccountRole.USER, "test2@test.com", encoder.encode("qweqwe123!"), "010-9393-0304",
                 MemberType.LOCAL, "testNickName2", "Oh2");
 
         memberRepository.saveAll(List.of(member1, member2));
 
-        Company company = Company.ofNewCompany("test3@test.com", "집다부셔", encoder.encode("qweqwe123!"),
+        Company company = Company.ofNewCompanyForTest("test3@test.com", "집다부셔", encoder.encode("qweqwe123!"),
                 "010-2344-3333", "집다부셔버려", "1234", LocalDate.of(2020, 04, 30),
                 "서울역 4번 출구", "다부셔버려");
 

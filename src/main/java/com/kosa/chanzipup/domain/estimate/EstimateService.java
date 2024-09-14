@@ -42,8 +42,7 @@ public class EstimateService {
         Estimate estimate = Estimate.waiting(company, estimateRequest);
         estimateRepository.save(estimate);
 
-        // 3. DTO 전송
-//        return EstimateResult.of(company, estimateRequest);
+        return EstimateResult.of(company, estimateRequest, estimate);
     }
 
     private boolean isNotRequestedMember(EstimateRequest estimateRequest, Member member) {

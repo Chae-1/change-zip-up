@@ -58,6 +58,21 @@ public class Member extends Account {
                 .build();
     }
 
+    public static Member ofLocalForTest(AccountRole accountRole, String email, String password,
+                                 String phoneNumber, MemberType memberType, String nickName, String name) {
+        return Member.builder()
+                .name(name)
+                .email(email)
+                .password(password)
+                .accountRole(accountRole)
+                .memberType(memberType)
+                .nickName(nickName)
+                .phoneNumber(phoneNumber)
+                .isVerified(true)
+                .build();
+    }
+
+
     @Override
     public String getNickName() {
         return nickName;

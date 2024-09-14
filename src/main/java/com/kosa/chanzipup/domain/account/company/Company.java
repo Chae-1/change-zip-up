@@ -62,6 +62,24 @@ public class Company extends Account {
                 .build();
     }
 
+    public static Company ofNewCompanyForTest(String email, String companyName, String password,
+                                       String phoneNumber, String owner, String companyNumber,
+                                       LocalDate publishDate, String address, String companyDesc) {
+        return Company.builder()
+                .email(email)
+                .password(password)
+                .companyNumber(companyNumber)
+                .accountRole(AccountRole.COMPANY)
+                .phoneNumber(phoneNumber)
+                .companyName(companyName)
+                .isVerified(true)
+                .owner(owner)
+                .publishDate(publishDate)
+                .address(address)
+                .companyDesc(companyDesc)
+                .build();
+    }
+
     public void addConstructionType(CompanyConstructionType constructionType) {
         constructionTypes.add(constructionType);
     }

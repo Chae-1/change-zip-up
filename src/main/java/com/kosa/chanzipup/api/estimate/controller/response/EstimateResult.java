@@ -1,16 +1,13 @@
 package com.kosa.chanzipup.api.estimate.controller.response;
 
-import com.kosa.chanzipup.api.estimate.controller.request.EstimateRegisterRequest;
 import com.kosa.chanzipup.domain.account.company.Company;
-import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
-import com.kosa.chanzipup.domain.estimate.EstimateConstructionType;
+import com.kosa.chanzipup.domain.estimate.Estimate;
 import com.kosa.chanzipup.domain.estimate.EstimateRequest;
-import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,7 +19,7 @@ public class EstimateResult {
 
     private String username;
 
-    private LocalDate estimateRequestDate;
+    private LocalDate requestDate; // Estimate 생성 날짜
 
     private List<String> constructionTypes;
 
@@ -42,8 +39,30 @@ public class EstimateResult {
 
     private BuildingType buildingType;
 
-    public static EstimateResponse of(Company company, EstimateRequest request) {
-        return null;  // 여기서부터 수정 필요
+
+    @Builder
+    public EstimateResult(Long companyId, String username, LocalDate requestDate,
+                          List<String> constructionTypes,
+                          String schedule, String budget, String constructionAddress, int floor,
+                          BuildingType buildingType) {
+        this.companyId = companyId;
+        this.username = username;
+        this.requestDate = requestDate;
+        this.constructionTypes = constructionTypes;
+        this.schedule = schedule;
+        this.budget = budget;
+        this.constructionAddress = constructionAddress;
+        this.floor = floor;
+        this.buildingType = buildingType;
+    }
+
+    public static EstimateResponse of(Company company, EstimateRequest request, Estimate estimate) {
+        return EstimateResult.builder()
+                .companyId(company.getId())
+                .username(request.getMember().getNickName())
+                .requestDate()
+                .budget(request.getBudget())
+                .build();  // 여기서부터 수정 필요
     }
 
     // 다음 순서
