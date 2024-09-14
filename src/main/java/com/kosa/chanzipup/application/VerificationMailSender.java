@@ -25,7 +25,7 @@ public class VerificationMailSender {
     // 회원 가입을 수행했을 때 가입 당시 이메일에 verificationCode 링크를 전송한다.
     public boolean sendVerificationTo(String toEmail, String verificationCode) {
         String clientUrl = String.format("%s/verify-email", target);  // 프론트엔드 URL
-        String verificationLink = clientUrl + "?code=" + verificationCode;
+        String verificationLink = clientUrl + "?code=" + verificationCode +"&email=" + toEmail;
         String subject = makeSubject();
         String makeVerificationContent = makeVerificationContent(toEmail, verificationLink);
         return sendToLocalUserAuthenticationCode(toEmail, subject, makeVerificationContent);

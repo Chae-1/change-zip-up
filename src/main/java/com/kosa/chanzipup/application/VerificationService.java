@@ -30,6 +30,7 @@ public class VerificationService {
         return VerificationCode.of(verification.getVerificationCode(), verification.getAccount().getEmail());
     }
 
+    @Transactional
     public boolean activeAccount(String verificationCode) {
         Verification verification = verificationRepository.findByVerificationCode(verificationCode)
                 .orElseThrow(() -> new IllegalArgumentException());
