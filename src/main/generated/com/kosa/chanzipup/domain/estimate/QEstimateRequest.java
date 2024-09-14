@@ -32,8 +32,6 @@ public class QEstimateRequest extends EntityPathBase<EstimateRequest> {
 
     public final StringPath detailedAddress = createString("detailedAddress");
 
-    public final StringPath estimateStatus = createString("estimateStatus");
-
     public final NumberPath<Integer> floor = createNumber("floor", Integer.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
