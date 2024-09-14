@@ -25,11 +25,8 @@ public class EstimateRequest {
     @Column(nullable = false)
     private LocalDate regDate;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String identification;
-
-    @Column(nullable = false)
-    private String estimateStatus;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "estimateRequest")
     private List<EstimateConstructionType> constructionTypes = new ArrayList<>();
@@ -61,11 +58,10 @@ public class EstimateRequest {
     private Member member;
 
     @Builder
-    public EstimateRequest(String identification, String estimateStatus, String schedule, String budget,
+    public EstimateRequest(String identification, String schedule, String budget,
                     String address, String detailedAddress, LocalDate measureDate, int floor,
                     BuildingType buildingType, Member member, LocalDate regDate) {
         this.identification = identification;
-        this.estimateStatus = estimateStatus;
         this.schedule = schedule;
         this.budget = budget;
         this.address = address;
