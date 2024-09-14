@@ -2,6 +2,7 @@ package com.kosa.chanzipup.api.member.service;
 
 import com.kosa.chanzipup.api.member.controller.request.MemberRegisterRequest;
 import com.kosa.chanzipup.api.member.controller.response.MemberRegisterResponse;
+import com.kosa.chanzipup.application.VerificationCode;
 import com.kosa.chanzipup.domain.account.AccountRole;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
@@ -34,7 +35,9 @@ public class MemberService {
 
         Member member =  Member.ofLocal(AccountRole.USER, request.getEmail(), encoder.encode(request.getPassword()), request.getPhoneNumber(),
                 request.getMemberType(), request.getNickName(), request.getName());
+
         memberRepository.save(member);
+
         return MemberRegisterResponse.of(member.getEmail(), request.getName());
     }
 

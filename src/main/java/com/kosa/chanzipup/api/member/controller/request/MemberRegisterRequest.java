@@ -4,8 +4,10 @@ import com.kosa.chanzipup.domain.account.member.MemberType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class MemberRegisterRequest {
     // 회원 가입 요청 DTO
     @NotBlank(message = "이메일은 필수 입력 항목입니다")

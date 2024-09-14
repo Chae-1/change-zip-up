@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.api.email.service;
+package com.kosa.chanzipup.application;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -11,19 +11,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class MailSendClient {
+public class VerificationMailSender {
 
     private final JavaMailSender mailSender;
 
     private final String target;
 
-    public MailSendClient(JavaMailSender mailSender, @Value("${target.address}") String target) {
+    public VerificationMailSender(JavaMailSender mailSender, @Value("${target.address}") String target) {
         this.mailSender = mailSender;
         this.target = target;
     }
 
     // 회원 가입을 수행했을 때 가입 당시 이메일에 verificationCode 링크를 전송한다.
-    public boolean sendVerificationCode(String toEmail, String verificationCode) {
+    public boolean sendVerificationTo(String toEmail, String verificationCode) {
         String clientUrl = String.format("%s/verify-email", target);  // 프론트엔드 URL
         String verificationLink = clientUrl + "?code=" + verificationCode;
         String subject = makeSubject();

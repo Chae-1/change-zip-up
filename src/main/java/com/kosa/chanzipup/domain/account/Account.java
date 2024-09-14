@@ -48,4 +48,8 @@ public abstract class Account extends BaseEntity {
     }
 
     public abstract String getNickName();
+
+    public void active() {
+        this.isVerified = true;
+    }
 }
