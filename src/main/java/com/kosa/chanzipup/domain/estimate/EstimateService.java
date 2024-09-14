@@ -24,7 +24,7 @@ public class EstimateService {
     private final EstimateRepository estimateRepository;
 
     // 회사에 요청 견적을 보낸다.
-    public void sendEstimateToCompany(String userEmail,
+    public EstimateResult sendEstimateToCompany(String userEmail,
                                       EstimateRegisterRequest request) {
         // 1. 요청한 유저
         Member member = memberRepository.findByEmail(userEmail)

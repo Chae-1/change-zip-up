@@ -2,7 +2,9 @@ package com.kosa.chanzipup.domain.estimate;
 
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import jakarta.persistence.*;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -75,5 +77,15 @@ public class EstimateRequest {
 
     public void addConstructionType(EstimateConstructionType estimateConstructionType) {
         constructionTypes.add(estimateConstructionType);
+    }
+
+    public List<String> getConstructionTypeNames() {
+        return constructionTypes.stream()
+                .map(EstimateConstructionType::getTypeName)
+                .collect(Collectors.toList());
+    }
+
+    public String getFullAddress() {
+        return String.format("%s %s", address, detailedAddress);
     }
 }

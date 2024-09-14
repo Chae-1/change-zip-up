@@ -27,4 +27,8 @@ public class EstimateConstructionType {
         this.constructionType = constructionType;
         this.estimateRequest = estimateRequest;
     }
+
+    public String getTypeName() {
+        return constructionType.getName();
+    }
 }
