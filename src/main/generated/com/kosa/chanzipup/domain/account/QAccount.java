@@ -62,7 +62,7 @@ public class QAccount extends EntityPathBase<Account> {
 
     public QAccount(Class<? extends Account> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.refreshToken = inits.isInitialized("refreshToken") ? new com.kosa.chanzipup.domain.account.token.QRefreshToken(forProperty("refreshToken")) : null;
+        this.refreshToken = inits.isInitialized("refreshToken") ? new com.kosa.chanzipup.domain.account.token.QRefreshToken(forProperty("refreshToken"), inits.get("refreshToken")) : null;
     }
 
 }

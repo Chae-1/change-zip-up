@@ -89,12 +89,14 @@ public class JwtProvider {
         Date issuedAt = convertDate(issuedDate);
         Date expriationDate = convertDate(issuedDate.plusMinutes(expireAmount.get(tokenType)));
 
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(issuedAt)
                 .setExpiration(expriationDate) // 30분동안 토큰 유지
                 .signWith(getSignKey(keyMap.get(tokenType)), SignatureAlgorithm.HS256).compact();
+
+        return tokenType.changeToken(token);
     }
 
     private Date convertDate(LocalDateTime createDate) {

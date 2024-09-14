@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QEstimate is a Querydsl query type for Estimate
+ * QEstimateRequest is a Querydsl query type for EstimateRequest
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QEstimate extends EntityPathBase<Estimate> {
+public class QEstimateRequest extends EntityPathBase<EstimateRequest> {
 
-    private static final long serialVersionUID = 329091575L;
+    private static final long serialVersionUID = 1905274008L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QEstimate estimate = new QEstimate("estimate");
+    public static final QEstimateRequest estimateRequest = new QEstimateRequest("estimateRequest");
 
     public final StringPath address = createString("address");
 
@@ -48,23 +48,23 @@ public class QEstimate extends EntityPathBase<Estimate> {
 
     public final StringPath schedule = createString("schedule");
 
-    public QEstimate(String variable) {
-        this(Estimate.class, forVariable(variable), INITS);
+    public QEstimateRequest(String variable) {
+        this(EstimateRequest.class, forVariable(variable), INITS);
     }
 
-    public QEstimate(Path<? extends Estimate> path) {
+    public QEstimateRequest(Path<? extends EstimateRequest> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QEstimate(PathMetadata metadata) {
+    public QEstimateRequest(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QEstimate(PathMetadata metadata, PathInits inits) {
-        this(Estimate.class, metadata, inits);
+    public QEstimateRequest(PathMetadata metadata, PathInits inits) {
+        this(EstimateRequest.class, metadata, inits);
     }
 
-    public QEstimate(Class<? extends Estimate> type, PathMetadata metadata, PathInits inits) {
+    public QEstimateRequest(Class<? extends EstimateRequest> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.buildingType = inits.isInitialized("buildingType") ? new com.kosa.chanzipup.domain.buildingtype.QBuildingType(forProperty("buildingType")) : null;
         this.member = inits.isInitialized("member") ? new com.kosa.chanzipup.domain.account.member.QMember(forProperty("member")) : null;

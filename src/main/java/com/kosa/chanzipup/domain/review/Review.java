@@ -2,7 +2,7 @@ package com.kosa.chanzipup.domain.review;
 
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.member.Member;
-import com.kosa.chanzipup.domain.estimate.Estimate;
+import com.kosa.chanzipup.domain.estimate.EstimateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -38,6 +38,6 @@ public class Review {
     private Company company;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "estimate_id")
-    private Estimate estimate;
+    @JoinColumn(name = "estimate_request_id")
+    private EstimateRequest estimate;
 }

@@ -47,8 +47,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   Oauth2MemberService oauth2MemberService,
-                                                   ProviderManagerBuilder builder, LoginSuccessHandler loginSuccessHandler,
+                                                   Oauth2MemberService oauth2MemberService, LoginSuccessHandler loginSuccessHandler,
                                                    AuthenticationManager manager) throws Exception {
 
         FormLoginAuthenticationFilter formLoginAuthenticationFilter = setFormLoginAuthentication(loginSuccessHandler, manager);
@@ -56,7 +55,8 @@ public class SecurityConfig {
         // 기본 설정
         http
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/payment/**", "/api/memberships/**").hasRole("COMPANY") //ROLE_COMPANY Role, Authority
+                        .requestMatchers("/refreshToken").permitAll()
+                        .requestMatchers("/api/payment/**", "/api/memberships/**").hasRole("COMPANY") // ROLE_COMPANY Role, Authority
                         .requestMatchers("/api/memberships/**").hasRole("COMPANY")
                         .requestMatchers("/api/**", "/", "/oauth2/**").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()

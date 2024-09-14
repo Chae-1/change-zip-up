@@ -91,12 +91,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     private String redirectURI(String accessToken) {
-        String fullAccessToken = String.format("Bearer %s", accessToken);
+        String fullAccessToken = String.format(" %s", accessToken);
         return String.format("http://localhost:3000/oauth/redirect?authorization=%s", fullAccessToken);
     }
 
     private String createAccessToken(String email) {
-        String accessToken = String.format("Bearer %s", jwtProvider.generateToken(email, TokenType.ACCESS, LocalDateTime.now()));
+        String accessToken = jwtProvider.generateToken(email, TokenType.ACCESS, LocalDateTime.now());
         return accessToken;
     }
 
