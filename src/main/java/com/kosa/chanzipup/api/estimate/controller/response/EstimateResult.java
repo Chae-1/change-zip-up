@@ -34,7 +34,7 @@ public class EstimateResult {
     // 그 후에 계약이 될 때 주소를 보내주는 방법을 생각해볼 필요가 있어 보임.
     // 형일님께서 고민해주시고 결정해주세요!
 
-    // -> 시공 집 주소 모든 업체에 오픈돼 있어야해서 굳이 그럴필요가 없을 것 같습니다.
+    // -> 시공 집 주소 모든 업체에 오픈돼 있어야해서 굳이 그럴 필요가 없을 것 같습니다.
     private String constructionAddress;
 
     private int floor;
@@ -74,15 +74,16 @@ public class EstimateResult {
 
     // 다음 순서
     // 1. 이 요청을 업체가 확인 후 승인하는 과정.
-    // estimate 엔터티에 있는 status가 "대기중".
+    // - estimate 엔터티에 있는 status가 "대기중".
+    // - estimateRequest 안에 estimate가 존재
+
     // 2. 승인하고 견적(estimate)를 고객에게 보내줌.
-    // 이 과정에서 견적(estimate) 엔터티에 데이터 저장.
+    // - 이 과정에서 견적(estimate) 엔터티에 데이터 저장.
     // estimate 엔터티에 있는 status가 "상담중" or "진행중".
     // 채팅이 확실하게 없다면 "진행중"
     // 한다면 "상담중"
 
     // 3. 고객이 업체가 보낸 견적을 확인 후 계약 진행?
     // 계약이 되면 estimate 엔터티에 있는 status가 "완료".
-
     // 제가 생각한 흐름은 이건데 형일님께서 생각해보시고 수정해주세요~
 }
