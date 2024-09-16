@@ -14,3 +14,5 @@ target:
 
 file:
   upload-dir: src/main/resources/static/images
+  location: c:\images
+

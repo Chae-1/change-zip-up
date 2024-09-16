@@ -5,6 +5,8 @@ import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,16 +25,16 @@ public class Review {
 
     private String title;
 
-    @Lob // string -> clob, other -> binary -> blob
+    @Lob
     private String content;
 
     private LocalDateTime regDate;
 
-    private LocalDateTime workStartDateTime;
+    private LocalDate workStartDate;
 
-    private LocalDateTime workEndDateTime;
+    private LocalDate workEndDate;
 
-    private double rating;
+    private int rating;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -58,9 +60,8 @@ public class Review {
     @JoinColumn(name = "building_type_id")
     private BuildingType buildingType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "construction_type_id")
-    private ConstructionType constructionType;
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewConstructionType> reviewConstructionTypes = new ArrayList<>();
 
     private Long totalPrice;
 
@@ -68,43 +69,42 @@ public class Review {
 
 
     @Builder
-    private Review(String title, String content, LocalDateTime regDate, LocalDateTime workStartDateTime, LocalDateTime workEndDateTime
-            , double rating, Member member, Company company, List<ReviewImages> reviewImages
-            , BuildingType buildingType, ConstructionType constructionType, Long totalPrice, int floor
+    private Review(String title, String content, LocalDateTime regDate, LocalDate workStartDate, LocalDate workEndDate,
+                   int rating, Member member, Company company,
+                   BuildingType buildingType, ConstructionType constructionType, Long totalPrice, int floor
     ) {
         this.title = title;
         this.content = content;
         this.regDate = regDate;
-        this.workStartDateTime = workStartDateTime;
-        this.workEndDateTime = workEndDateTime;
+        this.workStartDate = workStartDate;
+        this.workEndDate = workEndDate;
         this.rating = rating;
         this.member = member;
         this.company = company;
-        this.reviewImages = reviewImages;
         this.buildingType = buildingType;
-        this.constructionType = constructionType;
         this.totalPrice = totalPrice;
         this.floor = floor;
     }
 
-    public static Review ofNewReview(String title, String content, LocalDateTime regDate, LocalDateTime workStartDateTime, LocalDateTime workEndDateTime
-            , double rating, Member member, Company company, List<ReviewImages> reviewImages
-            , BuildingType buildingType, ConstructionType constructionType, Long totalPrice, int floor
-    ) {
+    public static Review ofNewReview(String title, LocalDateTime regDate, LocalDate workStartDate, LocalDate workEndDate,
+                                     int rating, Member member, Company company, BuildingType buildingType,
+                                     ConstructionType constructionType, Long totalPrice, int floor) {
         return Review.builder()
                 .title(title)
-                .content(content)
                 .regDate(regDate)
-                .workStartDateTime(workStartDateTime)
-                .workEndDateTime(workEndDateTime)
+                .workStartDate(workStartDate)
+                .workEndDate(workEndDate)
                 .rating(rating)
                 .member(member)
                 .company(company)
-                .reviewImages(reviewImages)
                 .buildingType(buildingType)
                 .constructionType(constructionType)
                 .totalPrice(totalPrice)
                 .floor(floor)
                 .build();
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
     }
 }

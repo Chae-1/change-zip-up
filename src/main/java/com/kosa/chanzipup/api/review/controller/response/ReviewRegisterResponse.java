@@ -4,15 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class ReviewRegisterResponse {
+    private Long reviewId;
 
-    private final Long id;
-
-    private ReviewRegisterResponse(Long id) {
-        this.id = id;
+    public ReviewRegisterResponse(Long reviewId) {
+        this.reviewId = reviewId;
     }
-
-    public static ReviewRegisterResponse of(Long id) {
-        return new ReviewRegisterResponse(id);
-    }
-
 }

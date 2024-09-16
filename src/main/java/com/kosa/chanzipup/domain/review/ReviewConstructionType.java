@@ -2,10 +2,11 @@ package com.kosa.chanzipup.domain.review;
 
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Setter
+@Getter
 public class ReviewConstructionType {
 
     @Id
@@ -19,4 +20,8 @@ public class ReviewConstructionType {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "construction_type_id")
     private ConstructionType constructionType;
+
+
+
+
 }
