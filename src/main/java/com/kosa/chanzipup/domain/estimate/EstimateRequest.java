@@ -2,7 +2,9 @@ package com.kosa.chanzipup.domain.estimate;
 
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import jakarta.persistence.*;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,11 +27,8 @@ public class EstimateRequest {
     @Column(nullable = false)
     private LocalDate regDate;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String identification;
-
-    @Column(nullable = false)
-    private String estimateStatus;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "estimateRequest")
     private List<EstimateConstructionType> constructionTypes = new ArrayList<>();
@@ -61,11 +60,10 @@ public class EstimateRequest {
     private Member member;
 
     @Builder
-    public EstimateRequest(String identification, String estimateStatus, String schedule, String budget,
+    public EstimateRequest(String identification, String schedule, String budget,
                     String address, String detailedAddress, LocalDate measureDate, int floor,
                     BuildingType buildingType, Member member, LocalDate regDate) {
         this.identification = identification;
-        this.estimateStatus = estimateStatus;
         this.schedule = schedule;
         this.budget = budget;
         this.address = address;
@@ -79,5 +77,15 @@ public class EstimateRequest {
 
     public void addConstructionType(EstimateConstructionType estimateConstructionType) {
         constructionTypes.add(estimateConstructionType);
+    }
+
+    public List<String> getConstructionTypeNames() {
+        return constructionTypes.stream()
+                .map(EstimateConstructionType::getTypeName)
+                .collect(Collectors.toList());
+    }
+
+    public String getFullAddress() {
+        return String.format("%s %s", address, detailedAddress);
     }
 }

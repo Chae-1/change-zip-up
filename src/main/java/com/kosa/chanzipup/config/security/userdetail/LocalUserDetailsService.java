@@ -20,6 +20,11 @@ public class LocalUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("계정 정보가 존재하지 않습니다."));
+
+        if (!account.isVerified()) {
+           throw new UsernameNotFoundException("이메일 인증을 수행하지 않은 회원입니다.");
+        }
+
         return new LocalUserDetailsDetails(account);
     }
 }
