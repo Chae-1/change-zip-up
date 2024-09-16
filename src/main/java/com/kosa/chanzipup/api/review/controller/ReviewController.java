@@ -20,8 +20,8 @@ public class ReviewController {
     // 예외처리까지 고려하지 않았어요..
     @PostMapping("/create")
     public ResponseEntity<?> createReview() {
-        ReviewRegisterResponse savedReviewResponse = reviewService.registerReview(request, member, company);
-        return ResponseEntity.ok(savedReviewResponse);
+//        ReviewRegisterResponse savedReviewResponse = reviewService.registerReview(request, member, company);
+        return null;
     }
 
     // 후기 목록 조회
