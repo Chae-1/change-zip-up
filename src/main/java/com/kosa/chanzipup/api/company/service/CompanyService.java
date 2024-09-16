@@ -79,21 +79,6 @@ public class CompanyService {
         }
         return responses;
 
-//        List<String> services = new ArrayList<>();
-//
-//        return companyRepository.findAll().stream()
-//                .map(company -> new CompanyListResponse(
-//                        company.getId(),
-//                        company.getCompanyName(),
-//                        company.getCompanyDesc(),
-//                        company.getCompanyLogoUrl(),
-//                        company.getRating(),
-//                        company.getConstructionTypes().stream()
-//                                .map(constructionType -> constructionType.getConstructionType().getName())
-//                                .collect(Collectors.toList())
-//                ))
-//                .collect(Collectors.toList());
-
     }
 
     // 업체 상세 조회
@@ -105,10 +90,6 @@ public class CompanyService {
         for (CompanyConstructionType constructionType : company.getConstructionTypes()) {
             services.add(constructionType.getConstructionType().getName());
         }
-
-//        List<String> services = company.getConstructionTypes().stream()
-//                .map(constructionType -> constructionType.getConstructionType().getName())
-//                .collect(Collectors.toList());
 
         return new CompanyDetailResponse(
                 company.getId(),
