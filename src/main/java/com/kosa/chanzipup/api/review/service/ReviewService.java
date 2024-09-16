@@ -69,33 +69,7 @@ public class ReviewService {
 
     // 전체 리뷰 목록 조회
     public List<ReviewListResponse> getAllReviews() {
-        // 사진 조회
-        List<Review> reviews = reviewRepository.findAllWithAll();
-        List<ReviewListResponse> responses = new ArrayList<>();
-        for (Review review : reviews) {
-            List<ReviewImages> reviewImages = review.getReviewImages();
-            List<ReviewImagesForReviewResponse> imageList = reviewImages.stream()
-                    .map(ReviewImagesForReviewResponse::new)
-                    .toList();
 
-            responses.add(new ReviewListResponse(
-                            review.getId(),
-                            review.getTitle(),
-                            review.getContent(),
-                            review.getRegDate(),
-                            review.getWorkStartDateTime(),
-                            review.getWorkEndDateTime(),
-                            review.getRating(),
-                            new MemberForReviewResponse(review.getMember()),
-                            new CompanyForReviewResponse(review.getCompany()),
-                            imageList,
-                            new BuildingTypeForReivewResponse(review.getBuildingType()),
-                            new ConstructionTypeForReivewResponse(review.getConstructionType()),
-                            review.getTotalPrice(),
-                            review.getFloor()
-                    )
-            );
-        }
-        return responses;
+        return null;
     }
 }
