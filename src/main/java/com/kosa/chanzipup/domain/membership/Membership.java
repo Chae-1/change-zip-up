@@ -26,7 +26,7 @@ public class Membership extends BaseEntity {
     @JoinColumn(name = "membership_internal_id")
     private MembershipType membershipType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
 
