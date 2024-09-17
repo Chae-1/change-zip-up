@@ -46,9 +46,8 @@ public class ReviewController {
     @PostMapping("/{reviewId}/images")
     public ResponseEntity<String> uploadReviewImages(@PathVariable("reviewId") Long reviewId, MultipartFile file) {
         String name = file.getName();
-        String originalFilename = file.getOriginalFilename();
         String uploadFullPath = uploadService.store("reviews", file);
-        log.info("name = {}, originalFileName = {}", name, originalFilename);
+        log.info("name = {}, uploadFullPath = {}", name, uploadFullPath);
         return ResponseEntity.ok(uploadFullPath);
     }
 
@@ -63,6 +62,11 @@ public class ReviewController {
     public ResponseEntity<List<ReviewListResponse>> getAllCompany() {
         List<ReviewListResponse> reviews = reviewService.getAllReviews();
         return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/{reviewId}")
+    public String review(@PathVariable("reviewId") Long reviewId) {
+        return null;
     }
 
 }

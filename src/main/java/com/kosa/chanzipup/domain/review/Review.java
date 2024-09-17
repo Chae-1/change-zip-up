@@ -26,6 +26,7 @@ public class Review {
     private String title;
 
     @Lob
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     private LocalDateTime regDate;
