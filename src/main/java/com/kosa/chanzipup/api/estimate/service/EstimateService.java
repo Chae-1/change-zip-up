@@ -6,10 +6,7 @@ import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
-import com.kosa.chanzipup.domain.estimate.Estimate;
-import com.kosa.chanzipup.domain.estimate.EstimateRepository;
-import com.kosa.chanzipup.domain.estimate.EstimateRequest;
-import com.kosa.chanzipup.domain.estimate.EstimateRequestRepository;
+import com.kosa.chanzipup.domain.estimate.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -62,11 +59,11 @@ public class EstimateService {
     }
 
     // 특정 업체에게 온 견적 요청을 조회
-    public List<EstimateResult> getEstimatesByCompanyEmail(String companyEmail) {
+    public List<EstimateResult> getWaitingEstimatesByCompanyEmail(String companyEmail) {
         Company company = companyRepository.findByEmail(companyEmail)
                 .orElseThrow(() -> new IllegalArgumentException("업체 정보 없음."));
 
-        List<Estimate> estimates = estimateRepository.findAllByCompany(company);
+        List<Estimate> estimates = estimateRepository.findAllWaitingByCompany(company);
 
         return estimates.stream()
                 .map(estimate -> EstimateResult.of(estimate.getCompany(), estimate.getEstimateRequest(), estimate))
@@ -82,4 +79,37 @@ public class EstimateService {
                 .orElseThrow(() -> new IllegalArgumentException("최근 견적 요청 정보 없음."));
     }
 
+    @Transactional
+    public void cancelEstimateByRequestIdAndCompanyEmail(Long estimateRequestId, String companyEmail) {
+        // companyEmail을 통해 회사 정보 조회
+        Company company = companyRepository.findByEmail(companyEmail)
+                .orElseThrow(() -> new IllegalArgumentException("해당 업체 정보 없음: " + companyEmail));
+
+        // estimateRequestId와 company 정보를 기반으로 Estimate 찾기
+        Estimate estimate = estimateRepository.findByEstimateRequestIdAndCompany(estimateRequestId, company)
+                .orElseThrow(() -> new IllegalArgumentException("해당 요청에 대한 견적이 존재하지 않거나 권한이 없습니다: " + estimateRequestId));
+
+        // 상태를 CANCELLATION로 업데이트
+        estimate.updateEstimateStatus(EstimateStatus.CANCELLATION);
+
+        // 업데이트된 견적을 저장
+        estimateRepository.save(estimate);
+    }
+
+    @Transactional
+    public void approvalEstimateByRequestIdAndCompanyEmail(Long estimateRequestId, String companyEmail) {
+        // companyEmail을 통해 회사 정보 조회
+        Company company = companyRepository.findByEmail(companyEmail)
+                .orElseThrow(() -> new IllegalArgumentException("해당 업체 정보 없음: " + companyEmail));
+
+        // estimateRequestId와 company 정보를 기반으로 Estimate 찾기
+        Estimate estimate = estimateRepository.findByEstimateRequestIdAndCompany(estimateRequestId, company)
+                .orElseThrow(() -> new IllegalArgumentException("해당 요청에 대한 견적이 존재하지 않거나 권한이 없습니다: " + estimateRequestId));
+
+        // 상태를 ONGOING로 업데이트
+        estimate.updateEstimateStatus(EstimateStatus.ONGOING);
+
+        // 업데이트된 견적을 저장
+        estimateRepository.save(estimate);
+    }
 }

@@ -43,8 +43,31 @@ public class EstimateController {
         String companyEmail = userDetails.getUsername();
 
         // 해당 업체에게 온 요청만 조회한다
-        List<EstimateResult> estimateList = estimateService.getEstimatesByCompanyEmail(companyEmail);
+        List<EstimateResult> estimateList = estimateService.getWaitingEstimatesByCompanyEmail(companyEmail);
         return ApiResponse.ok(estimateList);
     }
+
+    @PostMapping("/cancel/{estimateRequestId}")
+    public ApiResponse<Void> cancelEstimate(@PathVariable Long estimateRequestId,
+                                            @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        // 로그인한 업체 이메일을 가져옴
+        String companyEmail = userDetails.getUsername();
+
+        // 서비스 호출 시 estimateRequestId와 companyEmail을 넘김
+        estimateService.cancelEstimateByRequestIdAndCompanyEmail(estimateRequestId, companyEmail);
+        return ApiResponse.ok(null);
+    }
+
+    @PostMapping("/approval/{estimateRequestId}")
+    public ApiResponse<Void> approvalEstimate(@PathVariable Long estimateRequestId,
+                                            @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        // 로그인한 업체 이메일을 가져옴
+        String companyEmail = userDetails.getUsername();
+
+        // 서비스 호출 시 estimateRequestId와 companyEmail을 넘김
+        estimateService.approvalEstimateByRequestIdAndCompanyEmail(estimateRequestId, companyEmail);
+        return ApiResponse.ok(null);
+    }
+
 
 }

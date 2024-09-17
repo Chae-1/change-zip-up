@@ -52,4 +52,8 @@ public class Estimate {
                 .estimateRequest(request)
                 .build();
     }
+
+    public void updateEstimateStatus(EstimateStatus newStatus) {
+        this.estimateStatus = newStatus;
+    }
 }
