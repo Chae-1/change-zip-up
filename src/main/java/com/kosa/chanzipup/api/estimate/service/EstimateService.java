@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.domain.estimate;
+package com.kosa.chanzipup.api.estimate.service;
 
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRegisterRequest;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateResult;
@@ -6,12 +6,17 @@ import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
+import com.kosa.chanzipup.domain.estimate.Estimate;
+import com.kosa.chanzipup.domain.estimate.EstimateRepository;
+import com.kosa.chanzipup.domain.estimate.EstimateRequest;
+import com.kosa.chanzipup.domain.estimate.EstimateRequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,30 +29,57 @@ public class EstimateService {
     private final EstimateRepository estimateRepository;
 
     // 회사에 요청 견적을 보낸다.
+    @Transactional
     public EstimateResult sendEstimateToCompany(String userEmail,
                                       EstimateRegisterRequest request) {
         // 1. 요청한 유저
         Member member = memberRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new IllegalArgumentException("유저 정보 없음."));
+
+        // 2. 회사 정보 가져오기
         Company company = companyRepository.findById(request.getCompanyId())
                 .orElseThrow(() -> new IllegalArgumentException("회사 정보 없음."));
+
+        // 3. 견적 요청 정보 가져오기
         EstimateRequest estimateRequest = estimateRequestRepository.findByIdWithUser(request.getEstimateRequestId())
                 .orElseThrow(() -> new IllegalArgumentException("요청 정보 없음."));
 
+        // 4. 유저가 등록한 요청인지 확인
         if (isNotRequestedMember(estimateRequest, member)) {
             throw new IllegalArgumentException("유저가 등록한 요청이 아닙니다.");
         }
 
-        // 2. 정상적이면 estimateRequest를 company에 전송.
+        // 5. 견적 요청을 회사에 전송
         Estimate estimate = Estimate.waiting(company, estimateRequest);
         estimateRepository.save(estimate);
 
         return EstimateResult.of(company, estimateRequest, estimate);
     }
 
+    // 요청한 유저가 맞는지 확인
     private boolean isNotRequestedMember(EstimateRequest estimateRequest, Member member) {
         return !(estimateRequest.getMember() == member);
     }
 
+    // 특정 업체에게 온 견적 요청을 조회
+    public List<EstimateResult> getEstimatesByCompanyEmail(String companyEmail) {
+        Company company = companyRepository.findByEmail(companyEmail)
+                .orElseThrow(() -> new IllegalArgumentException("업체 정보 없음."));
+
+        List<Estimate> estimates = estimateRepository.findAllByCompany(company);
+
+        return estimates.stream()
+                .map(estimate -> EstimateResult.of(estimate.getCompany(), estimate.getEstimateRequest(), estimate))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public EstimateRequest getLatestEstimateRequestByUserEmail(String userEmail) {
+        Member member = memberRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("유저 정보 없음."));
+
+        return estimateRequestRepository.findFirstByMemberOrderByRegDateDesc(member)
+                .orElseThrow(() -> new IllegalArgumentException("최근 견적 요청 정보 없음."));
+    }
 
 }

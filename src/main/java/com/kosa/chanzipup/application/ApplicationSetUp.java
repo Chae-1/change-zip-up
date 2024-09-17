@@ -44,8 +44,11 @@ public class ApplicationSetUp {
         Company company = Company.ofNewCompanyForTest("test3@test.com", "집다부셔", encoder.encode("qweqwe123!"),
                 "010-2344-3333", "집다부셔버려", "1234", LocalDate.of(2020, 04, 30),
                 "서울역 4번 출구", "다부셔버려");
+        Company company2 = Company.ofNewCompanyForTest("test4@test.com", "집다부셔2", encoder.encode("qweqwe123!"),
+                "010-2344-4444", "집다부셔버려2", "1234", LocalDate.of(2020, 04, 30),
+                "서울역 4번 출구", "다부셔버려2");
 
-        companyRepository.save(company);
+        companyRepository.saveAll(List.of(company, company2));
 
         membershipTypeRepository.save(new MembershipType(100, MembershipName.BASIC));
         membershipTypeRepository.save(new MembershipType(150, MembershipName.PREMIUM));
