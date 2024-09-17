@@ -77,4 +77,9 @@ public class Member extends Account {
     public String getNickName() {
         return nickName;
     }
+
+    @Override
+    public String getName() {
+        return name;
+    }
 }
