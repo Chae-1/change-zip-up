@@ -32,7 +32,7 @@ public class ApplicationSetUp {
     private final BuildingTypeRepository buildingTypeRepository;
 
 
-    //@PostConstruct
+//    @PostConstruct
     public void init() {
         Member member1 =  Member.ofLocalForTest(AccountRole.USER, "test1@test.com", encoder.encode("qweqwe123!"), "010-9393-0303",
                 MemberType.LOCAL, "testNickName1", "Oh1");
