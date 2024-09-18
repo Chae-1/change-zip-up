@@ -38,4 +38,8 @@ public class ReviewRegisterRequest {
 
     @NotNull(message = "평수는 반드시 입력되어야 합니다.")
     private int floor;
+
+    private Long buildingTypeId;
+
+    private List<Long> constructionTypes;
 }

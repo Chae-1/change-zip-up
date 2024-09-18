@@ -6,11 +6,14 @@ import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
+import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.buildingtype.BuildingTypeRepository;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import com.kosa.chanzipup.domain.review.*;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ReviewService {
 
     private final MemberRepository memberRepository;
@@ -27,6 +31,7 @@ public class ReviewService {
     private final ReviewConstructionTypeRepository reviewConstructionTypeRepository;
     private final ConstructionTypeRepository constructionTypeRepository;
     private final CompanyRepository companyRepository;
+    private final ReviewImagesRepository reviewImagesRepository;
 
     @Transactional
     public ReviewRegisterResponse registerReview(ReviewRegisterRequest request, String email) {
@@ -37,45 +42,19 @@ public class ReviewService {
         Company company = companyRepository.findByCompanyName(request.getCompanyName())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 파트너입니다."));
 
+        // 시공 건물 종류.
+        BuildingType buildingType = buildingTypeRepository.findById(request.getBuildingTypeId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 건물 종류입니다."));
+
+        // 시공 서비스 타입
+        List<ConstructionType> constructionTypes = constructionTypeRepository.findByIdIn(request.getConstructionTypes());
+
         Review review = Review.ofNewReview(request.getTitle(), LocalDateTime.now(), request.getWorkStartDate(),
                 request.getWorkEndDate(), request.getRating(), member, company,
-                null, null, request.getTotalPrice(), request.getFloor());
+                buildingType, constructionTypes, request.getTotalPrice(), request.getFloor());
 
         reviewRepository.save(review);
 
-
-        // 건물 종류 조회해서 저장(하나만 저장하니까)
-//        BuildingType buildingType = buildingTypeRepository.findById(request.getBuildingTypeId())
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid building type ID: " + request.getBuildingTypeId()));
-//
-//        Review review = Review.ofNewReview(
-//                request.getTitle(),
-//                request.getContent(),
-//                request.getRegDate(),
-//                request.getWorkStartDateTime(),
-//                request.getWorkEndDateTime(),
-//                request.getRating(),
-//                member,
-//                company,
-//                request.getReviewImages(),
-//                buildingType,
-//                null,   // construnction 무조건 넣어야해서 일단..null이라고 정해두고 뒤에 시공 종류 저장할 때 채워지도록
-//                request.getTotalPrice(),
-//                request.getFloor()
-//        );
-//
-//        Review savedReview = reviewRepository.save(review);
-//
-//        // 시공 종류 조회해서 저장(일대다 다대다 관계를 위해서)
-//        for (Long constructionTypeId : request.getConstructionService()) {
-//            ConstructionType constructionType = constructionTypeRepository.findById(constructionTypeId)
-//                    .orElseThrow(() -> new IllegalArgumentException("Invalid construction type ID: " + constructionTypeId));
-//
-//            ReviewConstructionType reviewConstructionType = new ReviewConstructionType();
-//            reviewConstructionType.setReview(savedReview);
-//            reviewConstructionType.setConstructionType(constructionType);
-//            reviewConstructionTypeRepository.save(reviewConstructionType);
-//        }
         return new ReviewRegisterResponse(review.getId());
     }
 

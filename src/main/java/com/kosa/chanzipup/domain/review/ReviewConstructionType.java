@@ -2,11 +2,14 @@ package com.kosa.chanzipup.domain.review;
 
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewConstructionType {
 
     @Id
@@ -22,6 +25,9 @@ public class ReviewConstructionType {
     private ConstructionType constructionType;
 
 
-
+    public ReviewConstructionType(Review review, ConstructionType constructionType) {
+        this.review = review;
+        this.constructionType = constructionType;
+    }
 
 }

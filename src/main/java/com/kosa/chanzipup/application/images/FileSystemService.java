@@ -53,7 +53,7 @@ public class FileSystemService implements ImageService {
                     .replace("\\", "/");
 
             log.info("savedFilePath = {}", savedFilePath);
-            return String.format("http://localhost:8080/images%s", savedFilePath);
+            return String.format("/images%s", savedFilePath);
         } catch (IOException e) {
             throw new RuntimeException("Failed to store file.", e);
         }

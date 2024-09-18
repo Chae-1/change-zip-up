@@ -68,11 +68,10 @@ public class Review {
 
     private int floor;
 
-
     @Builder
     private Review(String title, String content, LocalDateTime regDate, LocalDate workStartDate, LocalDate workEndDate,
                    int rating, Member member, Company company,
-                   BuildingType buildingType, ConstructionType constructionType, Long totalPrice, int floor
+                   BuildingType buildingType, List<ConstructionType> constructionTypes, Long totalPrice, int floor
     ) {
         this.title = title;
         this.content = content;
@@ -80,6 +79,9 @@ public class Review {
         this.workStartDate = workStartDate;
         this.workEndDate = workEndDate;
         this.rating = rating;
+        this.reviewConstructionTypes.addAll(constructionTypes.stream()
+                .map((type) -> new ReviewConstructionType(this, type))
+                .toList());
         this.member = member;
         this.company = company;
         this.buildingType = buildingType;
@@ -89,7 +91,8 @@ public class Review {
 
     public static Review ofNewReview(String title, LocalDateTime regDate, LocalDate workStartDate, LocalDate workEndDate,
                                      int rating, Member member, Company company, BuildingType buildingType,
-                                     ConstructionType constructionType, Long totalPrice, int floor) {
+                                     List<ConstructionType> constructionTypes, Long totalPrice, int floor) {
+
         return Review.builder()
                 .title(title)
                 .regDate(regDate)
@@ -99,7 +102,7 @@ public class Review {
                 .member(member)
                 .company(company)
                 .buildingType(buildingType)
-                .constructionType(constructionType)
+                .constructionTypes(constructionTypes)
                 .totalPrice(totalPrice)
                 .floor(floor)
                 .build();

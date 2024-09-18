@@ -20,4 +20,14 @@ public class ReviewImages {
     @JoinColumn(name = "review_id")
     private Review review;
 
+
+    public ReviewImages(String imageUrl, Review review) {
+        this.imageUrl = imageUrl;
+        this.review = review;
+    }
+
+
+    public static ReviewImages of(Review review, String uploadFullPath) {
+        return new ReviewImages(uploadFullPath, review);
+    }
 }

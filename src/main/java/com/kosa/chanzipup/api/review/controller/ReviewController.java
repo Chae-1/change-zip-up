@@ -1,8 +1,11 @@
 package com.kosa.chanzipup.api.review.controller;
 
+import com.kosa.chanzipup.api.review.controller.query.ReviewQueryService;
 import com.kosa.chanzipup.api.review.controller.request.ReviewRegisterRequest;
+import com.kosa.chanzipup.api.review.controller.response.ReviewDetail;
 import com.kosa.chanzipup.api.review.controller.response.ReviewListResponse;
 import com.kosa.chanzipup.api.review.controller.response.ReviewRegisterResponse;
+import com.kosa.chanzipup.api.review.service.ReviewImagesService;
 import com.kosa.chanzipup.api.review.service.ReviewService;
 import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
@@ -26,6 +29,11 @@ public class ReviewController {
 
     private final ImageService uploadService;
 
+    private final ReviewQueryService reviewQueryService;
+
+    private final ReviewImagesService reviewImagesService;
+
+
     // 후기 등록
     // 1. 기본 내용을 삽입한다.
     // 2. 이미지들을 등록하고
@@ -43,10 +51,16 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.registerReview(request, userDetails.getName()));
     }
 
+    @GetMapping("/create")
+    public ResponseEntity<?> getRegisterPage() {
+        return ResponseEntity.ok(reviewQueryService.reviewCreationPage());
+    }
+
     @PostMapping("/{reviewId}/images")
     public ResponseEntity<String> uploadReviewImages(@PathVariable("reviewId") Long reviewId, MultipartFile file) {
         String name = file.getName();
-        String uploadFullPath = uploadService.store("reviews", file);
+        String uploadEndPoint = uploadService.store("reviews", file);
+        String uploadFullPath = reviewImagesService.addReviewImage(reviewId, uploadEndPoint);
         log.info("name = {}, uploadFullPath = {}", name, uploadFullPath);
         return ResponseEntity.ok(uploadFullPath);
     }
@@ -65,8 +79,9 @@ public class ReviewController {
     }
 
     @GetMapping("/{reviewId}")
-    public String review(@PathVariable("reviewId") Long reviewId) {
-        return null;
+    public ResponseEntity<ReviewDetail> review(@PathVariable("reviewId") Long reviewId,
+                                               @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        return ResponseEntity.ok(reviewQueryService.getUserDetail(reviewId, userDetails));
     }
 
 }
