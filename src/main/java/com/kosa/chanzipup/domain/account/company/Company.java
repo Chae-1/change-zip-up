@@ -92,4 +92,9 @@ public class Company extends Account {
     public String getNickName() {
         return companyName;
     }
+
+    @Override
+    public String getName() {
+        return owner;
+    }
 }

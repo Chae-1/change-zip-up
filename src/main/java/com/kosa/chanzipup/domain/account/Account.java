@@ -49,6 +49,8 @@ public abstract class Account extends BaseEntity {
 
     public abstract String getNickName();
 
+    public abstract String getName();
+
     public void active() {
         this.isVerified = true;
     }

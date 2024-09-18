@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -44,6 +45,9 @@ public class Portfolio {
     @JoinColumn(name = "building_type_id")
     private BuildingType buildingType;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "portfolio", fetch = FetchType.LAZY)
+    private List<PortfolioConstructionType> constructionTypes = new ArrayList<>();
+
     @Builder
     private Portfolio(String title, String content, int projectArea, int projectBudget,
                       String projectLocation, LocalDate startDate, LocalDate endDate,
@@ -75,6 +79,10 @@ public class Portfolio {
                 .account(account)
                 .buildingType(buildingType)
                 .build();
+    }
+
+    public void addConstructionType(PortfolioConstructionType constructionType) {
+        constructionTypes.add(constructionType);
     }
 
 }

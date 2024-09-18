@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -17,9 +18,11 @@ public class EstimateResult {
 
     private Long companyId;
 
+    private Long estimateRequestId;
+
     private String username;
 
-    private LocalDate requestDate;
+    private LocalDateTime requestDate;
 
     private List<String> constructionTypes;
 
@@ -43,32 +46,33 @@ public class EstimateResult {
 
 
     @Builder
-    public EstimateResult(Long companyId, String username, LocalDate requestDate,
-                          List<String> constructionTypes,
-                          String schedule, String budget, String constructionAddress, int floor,
-                          String buildingType) {
+    public EstimateResult(Long companyId, Long estimateRequestId, String username, LocalDateTime requestDate,
+                          String buildingType, List<String> constructionTypes,
+                          String schedule, String budget, String constructionAddress, int floor) {
         this.companyId = companyId;
+        this.estimateRequestId = estimateRequestId;
         this.username = username;
         this.requestDate = requestDate;
+        this.buildingType = buildingType;
         this.constructionTypes = constructionTypes;
         this.schedule = schedule;
         this.budget = budget;
         this.constructionAddress = constructionAddress;
         this.floor = floor;
-        this.buildingType = buildingType;
     }
 
     public static EstimateResult of(Company company, EstimateRequest request, Estimate estimate) {
         return EstimateResult.builder()
-                .companyId(company.getId())
+                .companyId(company != null ? company.getId() : null) // 회사가 없는 경우 null 처리
+                .estimateRequestId(request.getId())
                 .username(request.getMember().getNickName())
                 .requestDate(request.getRegDate())
+                .buildingType(request.getBuildingType().getName())
                 .constructionTypes(request.getConstructionTypeNames())
                 .schedule(request.getSchedule())
                 .budget(request.getBudget())
                 .constructionAddress(request.getFullAddress())
                 .floor(request.getFloor())
-                .buildingType(request.getBuildingType().getName())
                 .build();  // 여기서부터 수정 필요
     }
 

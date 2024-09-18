@@ -22,3 +22,7 @@ target:
 
 file:
   upload-dir: src/main/resources/static/images
+
+
+domain:
+  address: http://localhost:8080

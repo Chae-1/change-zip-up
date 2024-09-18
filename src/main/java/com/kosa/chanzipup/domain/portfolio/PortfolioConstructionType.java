@@ -2,10 +2,12 @@ package com.kosa.chanzipup.domain.portfolio;
 
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Setter
+@Getter
 public class PortfolioConstructionType {
 
     @Id
