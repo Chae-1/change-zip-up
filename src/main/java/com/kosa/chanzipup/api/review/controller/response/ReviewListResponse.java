@@ -1,9 +1,9 @@
 package com.kosa.chanzipup.api.review.controller.response;
 
-import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,9 +19,9 @@ public class ReviewListResponse {
 
     private LocalDateTime regDate;  // 게시일
 
-    private LocalDateTime workStartDateTime;
+    private LocalDate workStartDate;
 
-    private LocalDateTime workEndDateTime;
+    private LocalDate workEndDate;
 
     private double rating;  // 별점
 

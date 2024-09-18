@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -79,10 +80,38 @@ public class ReviewService {
         return new ReviewRegisterResponse(review.getId());
     }
 
+    // 이전에 올렸던 코드인데 시공시작일과 종료일 필드타입이 바껴서 그에 맞춰 수정했습니다
     // 전체 리뷰 목록 조회
     public List<ReviewListResponse> getAllReviews() {
+        // 사진 조회
+        List<Review> reviews = reviewRepository.findAllWithAll();
 
-        return null;
+        List<ReviewListResponse> responses = new ArrayList<>();
+        for (Review review : reviews) {
+            List<ReviewImages> reviewImages = review.getReviewImages();
+            List<ReviewImagesForReviewResponse> imageList = reviewImages.stream()
+                    .map(ReviewImagesForReviewResponse::new)
+                    .toList();
+
+            responses.add(new ReviewListResponse(
+                            review.getId(),
+                            review.getTitle(),
+                            review.getContent(),
+                            review.getRegDate(),
+                            review.getWorkStartDate(),
+                            review.getWorkEndDate(),
+                            review.getRating(),
+                            new MemberForReviewResponse(review.getMember()),
+                            new CompanyForReviewResponse(review.getCompany()),
+                            imageList,
+                            new BuildingTypeForReivewResponse(review.getBuildingType()),
+                            new ConstructionTypeForReivewResponse(review.getReviewConstructionTypes()),
+                            review.getTotalPrice(),
+                            review.getFloor()
+                    )
+            );
+        }
+        return responses;
     }
 
     @Transactional
