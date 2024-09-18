@@ -13,12 +13,15 @@ import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import com.kosa.chanzipup.domain.membership.MembershipName;
 import com.kosa.chanzipup.domain.membership.MembershipType;
 import com.kosa.chanzipup.domain.membership.MembershipTypeRepository;
+import com.kosa.chanzipup.domain.review.Review;
+import com.kosa.chanzipup.domain.review.ReviewRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -30,7 +33,7 @@ public class ApplicationSetUp {
     private final MemberRepository memberRepository;
     private final PasswordEncoder encoder;
     private final BuildingTypeRepository buildingTypeRepository;
-
+    private final ReviewRepository reviewRepository;
 
 //    @PostConstruct
     public void init() {
@@ -75,5 +78,17 @@ public class ApplicationSetUp {
            buildingType1, buildingType2, buildingType3, buildingType4, buildingType5
         ));
 
+        // 리뷰 임의 데이터 두개 넣었어요. content는 비워뒀어요.
+        Review review1 = Review.ofNewReview(
+                "리뷰 제목 1", LocalDateTime.now(), LocalDate.of(2023, 1, 1), LocalDate.of(2023, 2, 1),
+                5, member1, company, buildingType1, null, 1000000L, 10
+        );
+
+        Review review2 = Review.ofNewReview(
+                "리뷰 제목 2", LocalDateTime.now(), LocalDate.of(2023, 3, 1), LocalDate.of(2023, 4, 1),
+                4, member2, company2, buildingType2, null, 1500000L, 15
+        );
+
+        reviewRepository.saveAll(List.of(review1, review2));
     }
 }
