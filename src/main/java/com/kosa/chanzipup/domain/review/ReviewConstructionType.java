@@ -1,11 +1,10 @@
 package com.kosa.chanzipup.domain.review;
 
-import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
@@ -24,10 +23,14 @@ public class ReviewConstructionType {
     @JoinColumn(name = "construction_type_id")
     private ConstructionType constructionType;
 
+    // 다른 기능에서 필드 초기화 및 생성해서 이를 따라함
 
     public ReviewConstructionType(Review review, ConstructionType constructionType) {
         this.review = review;
         this.constructionType = constructionType;
     }
 
+    public String getTypeName() {
+        return constructionType.getName();
+    }
 }

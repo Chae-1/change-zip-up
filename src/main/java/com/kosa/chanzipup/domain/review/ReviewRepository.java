@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("select r from Review r")
-    @EntityGraph(attributePaths = {"estimate", "member", "company"})
+    @EntityGraph(attributePaths = {"member", "company"}) // estimate 주석처리되어 있어서 전체 목록 조회하는데 문제가 생겨서 일단 estimate를 뺐어요
     List<Review> findAllWithAll();
 
     @Query("select r from Review r join fetch r.member m where r.id = :reviewId")

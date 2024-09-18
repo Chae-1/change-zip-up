@@ -4,6 +4,8 @@ import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -25,7 +27,7 @@ public class EstimateRequest {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDate regDate;
+    private LocalDateTime regDate;
 
     @Column(unique = true)
     private String identification;
@@ -62,7 +64,7 @@ public class EstimateRequest {
     @Builder
     public EstimateRequest(String identification, String schedule, String budget,
                     String address, String detailedAddress, LocalDate measureDate, int floor,
-                    BuildingType buildingType, Member member, LocalDate regDate) {
+                    BuildingType buildingType, Member member, LocalDateTime regDate) {
         this.identification = identification;
         this.schedule = schedule;
         this.budget = budget;
