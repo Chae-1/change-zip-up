@@ -1,5 +1,8 @@
 package com.kosa.chanzipup.api.review.service;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
 import com.kosa.chanzipup.api.review.controller.request.ReviewRegisterRequest;
 import com.kosa.chanzipup.api.review.controller.response.*;
 import com.kosa.chanzipup.domain.account.company.Company;
@@ -12,6 +15,8 @@ import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import com.kosa.chanzipup.domain.review.*;
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -61,36 +66,56 @@ public class ReviewService {
 
     // 이전에 올렸던 코드인데 시공시작일과 종료일 필드타입이 바껴서 그에 맞춰 수정했습니다
     // 전체 리뷰 목록 조회
-    public List<ReviewListResponse> getAllReviews() {
-        // 사진 조회
+    public List<ReviewResponse> getAllReviews() {
+//        List<Review> reviews = reviewRepository.findAllWithAll();
+//
+//        List<ReviewListResponse> responses = new ArrayList<>();
+//        for (Review review : reviews) {
+//            List<ReviewImages> reviewImages = review.getReviewImages();
+//            List<ReviewImagesForReviewResponse> imageList = reviewImages.stream()
+//                    .map(ReviewImagesForReviewResponse::new)
+//                    .toList();
+//
+//            responses.add(new ReviewListResponse(
+//                            review.getId(),
+//                            review.getTitle(),
+//                            review.getContent(),
+//                            review.getRegDate(),
+//                            review.getWorkStartDate(),
+//                            review.getWorkEndDate(),
+//                            review.getRating(),
+//                            new MemberForReviewResponse(review.getMember()),
+//                            new CompanyForReviewResponse(review.getCompany()),
+//                            imageList,
+//                            new BuildingTypeForReivewResponse(review.getBuildingType()),
+//                            new ConstructionTypeForReivewResponse(review.getReviewConstructionTypes()),
+//                            review.getTotalPrice(),
+//                            review.getFloor()
+//                    )
+//            );
+//        }
+//
         List<Review> reviews = reviewRepository.findAllWithAll();
 
-        List<ReviewListResponse> responses = new ArrayList<>();
-        for (Review review : reviews) {
-            List<ReviewImages> reviewImages = review.getReviewImages();
-            List<ReviewImagesForReviewResponse> imageList = reviewImages.stream()
-                    .map(ReviewImagesForReviewResponse::new)
-                    .toList();
+        Map<Long, List<ReviewImages>> reviewImageMap = getReviewImageMap(reviews);
 
-            responses.add(new ReviewListResponse(
-                            review.getId(),
-                            review.getTitle(),
-                            review.getContent(),
-                            review.getRegDate(),
-                            review.getWorkStartDate(),
-                            review.getWorkEndDate(),
-                            review.getRating(),
-                            new MemberForReviewResponse(review.getMember()),
-                            new CompanyForReviewResponse(review.getCompany()),
-                            imageList,
-                            new BuildingTypeForReivewResponse(review.getBuildingType()),
-                            new ConstructionTypeForReivewResponse(review.getReviewConstructionTypes()),
-                            review.getTotalPrice(),
-                            review.getFloor()
-                    )
-            );
-        }
-        return responses;
+        List<ReviewResponse> reviewResponses = reviews
+                .stream()
+                .map((review) -> new ReviewResponse(review, review.getCompany(), review.getMember(), reviewImageMap.get(review.getId())))
+                .toList();
+
+        return reviewResponses;
+    }
+
+    private Map<Long, List<ReviewImages>> getReviewImageMap(List<Review> reviews) {
+        List<Long> reviewIds = reviews.stream()
+                .map(Review::getId)
+                .toList();
+
+        List<ReviewImages> reviewImages = reviewImagesRepository.findAllByReviewIds(reviewIds);
+
+        return reviewImages.stream()
+                .collect(groupingBy((reviewImage) -> reviewImage.getReview().getId(), toList()));
     }
 
     @Transactional

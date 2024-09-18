@@ -5,6 +5,7 @@ import com.kosa.chanzipup.api.review.controller.request.ReviewRegisterRequest;
 import com.kosa.chanzipup.api.review.controller.response.ReviewDetail;
 import com.kosa.chanzipup.api.review.controller.response.ReviewListResponse;
 import com.kosa.chanzipup.api.review.controller.response.ReviewRegisterResponse;
+import com.kosa.chanzipup.api.review.controller.response.ReviewResponse;
 import com.kosa.chanzipup.api.review.service.ReviewImagesService;
 import com.kosa.chanzipup.api.review.service.ReviewService;
 import com.kosa.chanzipup.application.images.ImageService;
@@ -72,9 +73,9 @@ public class ReviewController {
         return ResponseEntity.ok(true);
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<ReviewListResponse>> getAllCompany() {
-        List<ReviewListResponse> reviews = reviewService.getAllReviews();
+    @GetMapping
+    public ResponseEntity<List<ReviewResponse>> getAllCompany() {
+        List<ReviewResponse> reviews = reviewService.getAllReviews();
         return ResponseEntity.ok(reviews);
     }
 
