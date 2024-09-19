@@ -14,15 +14,15 @@ import com.kosa.chanzipup.domain.buildingtype.BuildingTypeRepository;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import com.kosa.chanzipup.domain.review.*;
+
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -99,23 +99,33 @@ public class ReviewService {
 
         Map<Long, List<ReviewImages>> reviewImageMap = getReviewImageMap(reviews);
 
+        Map<Long, List<ReviewConstructionType>> reviewConstructionTypes = getConstructionTypes(reviews);
+
+
         List<ReviewResponse> reviewResponses = reviews
                 .stream()
-                .map((review) -> new ReviewResponse(review, review.getCompany(), review.getMember(), reviewImageMap.get(review.getId())))
+                .map((review) -> new ReviewResponse(review, review.getCompany(), review.getMember(),
+                        reviewImageMap.get(review.getId()), reviewConstructionTypes.get(review.getId())))
                 .toList();
 
         return reviewResponses;
     }
 
+
     private Map<Long, List<ReviewImages>> getReviewImageMap(List<Review> reviews) {
-        List<Long> reviewIds = reviews.stream()
-                .map(Review::getId)
-                .toList();
+        List<Long> reviewIds = getReviewIds(reviews);
 
         List<ReviewImages> reviewImages = reviewImagesRepository.findAllByReviewIds(reviewIds);
 
         return reviewImages.stream()
                 .collect(groupingBy((reviewImage) -> reviewImage.getReview().getId(), toList()));
+    }
+
+    private List<Long> getReviewIds(List<Review> reviews) {
+        List<Long> reviewIds = reviews.stream()
+                .map(Review::getId)
+                .toList();
+        return reviewIds;
     }
 
     @Transactional
@@ -124,5 +134,14 @@ public class ReviewService {
                 .orElseThrow(() -> new IllegalArgumentException());
 
         review.updateContent(content);
+    }
+
+    private Map<Long, List<ReviewConstructionType>> getConstructionTypes(List<Review> reviews) {
+        List<Long> reviewIds = getReviewIds(reviews);
+
+        List<ReviewConstructionType> reviewConstructionTypes = reviewConstructionTypeRepository.findAllByReviewIds(reviewIds);
+
+        return reviewConstructionTypes.stream()
+                .collect(groupingBy((type) -> type.getReview().getId(), toList()));
     }
 }

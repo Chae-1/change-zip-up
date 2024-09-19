@@ -78,6 +78,7 @@ public class EstimateRequestService {
         LocalDate currentDate = LocalDate.now();
         // 20241011_99999
         String currentYearMonthDay = currentDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
         // 동시성 문제 발생
         // 락 사용
         long count = estimateRequestRepository.count(); // 현재까지 저장된 견적의 수를 조회
@@ -86,23 +87,4 @@ public class EstimateRequestService {
         return currentYearMonthDay + nextId;
     }
 
-//    public List<EstimateResponse> findAll(String email) {
-//        Member findMember = memberRepository.findByEmail(email)
-//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-//
-//        // 1번 query result == 2000 N개를 조회하는 쿼리가 한번 나간다.
-//        List<Estimate> estimates = estimateRepository.findAllWithMember(); // 2000개 조회
-//        List<EstimateResponse> responses = new ArrayList<>();
-//        for (Estimate estimate : estimates) {
-//            Member member = estimate.getMember(); //
-//            // 로그인한 유저와 작성한 유저가 같다.
-//            if (member.getId() == findMember.getId()) {
-//                responses.add(EstimateResponse.write("content", true));
-//                continue;
-//            }
-//            // 멤버 정보를 최소한으로 유지하고 있을 경우 사용해하는 방식
-//            responses.add(EstimateResponse.noWrite("content", false));
-//        }
-//        return responses;
-//    }
 }

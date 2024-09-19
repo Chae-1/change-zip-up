@@ -30,9 +30,4 @@ public class EstimateRequestController {
         return ResponseEntity.ok("Estimate has been created.");
     }
 
-//    @GetMapping
-//    public void test(@AuthenticationPrincipal UnifiedUserDetails userDetails) {
-//        String email = userDetails.getUsername();
-//        estimateService.findAll(email);
-//    }
 }

@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -73,6 +74,8 @@ public class Review {
                    int rating, Member member, Company company,
                    BuildingType buildingType, List<ConstructionType> constructionTypes, Long totalPrice, int floor
     ) {
+        constructionTypes = (constructionTypes == null) ? Collections.emptyList() : constructionTypes;
+
         this.title = title;
         this.content = content;
         this.regDate = regDate;
