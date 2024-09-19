@@ -60,7 +60,7 @@ public class EstimateController {
         return ApiResponse.ok(null);
     }
 
-    @PostMapping("/approval/{estimateRequestId}")
+    @PostMapping("/{estimateRequestId}/approval")
     public ApiResponse<Void> approvalEstimate(@PathVariable Long estimateRequestId,
                                             @AuthenticationPrincipal UnifiedUserDetails userDetails) {
         // 로그인한 업체 이메일을 가져옴
@@ -70,6 +70,5 @@ public class EstimateController {
         estimateService.approvalEstimateByRequestIdAndCompanyEmail(estimateRequestId, companyEmail);
         return ApiResponse.ok(null);
     }
-
 
 }
