@@ -1,18 +1,7 @@
 package com.kosa.chanzipup.api.estimate.service.query;
 
-import com.kosa.chanzipup.api.estimate.controller.response.EstimateConstructionTypeResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
-import com.kosa.chanzipup.domain.buildingtype.QBuildingType;
-import com.kosa.chanzipup.domain.estimate.EstimateConstructionType;
-import com.kosa.chanzipup.domain.estimate.EstimateRequest;
-import com.kosa.chanzipup.domain.estimate.QEstimateConstructionType;
-import com.kosa.chanzipup.domain.estimate.QEstimateRequest;
-import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.ConstructorExpression;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringExpression;
-import com.querydsl.jpa.impl.JPAQuery;
+import com.kosa.chanzipup.domain.estimate.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +21,7 @@ import static com.kosa.chanzipup.domain.estimate.QEstimateRequest.estimateReques
 public class EstimateRequestQueryService {
     private final JPAQueryFactory factory;
 
-    public List<EstimateRequestResponse> estimateRequestResponses() {
+    public List<EstimateRequestResponse> getEstimateRequestResponsesOnWaiting() {
 
         List<EstimateRequest> fetch = factory.select(estimateRequest)
                 .from(estimateRequest)
@@ -40,10 +29,12 @@ public class EstimateRequestQueryService {
                 .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin()
                 .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin()
                 .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
+                .where(estimateRequest.status.eq(EstimateRequestStatus.WAITING))
                 .fetch();
 
         return fetch.stream()
                 .map(estimateRequest -> new EstimateRequestResponse(estimateRequest))
                 .toList();
     }
+
 }
