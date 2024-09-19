@@ -31,7 +31,6 @@ public class ReviewResponse {
     private String companyName;
 
 
-
     // 멤버 정보
     private String memberNickName;
     private List<ReviewImageResponse> reviewImageResponses;

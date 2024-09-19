@@ -61,6 +61,10 @@ public class EstimateRequest {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Enumerated(EnumType.STRING)
+    private EstimateRequestStatus status;
+
+
     @Builder
     public EstimateRequest(String identification, String schedule, String budget,
                     String address, String detailedAddress, LocalDate measureDate, int floor,

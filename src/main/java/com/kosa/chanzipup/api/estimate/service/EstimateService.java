@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional(readOnly = true)
 public class EstimateService {
+
     private final EstimateRequestRepository estimateRequestRepository;
     private final CompanyRepository companyRepository;
     private final MemberRepository memberRepository;
@@ -47,7 +48,7 @@ public class EstimateService {
         }
 
         // 5. 견적 요청을 회사에 전송
-        Estimate estimate = Estimate.waiting(company, estimateRequest);
+        Estimate estimate = Estimate.send(company, estimateRequest);
         estimateRepository.save(estimate);
 
         return EstimateResult.of(company, estimateRequest, estimate);
@@ -79,18 +80,35 @@ public class EstimateService {
                 .orElseThrow(() -> new IllegalArgumentException("최근 견적 요청 정보 없음."));
     }
 
+
     @Transactional
-    public void cancelEstimateByRequestIdAndCompanyEmail(Long estimateRequestId, String companyEmail) {
-        // companyEmail을 통해 회사 정보 조회
+    public void rejectEstimateByCompany(Long estimateRequestId, String companyEmail) {
         Company company = companyRepository.findByEmail(companyEmail)
-                .orElseThrow(() -> new IllegalArgumentException("해당 업체 정보 없음: " + companyEmail));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회사 정보입니다."));
+
+        Estimate estimate = estimateRepository.findByEstimateRequestIdAndCompanyId(estimateRequestId, company.getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 요청에 대한 견적이 존재하지 않거나 권한이 없습니다: " + estimateRequestId));
+
+
+
+
+    }
+
+
+
+    @Transactional
+    public void rejectEstimateByMember(Long estimateRequestId, String memberEmail, Long companyId) {
+
+        // companyEmail을 통해 회사 정보 조회
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일 정보 없음: " + memberEmail));
 
         // estimateRequestId와 company 정보를 기반으로 Estimate 찾기
-        Estimate estimate = estimateRepository.findByEstimateRequestIdAndCompany(estimateRequestId, company)
+        Estimate estimate = estimateRepository.findByEstimateRequestIdAndCompanyId(estimateRequestId, companyId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 요청에 대한 견적이 존재하지 않거나 권한이 없습니다: " + estimateRequestId));
 
         // 상태를 CANCELLATION로 업데이트
-        estimate.updateEstimateStatus(EstimateStatus.CANCELLATION);
+        estimate.updateEstimateStatus(EstimateStatus.REJECTED);
 
         // 업데이트된 견적을 저장
         estimateRepository.save(estimate);
@@ -107,7 +125,7 @@ public class EstimateService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 요청에 대한 견적이 존재하지 않거나 권한이 없습니다: " + estimateRequestId));
 
         // 상태를 ONGOING로 업데이트
-        estimate.updateEstimateStatus(EstimateStatus.ONGOING);
+        estimate.updateEstimateStatus(EstimateStatus.ACCEPTED);
 
         // 업데이트된 견적을 저장
         estimateRepository.save(estimate);

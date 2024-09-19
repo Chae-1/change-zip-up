@@ -31,12 +31,14 @@ public class ReviewDetail {
 
     private List<ReviewImageResponse> reviewImageResponses;
     private List<ReviewConstructionTypeResponse> reviewConstructionTypeResponses;
+    private String buildingTypeName;
 
     public ReviewDetail(Long reviewId, String content, String title, LocalDateTime regDate, LocalDate workStartDate,
                         LocalDate workEndDate, int rating, Long totalPrice, int floor, Long companyId,
                         String companyName,
                         String memberNickName, Long memberId, boolean isUpdatable, List<ReviewImageResponse> reviewImageResponses,
-                        List<ReviewConstructionTypeResponse> reviewConstructionTypeResponses) {
+                        List<ReviewConstructionTypeResponse> reviewConstructionTypeResponses,
+                        String buildingTypeName) {
         this.reviewId = reviewId;
         this.content = content;
         this.title = title;
@@ -53,6 +55,7 @@ public class ReviewDetail {
         this.isUpdatable = isUpdatable;
         this.reviewImageResponses = reviewImageResponses;
         this.reviewConstructionTypeResponses = reviewConstructionTypeResponses;
+        this.buildingTypeName = buildingTypeName;
     }
 
 

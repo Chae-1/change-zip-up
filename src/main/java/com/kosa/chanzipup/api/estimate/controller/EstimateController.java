@@ -4,6 +4,7 @@ import com.kosa.chanzipup.api.ApiResponse;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRegisterRequest;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateResult;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
+import com.kosa.chanzipup.domain.account.company.CompanyId;
 import com.kosa.chanzipup.domain.estimate.EstimateRequest;
 import com.kosa.chanzipup.api.estimate.service.EstimateService;
 import lombok.RequiredArgsConstructor;
@@ -39,22 +40,23 @@ public class EstimateController {
 
     @GetMapping("/list")
     public ApiResponse<List<EstimateResult>> getEstimateList(@AuthenticationPrincipal UnifiedUserDetails userDetails) {
-        // 견적 요청을 받은 업체
+        // 견적 요청을 받은 업체.
         String companyEmail = userDetails.getUsername();
 
-        // 해당 업체에게 온 요청만 조회한다
+        // 해당 업체에게 온 요청만 조회한다.
         List<EstimateResult> estimateList = estimateService.getWaitingEstimatesByCompanyEmail(companyEmail);
         return ApiResponse.ok(estimateList);
     }
 
-    @PostMapping("/cancel/{estimateRequestId}")
+    @PostMapping("/{estimateRequestId}/cancel")
     public ApiResponse<Void> cancelEstimate(@PathVariable Long estimateRequestId,
-                                            @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+                                            @AuthenticationPrincipal UnifiedUserDetails userDetails,
+                                            @RequestBody CompanyId companyId) {
         // 로그인한 업체 이메일을 가져옴
-        String companyEmail = userDetails.getUsername();
+        String memberEmail = userDetails.getUsername();
 
         // 서비스 호출 시 estimateRequestId와 companyEmail을 넘김
-        estimateService.cancelEstimateByRequestIdAndCompanyEmail(estimateRequestId, companyEmail);
+        estimateService.rejectEstimateByMember(estimateRequestId, memberEmail, companyId.getCompanyId());
         return ApiResponse.ok(null);
     }
 

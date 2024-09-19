@@ -44,10 +44,20 @@ public class Estimate {
         return new Estimate(totalPrice, estimateStatus, company, estimateRequest);
     }
 
-    public static Estimate waiting(Company company, EstimateRequest request) {
+    public static Estimate send(Company company, EstimateRequest request) {
         return Estimate.builder()
                 .company(company)
-                .estimateStatus(EstimateStatus.WAITING)
+                .estimateStatus(EstimateStatus.SENT)
+                .totalPrice(0L)
+                .estimateRequest(request)
+                .build();
+    }
+
+
+    public static Estimate received(Company company, EstimateRequest request) {
+        return Estimate.builder()
+                .company(company)
+                .estimateStatus(EstimateStatus.SENT)
                 .totalPrice(0L)
                 .estimateRequest(request)
                 .build();
