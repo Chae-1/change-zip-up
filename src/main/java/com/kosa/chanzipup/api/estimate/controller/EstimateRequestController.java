@@ -44,7 +44,7 @@ public class EstimateRequestController {
         return ResponseEntity.ok(estimateRequestResponses);
     }
 
-    @GetMapping
+    @GetMapping("/received")
     @PreAuthorize("ROLE_COMPANY")
     public ResponseEntity<List<EstimateRequestResponse>> getAllReceivedEstimate(@AuthenticationPrincipal UnifiedUserDetails userDetails){
         List<EstimateRequestResponse> estimateRequestResponses = queryService.getAllReceivedEstimate(userDetails.getUsername());
