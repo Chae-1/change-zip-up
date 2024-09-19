@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.api.company.service;
 
 import com.kosa.chanzipup.api.company.controller.request.CompanyRegisterRequest;
+import com.kosa.chanzipup.api.company.controller.request.CompanySearchCondition;
 import com.kosa.chanzipup.api.company.controller.response.CompanyDetailResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyListResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterResponse;
@@ -59,27 +60,6 @@ public class CompanyService {
     }
 
     // 업체 리스트 조회
-    public List<CompanyListResponse> getAllCompanies() {
-        List<Company> companies = companyRepository.findAll();
-        List<CompanyListResponse> responses = new ArrayList<>();
-
-        for (Company company : companies) {
-            List<String> services = new ArrayList<>();
-            for (CompanyConstructionType constructionType : company.getConstructionTypes()) {
-                services.add(constructionType.getConstructionType().getName());
-            }
-            responses.add(new CompanyListResponse(
-                    company.getId(),
-                    company.getCompanyName(),
-                    company.getCompanyDesc(),
-                    company.getCompanyLogoUrl(),
-                    company.getRating(),
-                    services
-            ));
-        }
-        return responses;
-
-    }
 
     // 업체 상세 조회
     public CompanyDetailResponse getCompanyById(Long companyId) {
