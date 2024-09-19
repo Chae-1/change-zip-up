@@ -12,6 +12,7 @@ import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import com.kosa.chanzipup.domain.estimate.EstimateConstructionType;
 import com.kosa.chanzipup.domain.estimate.EstimateRequest;
 import com.kosa.chanzipup.domain.estimate.EstimateRequestRepository;
+import com.kosa.chanzipup.domain.estimate.EstimateRequestStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,7 @@ public class EstimateRequestService {
         EstimateRequest estimate = EstimateRequest.builder()
                 .identification(identification)
                 .schedule(estimateRequestDTO.getSchedule())
+                .status(EstimateRequestStatus.WAITING)
                 .budget(estimateRequestDTO.getBudget())
                 .address(estimateRequestDTO.getAddress())
                 .detailedAddress(estimateRequestDTO.getDetailedAddress())
