@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.api.estimate.controller.response;
 
 import com.kosa.chanzipup.domain.estimate.EstimateConstructionType;
+import com.kosa.chanzipup.domain.estimate.EstimateRequest;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class EstimateRequestResponse {
 
     private LocalDateTime regDate;
 
-    private List<EstimateConstructionTypeResponse> constructionTypes;
+    private List<String> constructionTypes;
 
 
     public EstimateRequestResponse(Long requestId, String fullAddress, Integer floor, String budget, String schedule, String nickName
@@ -38,6 +39,20 @@ public class EstimateRequestResponse {
         this.nickName = nickName;
         this.buildingTypeName = buildingTypeName;
         this.regDate = regDate;
-        this.constructionTypes = constructionTypes;
+    }
+
+    public EstimateRequestResponse(EstimateRequest estimateRequest) {
+        this.requestId = estimateRequest.getId();
+        this.fullAddress = estimateRequest.getFullAddress();
+        this.floor = estimateRequest.getFloor();
+        this.budget = estimateRequest.getBudget();
+        this.schedule = estimateRequest.getSchedule();
+        this.nickName = estimateRequest.getMember().getNickName();
+        this.buildingTypeName = estimateRequest.getBuildingType().getName();
+        this.regDate = estimateRequest.getRegDate(); ;
+        this.constructionTypes = estimateRequest.getConstructionTypes()
+                .stream()
+                .map(type -> type.getTypeName())
+                .toList();
     }
 }

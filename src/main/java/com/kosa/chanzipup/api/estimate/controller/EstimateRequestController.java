@@ -44,9 +44,4 @@ public class EstimateRequestController {
         List<EstimateRequestResponse> estimateRequestResponses = queryService.estimateRequestResponses();
         return ResponseEntity.ok(estimateRequestResponses);
     }
-
-
-
-
-
 }

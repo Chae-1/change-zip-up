@@ -12,6 +12,7 @@ import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +25,6 @@ import static com.kosa.chanzipup.domain.buildingtype.QBuildingType.buildingType;
 import static com.kosa.chanzipup.domain.constructiontype.QConstructionType.constructionType;
 import static com.kosa.chanzipup.domain.estimate.QEstimateConstructionType.estimateConstructionType;
 import static com.kosa.chanzipup.domain.estimate.QEstimateRequest.estimateRequest;
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.types.Projections.constructor;
-import static com.querydsl.core.types.Projections.list;
 
 @Service
 @RequiredArgsConstructor
@@ -34,24 +32,18 @@ import static com.querydsl.core.types.Projections.list;
 public class EstimateRequestQueryService {
     private final JPAQueryFactory factory;
 
-
     public List<EstimateRequestResponse> estimateRequestResponses() {
 
-        StringExpression fullAddress = estimateRequest
-                .address.concat(" ")
-                .concat(estimateRequest.detailedAddress).as("fullAddress");
-
-        return factory.select(estimateRequest)
+        List<EstimateRequest> fetch = factory.select(estimateRequest)
                 .from(estimateRequest)
-                .leftJoin(estimateRequest.member, member)
-                .leftJoin(estimateRequest.buildingType, buildingType)
-                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType)
-                .transform(groupBy(estimateRequest.id).list(constructor(EstimateRequestResponse.class,
-                        estimateRequest.id.as("requestId"), fullAddress, estimateRequest.floor,
-                        estimateRequest.budget, estimateRequest.schedule, member.nickName,
-                        estimateRequest.buildingType.name.as("buildingTypeName"),
-                        estimateRequest.regDate,
-                        list(constructor(EstimateConstructionTypeResponse.class, estimateConstructionType.constructionType.name)))));
-    }
+                .leftJoin(estimateRequest.member, member).fetchJoin()
+                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin()
+                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin()
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
+                .fetch();
 
+        return fetch.stream()
+                .map(estimateRequest -> new EstimateRequestResponse(estimateRequest))
+                .toList();
+    }
 }
