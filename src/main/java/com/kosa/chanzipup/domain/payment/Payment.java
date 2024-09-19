@@ -33,7 +33,7 @@ public class Payment extends BaseEntity {
     private PaymentStatus status;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
 
@@ -43,7 +43,7 @@ public class Payment extends BaseEntity {
     @Column(name = "complete_date")
     private LocalDateTime completeDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "membership_type_id")
     private MembershipType membershipType;
 

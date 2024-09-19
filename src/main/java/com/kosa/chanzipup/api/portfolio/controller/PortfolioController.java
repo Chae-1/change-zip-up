@@ -59,7 +59,6 @@ public class PortfolioController {
     public ResponseEntity<PortfolioDetailResponse> getPortfolioById(@PathVariable long id) {
         PortfolioDetailResponse portfolio = portfolioService.getPortfolioById(id);
         return ResponseEntity.ok(portfolio);
-
     }
 
 }

@@ -16,7 +16,8 @@ public class ImageController {
     private final ImageService imageService;
 
     @GetMapping("/images/{subPath}/{fileName}")
-    public ResponseEntity<Resource> getImage(@PathVariable("subPath") String subPath, @PathVariable("fileName") String fileName) {
+    public ResponseEntity<Resource> getImage(@PathVariable("subPath") String subPath,
+                                             @PathVariable("fileName") String fileName) {
         log.info("subPath = {}, filName = {}", subPath, fileName);
 
         return ResponseEntity.ok(imageService.loadAsResource(subPath, fileName));
