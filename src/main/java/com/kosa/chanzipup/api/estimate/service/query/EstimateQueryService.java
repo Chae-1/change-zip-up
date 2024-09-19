@@ -37,13 +37,13 @@ public class EstimateQueryService {
                 .fetch();
 
         return fetch.stream()
-                .map(estimateRequest -> new EstimateRequestResponse(estimateRequest))
+                .map(estimate -> new EstimateRequestResponse(estimate))
                 .toList();
     }
 
 
     public List<EstimateRequestResponse> getAllReceivedEstimate(String companyEmail) {
-        List<EstimateRequest> fetch = factory.select(estimateRequest)
+        List<Estimate> fetch = factory.select(estimate)
                 .from(estimate) // 1
                 .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin() // 1
                 .leftJoin(estimate.company, company).fetchJoin() // 1
@@ -57,7 +57,7 @@ public class EstimateQueryService {
                 .fetch();
 
         return fetch.stream()
-                .map(estimateRequest -> new EstimateRequestResponse(estimateRequest))
+                .map(estimate -> new EstimateRequestResponse(estimate))
                 .toList();
 
     }
