@@ -3,15 +3,15 @@ package com.kosa.chanzipup.api.estimate.service;
 
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRequestDTO;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
+import com.kosa.chanzipup.domain.account.company.Company;
+import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.buildingtype.BuildingTypeRepository;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
-import com.kosa.chanzipup.domain.estimate.EstimateConstructionType;
-import com.kosa.chanzipup.domain.estimate.EstimateRequest;
-import com.kosa.chanzipup.domain.estimate.EstimateRequestRepository;
+import com.kosa.chanzipup.domain.estimate.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class EstimateRequestService {
     private final MemberRepository memberRepository;
     private final BuildingTypeRepository buildingTypeRepository;
     private final ConstructionTypeRepository constructionTypeRepository;
+    private final CompanyRepository companyRepository;
 
     @Transactional
     public void createEstimate(EstimateRequestDTO estimateRequestDTO, String email) {
@@ -50,6 +52,7 @@ public class EstimateRequestService {
         EstimateRequest estimate = EstimateRequest.builder()
                 .identification(identification)
                 .schedule(estimateRequestDTO.getSchedule())
+                .status(EstimateRequestStatus.WAITING)
                 .budget(estimateRequestDTO.getBudget())
                 .address(estimateRequestDTO.getAddress())
                 .detailedAddress(estimateRequestDTO.getDetailedAddress())
@@ -90,4 +93,27 @@ public class EstimateRequestService {
         return currentYearMonthDay + nextId;
     }
 
+    @Transactional
+    public void writePrices(String email, Long estimateRequestId, Map<Long, Integer> constructionPrices) {
+
+        EstimateRequest request = estimateRequestRepository.findById(estimateRequestId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 요청 정보입니다."));
+
+        Company company = companyRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 기업 정보입니다."));
+
+        Estimate estimate = Estimate.send(company, request);
+//
+//        constructionPrices
+//                .entrySet()
+//                .stream()
+//                .map(entry -> {
+//                    new EstimatePrice(entry.getKey())
+//                })
+
+
+
+
+
+    }
 }

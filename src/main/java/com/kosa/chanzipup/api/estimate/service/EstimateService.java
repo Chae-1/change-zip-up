@@ -48,7 +48,8 @@ public class EstimateService {
         }
 
         // 5. 견적 요청을 회사에 전송
-        Estimate estimate = Estimate.send(company, estimateRequest);
+        // 고객이 보냈으니, 회사 입장에서 받은 것.
+        Estimate estimate = Estimate.received(company, estimateRequest);
         estimateRepository.save(estimate);
 
         return EstimateResult.of(company, estimateRequest, estimate);

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -67,8 +68,9 @@ public class EstimateRequest {
 
     @Builder
     public EstimateRequest(String identification, String schedule, String budget,
-                    String address, String detailedAddress, LocalDate measureDate, int floor,
-                    BuildingType buildingType, Member member, LocalDateTime regDate) {
+                           String address, String detailedAddress, LocalDate measureDate, int floor,
+                           BuildingType buildingType, Member member, LocalDateTime regDate,
+                           EstimateRequestStatus status) {
         this.identification = identification;
         this.schedule = schedule;
         this.budget = budget;
@@ -79,6 +81,7 @@ public class EstimateRequest {
         this.buildingType = buildingType;
         this.member = member;
         this.regDate = regDate;
+        this.status = status;
     }
 
     public void addConstructionType(EstimateConstructionType estimateConstructionType) {

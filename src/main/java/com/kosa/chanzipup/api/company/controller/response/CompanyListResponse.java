@@ -1,5 +1,8 @@
 package com.kosa.chanzipup.api.company.controller.response;
 
+import com.kosa.chanzipup.domain.account.company.Company;
+import com.kosa.chanzipup.domain.account.company.CompanyConstructionType;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,4 +22,16 @@ public class CompanyListResponse {
     private float rating;
 
     private List<String> services;
+
+    public CompanyListResponse(Company company) {
+        this.id = company.getId();
+        this.companyName = company.getCompanyName();
+        this.companyDesc = company.getCompanyDesc();
+        this.companyLogoUrl = company.getCompanyLogoUrl();
+        this.rating = company.getRating();
+        this.services = company.getConstructionTypes()
+                .stream()
+                .map(CompanyConstructionType::getName)
+                .toList();
+    }
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EstimatePrice {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,7 +15,6 @@ public class EstimatePrice {
     @ManyToOne
     @JoinColumn(name = "estimate_id")
     private Estimate estimate;
-
 
     @ManyToOne
     @JoinColumn(name = "ec_type_id")

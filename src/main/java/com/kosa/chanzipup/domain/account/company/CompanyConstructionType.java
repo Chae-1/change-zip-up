@@ -27,4 +27,8 @@ public class CompanyConstructionType {
         this.constructionType = constructionType;
         this.company = company;
     }
+
+    public String getName() {
+        return constructionType.getName();
+    }
 }

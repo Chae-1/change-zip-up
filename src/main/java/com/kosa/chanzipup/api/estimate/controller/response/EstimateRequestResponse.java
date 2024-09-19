@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.api.estimate.controller.response;
 
+import com.kosa.chanzipup.domain.estimate.Estimate;
 import com.kosa.chanzipup.domain.estimate.EstimateConstructionType;
 import com.kosa.chanzipup.domain.estimate.EstimateRequest;
 import lombok.Getter;
@@ -54,5 +55,9 @@ public class EstimateRequestResponse {
                 .stream()
                 .map(type -> type.getTypeName())
                 .toList();
+    }
+
+    public EstimateRequestResponse(Estimate estimate) {
+        this(estimate.getEstimateRequest());
     }
 }

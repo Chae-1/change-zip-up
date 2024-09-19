@@ -7,6 +7,7 @@ import lombok.Getter;
 
 @Getter
 public class ReviewDetail {
+
     // 후기 내용
     private Long reviewId;
     private String content;
@@ -39,6 +40,7 @@ public class ReviewDetail {
                         String memberNickName, Long memberId, boolean isUpdatable, List<ReviewImageResponse> reviewImageResponses,
                         List<ReviewConstructionTypeResponse> reviewConstructionTypeResponses,
                         String buildingTypeName) {
+
         this.reviewId = reviewId;
         this.content = content;
         this.title = title;
@@ -57,8 +59,5 @@ public class ReviewDetail {
         this.reviewConstructionTypeResponses = reviewConstructionTypeResponses;
         this.buildingTypeName = buildingTypeName;
     }
-
-
-
 
 }
