@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Table(name = "estimate")
@@ -31,6 +33,10 @@ public class Estimate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estimate_request_id", nullable = false)
     private EstimateRequest estimateRequest;
+
+
+    @OneToMany(mappedBy = "estimate", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EstimatePrice> estimatePrices;
 
     @Builder
     public Estimate(Long totalPrice, EstimateStatus estimateStatus, Company company, EstimateRequest estimateRequest) {
@@ -57,7 +63,7 @@ public class Estimate {
     public static Estimate received(Company company, EstimateRequest request) {
         return Estimate.builder()
                 .company(company)
-                .estimateStatus(EstimateStatus.SENT)
+                .estimateStatus(EstimateStatus.RECEIVED)
                 .totalPrice(0L)
                 .estimateRequest(request)
                 .build();

@@ -1,10 +1,11 @@
 package com.kosa.chanzipup.api.estimate.controller;
 
+import com.kosa.chanzipup.api.estimate.controller.request.EstimatePriceRequest;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRequestDTO;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateConstructionResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
 import com.kosa.chanzipup.api.estimate.service.EstimateRequestService;
-import com.kosa.chanzipup.api.estimate.service.query.EstimateRequestQueryService;
+import com.kosa.chanzipup.api.estimate.service.query.EstimateQueryService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ import java.util.List;
 public class EstimateRequestController {
 
     private final EstimateRequestService estimateRequestService;
-    private final EstimateRequestQueryService queryService;
+    private final EstimateQueryService queryService;
 
     @PostMapping
     public ResponseEntity<?> createEstimate(@RequestBody EstimateRequestDTO estimateRequestDTO,
@@ -36,7 +37,6 @@ public class EstimateRequestController {
         return ResponseEntity.ok("Estimate has been created.");
     }
 
-
     @GetMapping
     @PreAuthorize("ROLE_COMPANY")
     public ResponseEntity<List<EstimateRequestResponse>> getAllEstimateRequests(){
@@ -44,9 +44,31 @@ public class EstimateRequestController {
         return ResponseEntity.ok(estimateRequestResponses);
     }
 
+    @GetMapping
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<List<EstimateRequestResponse>> getAllReceivedEstimate(@AuthenticationPrincipal UnifiedUserDetails userDetails){
+        List<EstimateRequestResponse> estimateRequestResponses = queryService.getAllReceivedEstimate(userDetails.getUsername());
+        return ResponseEntity.ok(estimateRequestResponses);
+    }
+
+
     @GetMapping("/{estimateRequestId}/write")
     @PreAuthorize("ROLE_COMPANY")
     public ResponseEntity<List<EstimateConstructionResponse>> getEstimatePriceDetail(@PathVariable Long estimateRequestId) {
         return ResponseEntity.ok(queryService.getEstimatePriceDetail(estimateRequestId));
     }
+
+
+    @PostMapping("/{estimateRequestId}/write")
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<Void> writeEstimatePrices(@PathVariable Long estimateRequestId,
+                                                    @RequestBody EstimatePriceRequest request,
+                                                    @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+
+        String email = userDetails.getUsername();
+        estimateRequestService.writePrices(email, estimateRequestId, request.getConstructionPrices());
+        return ResponseEntity.ok(null);
+
+    }
+
 }
