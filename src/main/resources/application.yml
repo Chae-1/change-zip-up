@@ -16,3 +16,5 @@ file:
   upload-dir: src/main/resources/static/images
   location: c:\images
 
+domain:
+  address: http://localhost:8080
