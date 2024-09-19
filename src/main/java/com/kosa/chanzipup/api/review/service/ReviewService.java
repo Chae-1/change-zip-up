@@ -105,7 +105,7 @@ public class ReviewService {
         List<ReviewResponse> reviewResponses = reviews
                 .stream()
                 .map((review) -> new ReviewResponse(review, review.getCompany(), review.getMember(),
-                        reviewImageMap.get(review.getId()), reviewConstructionTypes.get(review.getId())))
+                        reviewImageMap.get(review.getId()), reviewConstructionTypes.get(review.getId()), review.getBuildingType()))
                 .toList();
 
         return reviewResponses;

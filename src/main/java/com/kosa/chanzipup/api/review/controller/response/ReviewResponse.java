@@ -2,6 +2,7 @@ package com.kosa.chanzipup.api.review.controller.response;
 
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.member.Member;
+import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.review.Review;
 import com.kosa.chanzipup.domain.review.ReviewConstructionType;
 import com.kosa.chanzipup.domain.review.ReviewImages;
@@ -36,10 +37,11 @@ public class ReviewResponse {
     private List<ReviewImageResponse> reviewImageResponses;
 
     private List<String> constructionTypes;
+    private String buildingType;
 
 
     public ReviewResponse(Review review, Company company, Member member,
-                          List<ReviewImages> images, List<ReviewConstructionType> reviewConstructionTypes) {
+                          List<ReviewImages> images, List<ReviewConstructionType> reviewConstructionTypes, BuildingType buildingType ) {
         this.id = review.getId();
         this.title = review.getTitle();
         this.content = review.getContent();
@@ -57,9 +59,10 @@ public class ReviewResponse {
                 .stream()
                 .map(image -> new ReviewImageResponse(image.getImageUrl()))
                 .toList();
-        this.constructionTypes = reviewConstructionTypes.stream()
+        this.constructionTypes =  reviewConstructionTypes == null ? Collections.emptyList() : reviewConstructionTypes
+                .stream()
                 .map(type -> type.getConstructionType().getName())
                 .toList();
-
+        this.buildingType = buildingType.getName();
     }
 }
