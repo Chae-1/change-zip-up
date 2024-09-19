@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.api.estimate.service.query;
 
+import com.kosa.chanzipup.api.estimate.controller.response.EstimateConstructionTypeResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
 import com.kosa.chanzipup.domain.buildingtype.QBuildingType;
 import com.kosa.chanzipup.domain.estimate.EstimateConstructionType;
@@ -45,12 +46,12 @@ public class EstimateRequestQueryService {
                 .leftJoin(estimateRequest.member, member)
                 .leftJoin(estimateRequest.buildingType, buildingType)
                 .leftJoin(estimateRequest.constructionTypes, estimateConstructionType)
-                .leftJoin(estimateConstructionType.constructionType, constructionType)
                 .transform(groupBy(estimateRequest.id).list(constructor(EstimateRequestResponse.class,
                         estimateRequest.id.as("requestId"), fullAddress, estimateRequest.floor,
                         estimateRequest.budget, estimateRequest.schedule, member.nickName,
                         estimateRequest.buildingType.name.as("buildingTypeName"),
-                        estimateRequest.regDate, list(constructor(String.class, constructionType.name)))));
+                        estimateRequest.regDate,
+                        list(constructor(EstimateConstructionTypeResponse.class, estimateConstructionType.constructionType.name)))));
     }
 
 }

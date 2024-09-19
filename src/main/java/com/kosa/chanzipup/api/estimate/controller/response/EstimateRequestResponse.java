@@ -25,11 +25,11 @@ public class EstimateRequestResponse {
 
     private LocalDateTime regDate;
 
-    private List<String> constructionTypes;
+    private List<EstimateConstructionTypeResponse> constructionTypes;
 
 
     public EstimateRequestResponse(Long requestId, String fullAddress, Integer floor, String budget, String schedule, String nickName
-            , String buildingTypeName, LocalDateTime regDate, List<String> constructionTypes) {
+            , String buildingTypeName, LocalDateTime regDate, List<EstimateConstructionTypeResponse> constructionTypes) {
         this.requestId = requestId;
         this.fullAddress = fullAddress;
         this.floor = floor;
