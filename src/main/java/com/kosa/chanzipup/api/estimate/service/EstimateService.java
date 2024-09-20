@@ -3,6 +3,7 @@ package com.kosa.chanzipup.api.estimate.service;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRegisterRequest;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateResult;
 import com.kosa.chanzipup.domain.account.company.Company;
+import com.kosa.chanzipup.domain.account.company.CompanyException;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
@@ -129,5 +130,14 @@ public class EstimateService {
 
         // 업데이트된 견적을 저장
         estimateRepository.save(estimate);
+    }
+
+    public void acceptEstimate(Long requestId, Long estimateId) {
+        // 1. request가 ongoing 상태로 된다.
+        EstimateRequest request = estimateRequestRepository.findById(requestId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 요청 정보입니다."));
+
+        Estimate estimate = estimateRepository.findById(estimateId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 견적 정보입니다."));
     }
 }

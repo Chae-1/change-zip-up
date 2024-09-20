@@ -7,6 +7,7 @@ import com.kosa.chanzipup.api.estimate.controller.response.EstimateDetailRespons
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.SimpleEstimateResponse;
 import com.kosa.chanzipup.api.estimate.service.EstimateRequestService;
+import com.kosa.chanzipup.api.estimate.service.EstimateService;
 import com.kosa.chanzipup.api.estimate.service.query.EstimateQueryService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class EstimateRequestController {
 
     private final EstimateRequestService estimateRequestService;
     private final EstimateQueryService queryService;
+    private final EstimateService estimateService;
 
     @PostMapping
     public ResponseEntity<?> createEstimate(@RequestBody EstimateRequestDTO estimateRequestDTO,
@@ -98,6 +100,26 @@ public class EstimateRequestController {
         return ResponseEntity.ok(queryService.getEstimateDetail(requestId, estimateId));
     }
 
+
+    @PostMapping("/{requestId}/estimates/{estimateId}/accept")
+    @PreAuthorize("ROLE_USER")
+    public ResponseEntity<Void> acceptEstimate(@PathVariable Long requestId,
+                                               @PathVariable Long estimateId,
+                                               @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        estimateService.acceptEstimate(requestId, estimateId);
+        return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/{requestId}/estimates/{estimateId}/reject")
+    @PreAuthorize("ROLE_USER")
+    public ResponseEntity<Void> rejectEstimate(@PathVariable Long requestId,
+                                               @PathVariable Long estimateId,
+                                               @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+
+        estimateService.rejectEstimateByMember(requestId, userDetails.getUsername(), estimateId);
+        return ResponseEntity.ok(null);
+
+    }
 
 
 }

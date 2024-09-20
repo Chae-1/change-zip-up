@@ -14,6 +14,8 @@ import static java.util.stream.Collectors.*;
 @Getter
 public class EstimateDetailResponse {
 
+    private Long estimateId;
+
     private String companyName;
     private String companyLogoUrl;
     private double rating;
@@ -23,6 +25,8 @@ public class EstimateDetailResponse {
 
     public EstimateDetailResponse(Estimate estimate) {
         Company company = estimate.getCompany();
+        this.estimateId = estimate.getId();
+
         this.companyLogoUrl = company.getCompanyLogoUrl();
         this.companyName = company.getCompanyName();
         this.rating = company.getRating();
