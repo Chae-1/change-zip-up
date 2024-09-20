@@ -40,5 +40,7 @@ public class PortfolioDetailResponse {
 
     private String companyPhone;
 
+    private String companyLogo;
+
 
 }
