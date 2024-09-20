@@ -73,7 +73,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             cookie.setMaxAge(10000);
             cookie.setPath("/oauth/redirect");
             response.addCookie(cookie);
-            response.sendRedirect(redirectURI(accessToken));
+            response.sendRedirect(redirectURI(accessToken, nickName, role));
             return ;
         }
 
@@ -90,9 +90,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     }
 
-    private String redirectURI(String accessToken) {
+    private String redirectURI(String accessToken, String nickName, String role) {
         String fullAccessToken = String.format(" %s", accessToken);
-        return String.format("http://localhost:3000/oauth/redirect?authorization=%s", fullAccessToken);
+        return String.format("http://localhost:3000/oauth/redirect?authorization=%s&role=%s&nickName=%s", fullAccessToken, role, nickName);
     }
 
     private String createAccessToken(String email) {
