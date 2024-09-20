@@ -108,7 +108,7 @@ public class EstimateRequestService {
 
         // 1.기존 견적이 존재하지 않으면 업체에 의해 새로운 견적이 고객에게 전송된다.
         // 2. 고객이 보냈던 견적이 존재하면 가격 정보에 대한 응답을 업데이트하여 고객에게 전송한다.
-        estimateRepository.findByCompanyEmail(email)
+        estimateRepository.findByCompanyEmailAndEstimateRequestId(email, estimateRequestId)
                 .ifPresentOrElse((estimate) -> {
                     estimate.updatePrices(constructionTypes, constructionPrices);
                 }, () -> {
