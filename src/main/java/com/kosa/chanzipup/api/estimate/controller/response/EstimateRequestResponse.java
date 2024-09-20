@@ -28,6 +28,8 @@ public class EstimateRequestResponse {
 
     private List<String> constructionTypes;
 
+    private boolean isSend;
+
 
     public EstimateRequestResponse(Long requestId, String fullAddress, Integer floor, String budget, String schedule, String nickName
             , String buildingTypeName, LocalDateTime regDate, List<EstimateConstructionTypeResponse> constructionTypes) {

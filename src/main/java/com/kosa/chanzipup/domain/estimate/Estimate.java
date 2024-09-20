@@ -65,6 +65,7 @@ public class Estimate {
         return Estimate.builder()
                 .company(company)
                 .estimateRequest(request)
+                .estimateStatus(EstimateStatus.SENT)
                 .estimateConstructionTypes(estimateConstructionTypes)
                 .estimatePrices(constructionPrices)
                 .build();
