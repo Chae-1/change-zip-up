@@ -3,6 +3,7 @@ package com.kosa.chanzipup.api.estimate.controller;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimatePriceRequest;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRequestDTO;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateConstructionResponse;
+import com.kosa.chanzipup.api.estimate.controller.response.EstimateDetailResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.SimpleEstimateResponse;
 import com.kosa.chanzipup.api.estimate.service.EstimateRequestService;
@@ -86,5 +87,17 @@ public class EstimateRequestController {
 
         return ResponseEntity.ok(queryService.findAllEstimateSimpleOnEstimateRequest(requestId));
     }
+
+
+    @GetMapping("/{requestId}/estimates/{estimateId}")
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<EstimateDetailResponse> getAllEstimateOnEstimateRequest(@PathVariable Long requestId,
+                                                                                  @PathVariable Long estimateId,
+                                                                                  @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+
+        return ResponseEntity.ok(queryService.getEstimateDetail(requestId, estimateId));
+    }
+
+
 
 }

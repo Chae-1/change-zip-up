@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.api.estimate.service.query;
 
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateConstructionResponse;
+import com.kosa.chanzipup.api.estimate.controller.response.EstimateDetailResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.SimpleEstimateResponse;
 import com.kosa.chanzipup.domain.account.company.Company;
@@ -139,5 +140,24 @@ public class EstimateQueryService {
                 .toList();
 
 
+    }
+
+    public EstimateDetailResponse getEstimateDetail(Long requestId, Long estimateId) {
+        Optional<Estimate> findEstimate = Optional.of(
+                factory.select(estimate)
+                .from(estimate) // 1
+                .leftJoin(estimate.company, company)
+                .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin() // 1
+                .leftJoin(estimate.estimatePrices, estimatePrice).fetchJoin()
+                .leftJoin(estimatePrice.constructionType, estimateConstructionType)
+                .leftJoin(estimateConstructionType.constructionType, constructionType)
+                .where(estimate.id.eq(estimateId), estimateRequest.id.eq(requestId)) // requestId 에 대한 요청이면서 업체가 보낸 견적이면
+                .fetchOne()
+        );
+
+
+        return findEstimate
+                .map(EstimateDetailResponse::new)
+                .orElse(null);
     }
 }
