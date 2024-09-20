@@ -32,4 +32,13 @@ public class PortfolioDetailResponse {
 
     private List<String> services;
 
+    private Long companyId;
+
+    private String companyName;
+
+    private String companyAddress;
+
+    private String companyPhone;
+
+
 }
