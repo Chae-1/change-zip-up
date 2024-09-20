@@ -3,6 +3,7 @@ package com.kosa.chanzipup.api.estimate.service.query;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateConstructionResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
 import com.kosa.chanzipup.domain.estimate.*;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +28,8 @@ public class EstimateQueryService {
 
     public List<EstimateRequestResponse> getEstimateRequestResponsesOnWaiting(String companyEmail) {
 
-        List<Estimate> fetch = factory.select(estimate)
-                .from(estimate) // 1
-                .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin() // 1
-                .leftJoin(estimate.company, company).fetchJoin() // 1
+        List<EstimateRequest> fetch = factory.select(estimateRequest)
+                .from(estimateRequest) // 1
                 .leftJoin(estimateRequest.member, member).fetchJoin() // 1
                 .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin() // 1
                 .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
@@ -38,8 +37,21 @@ public class EstimateQueryService {
                 .where(estimateRequest.status.eq(EstimateRequestStatus.WAITING))
                 .fetch();
 
+
+        // 현재 업체 회원이 견적서를 보낸 requestId의 모든 id
+        List<Long> writeEstimateRequestIds = factory.select(estimate)
+                .from(estimate)
+                .leftJoin(estimate.estimateRequest, estimateRequest)
+                .leftJoin(estimate.company, company)
+                .where(company.email.eq(companyEmail))
+                .fetch()
+                .stream()
+                .map(estimate -> estimate.getEstimateRequest().getId())
+                .toList();
+
+
         return fetch.stream()
-                .map(estimate -> new EstimateRequestResponse(estimate, companyEmail))
+                .map(estimateRequest -> new EstimateRequestResponse(estimateRequest, writeEstimateRequestIds.contains(estimateRequest.getId())))
                 .toList();
     }
 
@@ -59,9 +71,8 @@ public class EstimateQueryService {
                 .fetch();
 
         return fetch.stream()
-                .map(estimate -> new EstimateRequestResponse(estimate, companyEmail))
+                .map(estimate -> new EstimateRequestResponse(estimate))
                 .toList();
-
     }
 
     public List<EstimateConstructionResponse> getEstimatePriceDetail(Long estimateRequestId) {
@@ -99,7 +110,7 @@ public class EstimateQueryService {
                 .fetch();// n - 1
 
         return requests.stream()
-                .map(estimateRequest -> new EstimateRequestResponse(estimateRequest))
+                .map(estimateRequest -> new EstimateRequestResponse(estimateRequest, false))
                 .toList();
     }
 

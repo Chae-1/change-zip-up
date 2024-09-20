@@ -19,5 +19,9 @@ file:
 domain:
   address: http://localhost:8080
 
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
 
 
