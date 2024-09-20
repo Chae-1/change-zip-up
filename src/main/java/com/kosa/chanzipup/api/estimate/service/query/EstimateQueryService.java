@@ -2,15 +2,18 @@ package com.kosa.chanzipup.api.estimate.service.query;
 
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateConstructionResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
+import com.kosa.chanzipup.api.estimate.controller.response.SimpleEstimateResponse;
+import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.estimate.*;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.kosa.chanzipup.domain.account.company.QCompany.company;
 import static com.kosa.chanzipup.domain.account.member.QMember.member;
@@ -18,7 +21,9 @@ import static com.kosa.chanzipup.domain.buildingtype.QBuildingType.buildingType;
 import static com.kosa.chanzipup.domain.constructiontype.QConstructionType.constructionType;
 import static com.kosa.chanzipup.domain.estimate.QEstimate.estimate;
 import static com.kosa.chanzipup.domain.estimate.QEstimateConstructionType.estimateConstructionType;
+import static com.kosa.chanzipup.domain.estimate.QEstimatePrice.estimatePrice;
 import static com.kosa.chanzipup.domain.estimate.QEstimateRequest.estimateRequest;
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -114,17 +119,25 @@ public class EstimateQueryService {
                 .toList();
     }
 
-    public void findAllEstimateOnEstimateRequest(Long requestId, String username) {
+    public List<SimpleEstimateResponse> findAllEstimateSimpleOnEstimateRequest(Long requestId) {
+        // estimate
         List<Estimate> fetch = factory.select(estimate)
                 .from(estimate) // 1
+                .leftJoin(estimate.company, company)
                 .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin() // 1
-                .leftJoin(estimate.company, company).fetchJoin() // 1
-                .leftJoin(estimateRequest.member, member).fetchJoin() // 1
-                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin() // 1
-                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
-                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin() // n - 1
-                .where(estimateRequest.status.eq(EstimateRequestStatus.WAITING))
+                .leftJoin(estimate.estimatePrices, estimatePrice).fetchJoin()
+                .where(estimateRequest.id.eq(requestId), estimate.estimateStatus.eq(EstimateStatus.SENT)) // requestId 에 대한 요청이면서 업체가 보낸 견적이면
                 .fetch();
+
+        Map<Company, List<Estimate>> companyEstimates = fetch.stream()
+                .collect(groupingBy(Estimate::getCompany, toList()));
+
+        // 회사 정보
+        return fetch.stream()
+                .map(estimate -> new SimpleEstimateResponse(estimate, companyEstimates))
+                .toList();
+
+
 
     }
 }

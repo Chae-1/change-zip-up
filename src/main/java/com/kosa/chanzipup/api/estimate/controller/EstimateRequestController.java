@@ -4,6 +4,7 @@ import com.kosa.chanzipup.api.estimate.controller.request.EstimatePriceRequest;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRequestDTO;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateConstructionResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
+import com.kosa.chanzipup.api.estimate.controller.response.SimpleEstimateResponse;
 import com.kosa.chanzipup.api.estimate.service.EstimateRequestService;
 import com.kosa.chanzipup.api.estimate.service.query.EstimateQueryService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
@@ -80,11 +81,10 @@ public class EstimateRequestController {
 
     @GetMapping("/{requestId}/estimates")
     @PreAuthorize("ROLE_USER")
-    public void getAllEstimateOnEstimateRequest(@RequestParam Long requestId,
-                                                @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+    public ResponseEntity<List<SimpleEstimateResponse>> getAllEstimateOnEstimateRequest(@RequestParam Long requestId,
+                                                                                        @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
-        String username = userDetails.getUsername();
-        queryService.findAllEstimateOnEstimateRequest(requestId, username);
+        return ResponseEntity.ok(queryService.findAllEstimateSimpleOnEstimateRequest(requestId));
     }
 
 }

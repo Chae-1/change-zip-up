@@ -2,10 +2,7 @@ package com.kosa.chanzipup.domain.estimate;
 
 import com.kosa.chanzipup.domain.account.company.Company;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,6 +14,7 @@ import java.util.Map;
 @Getter
 @Table(name = "estimate")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(of = "id")
 public class Estimate {
 
     @Id
