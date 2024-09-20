@@ -1,7 +1,6 @@
 package com.kosa.chanzipup.api.estimate.controller.response;
 
 import com.kosa.chanzipup.domain.estimate.Estimate;
-import com.kosa.chanzipup.domain.estimate.EstimateConstructionType;
 import com.kosa.chanzipup.domain.estimate.EstimateRequest;
 import lombok.Getter;
 
@@ -29,18 +28,9 @@ public class EstimateRequestResponse {
 
     private List<String> constructionTypes;
 
+    private boolean isSend;
 
-    public EstimateRequestResponse(Long requestId, String fullAddress, Integer floor, String budget, String schedule, String nickName
-            , String buildingTypeName, LocalDateTime regDate, List<EstimateConstructionTypeResponse> constructionTypes) {
-        this.requestId = requestId;
-        this.fullAddress = fullAddress;
-        this.floor = floor;
-        this.budget = budget;
-        this.schedule = schedule;
-        this.nickName = nickName;
-        this.buildingTypeName = buildingTypeName;
-        this.regDate = regDate;
-    }
+
 
     public EstimateRequestResponse(EstimateRequest estimateRequest) {
         this.requestId = estimateRequest.getId();
@@ -55,9 +45,12 @@ public class EstimateRequestResponse {
                 .stream()
                 .map(type -> type.getTypeName())
                 .toList();
+        this.isSend = false;
     }
 
-    public EstimateRequestResponse(Estimate estimate) {
+
+    public EstimateRequestResponse(Estimate estimate, String companyEmail) {
         this(estimate.getEstimateRequest());
+        this.isSend = estimate.getCompany().getEmail().equals(companyEmail);
     }
 }

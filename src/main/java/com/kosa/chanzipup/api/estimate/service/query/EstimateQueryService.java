@@ -25,19 +25,21 @@ import static com.kosa.chanzipup.domain.estimate.QEstimateRequest.estimateReques
 public class EstimateQueryService {
     private final JPAQueryFactory factory;
 
-    public List<EstimateRequestResponse> getEstimateRequestResponsesOnWaiting() {
+    public List<EstimateRequestResponse> getEstimateRequestResponsesOnWaiting(String companyEmail) {
 
-        List<EstimateRequest> fetch = factory.select(estimateRequest)
-                .from(estimateRequest)
-                .leftJoin(estimateRequest.member, member).fetchJoin()
-                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin()
-                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin()
-                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
+        List<Estimate> fetch = factory.select(estimate)
+                .from(estimate) // 1
+                .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin() // 1
+                .leftJoin(estimate.company, company).fetchJoin() // 1
+                .leftJoin(estimateRequest.member, member).fetchJoin() // 1
+                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin() // 1
+                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin() // n - 1
                 .where(estimateRequest.status.eq(EstimateRequestStatus.WAITING))
                 .fetch();
 
         return fetch.stream()
-                .map(estimate -> new EstimateRequestResponse(estimate))
+                .map(estimate -> new EstimateRequestResponse(estimate, companyEmail))
                 .toList();
     }
 
@@ -50,19 +52,17 @@ public class EstimateQueryService {
                 .leftJoin(estimateRequest.member, member).fetchJoin() // 1
                 .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin() // 1
                 .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
-                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin() // 1
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin() // n - 1
                 .where(estimateRequest.status.eq(EstimateRequestStatus.WAITING),
                         estimate.estimateStatus.eq(EstimateStatus.RECEIVED),
                         company.email.eq(companyEmail))
                 .fetch();
 
         return fetch.stream()
-                .map(estimate -> new EstimateRequestResponse(estimate))
+                .map(estimate -> new EstimateRequestResponse(estimate, companyEmail))
                 .toList();
 
     }
-
-
 
     public List<EstimateConstructionResponse> getEstimatePriceDetail(Long estimateRequestId) {
 
@@ -86,4 +86,34 @@ public class EstimateQueryService {
         return estimateConstructionResponses;
     }
 
+    public List<EstimateRequestResponse> getAllEstimateRequestByUser(String userEmail) {
+
+        List<EstimateRequest> requests = factory.select(estimateRequest)
+                .from(estimateRequest)
+                .leftJoin(estimateRequest.member, member).fetchJoin() // 1
+                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin() // 1
+                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
+                .where(member.email.eq(userEmail),
+                        estimateRequest.status.eq(EstimateRequestStatus.WAITING))
+                .fetch();// n - 1
+
+        return requests.stream()
+                .map(estimateRequest -> new EstimateRequestResponse(estimateRequest))
+                .toList();
+    }
+
+    public void findAllEstimateOnEstimateRequest(Long requestId, String username) {
+        List<Estimate> fetch = factory.select(estimate)
+                .from(estimate) // 1
+                .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin() // 1
+                .leftJoin(estimate.company, company).fetchJoin() // 1
+                .leftJoin(estimateRequest.member, member).fetchJoin() // 1
+                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin() // 1
+                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin() // n - 1
+                .where(estimateRequest.status.eq(EstimateRequestStatus.WAITING))
+                .fetch();
+
+    }
 }

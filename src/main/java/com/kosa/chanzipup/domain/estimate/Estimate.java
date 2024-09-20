@@ -6,8 +6,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -18,9 +22,6 @@ public class Estimate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column
-    private Long totalPrice;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -34,42 +35,71 @@ public class Estimate {
     @JoinColumn(name = "estimate_request_id", nullable = false)
     private EstimateRequest estimateRequest;
 
-
     @OneToMany(mappedBy = "estimate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EstimatePrice> estimatePrices;
+    private List<EstimatePrice> estimatePrices = new ArrayList<>();
 
     @Builder
-    public Estimate(Long totalPrice, EstimateStatus estimateStatus, Company company, EstimateRequest estimateRequest) {
-        this.totalPrice = totalPrice;
+    public Estimate(EstimateStatus estimateStatus,
+                    Company company, EstimateRequest estimateRequest,
+                    List<EstimateConstructionType> estimateConstructionTypes,
+                    Map<Long, Integer> estimatePrices) {
         this.estimateStatus = estimateStatus;
         this.company = company;
         this.estimateRequest = estimateRequest;
+        this.estimatePrices.addAll(
+                toEstimatePrices(estimateConstructionTypes, estimatePrices)
+        );
     }
 
-    public static Estimate of(Long totalPrice, EstimateStatus estimateStatus, Company company, EstimateRequest estimateRequest) {
-        return new Estimate(totalPrice, estimateStatus, company, estimateRequest);
+    private List<EstimatePrice> toEstimatePrices(List<EstimateConstructionType> estimateConstructionTypes, Map<Long, Integer> estimatePrices) {
+        return estimateConstructionTypes
+                .stream()
+                .map(type -> new EstimatePrice(this, type, estimatePrices.get(type.getId())))
+                .toList();
     }
 
-    public static Estimate send(Company company, EstimateRequest request) {
+
+    public static Estimate sent(Company company, EstimateRequest request,
+                                List<EstimateConstructionType> estimateConstructionTypes,
+                                Map<Long, Integer> constructionPrices) {
         return Estimate.builder()
                 .company(company)
-                .estimateStatus(EstimateStatus.SENT)
-                .totalPrice(0L)
                 .estimateRequest(request)
+                .estimateStatus(EstimateStatus.SENT)
+                .estimateConstructionTypes(estimateConstructionTypes)
+                .estimatePrices(constructionPrices)
                 .build();
     }
 
 
     public static Estimate received(Company company, EstimateRequest request) {
-        return Estimate.builder()
+        return Estimate
+                .builder()
                 .company(company)
                 .estimateStatus(EstimateStatus.RECEIVED)
-                .totalPrice(0L)
                 .estimateRequest(request)
+                .estimateConstructionTypes(Collections.emptyList())
+                .estimatePrices(Collections.emptyMap())
                 .build();
     }
 
     public void updateEstimateStatus(EstimateStatus newStatus) {
         this.estimateStatus = newStatus;
+    }
+
+    public void updatePrices(List<EstimateConstructionType> constructionTypes, Map<Long, Integer> constructionPrices) {
+        updateEstimateStatus(EstimateStatus.SENT);
+        this.estimatePrices.addAll(toEstimatePrices(constructionTypes, constructionPrices));
+    }
+
+    public int getTotalPrices() {
+        if (estimatePrices.isEmpty()) {
+            return 0;
+        }
+
+        return estimatePrices
+                .stream()
+                .mapToInt(EstimatePrice::getPrice)
+                .sum();
     }
 }

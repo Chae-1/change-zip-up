@@ -20,8 +20,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 
 @Component
@@ -73,7 +77,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             cookie.setMaxAge(10000);
             cookie.setPath("/oauth/redirect");
             response.addCookie(cookie);
-            response.sendRedirect(redirectURI(accessToken));
+            String uri = redirectURI(accessToken, nickName, role);
+            response.sendRedirect(uri);
             return ;
         }
 
@@ -90,9 +95,15 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     }
 
-    private String redirectURI(String accessToken) {
-        String fullAccessToken = String.format(" %s", accessToken);
-        return String.format("http://localhost:3000/oauth/redirect?authorization=%s", fullAccessToken);
+    private String redirectURI(String accessToken, String nickName, String role) throws UnsupportedEncodingException {
+        String encodedName = URLEncoder.encode(nickName, "UTF-8");
+
+        return UriComponentsBuilder
+                .fromUriString("http://localhost:3000/oauth/redirect")
+                .queryParam("authorization", accessToken)
+                .queryParam("role", role)
+                .queryParam("nickName", encodedName)
+                .toUriString();
     }
 
     private String createAccessToken(String email) {

@@ -39,8 +39,8 @@ public class EstimateRequestController {
 
     @GetMapping
     @PreAuthorize("ROLE_COMPANY")
-    public ResponseEntity<List<EstimateRequestResponse>> getAllEstimateRequests(){
-        List<EstimateRequestResponse> estimateRequestResponses = queryService.getEstimateRequestResponsesOnWaiting();
+    public ResponseEntity<List<EstimateRequestResponse>> getAllEstimateRequests(@AuthenticationPrincipal UnifiedUserDetails userDetails){
+        List<EstimateRequestResponse> estimateRequestResponses = queryService.getEstimateRequestResponsesOnWaiting(userDetails.getUsername());
         return ResponseEntity.ok(estimateRequestResponses);
     }
 
@@ -66,9 +66,25 @@ public class EstimateRequestController {
                                                     @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
         String email = userDetails.getUsername();
-        estimateRequestService.writePrices(email, estimateRequestId, request.getConstructionPrices());
+        estimateRequestService.writePricesOfNewEstimate(email, estimateRequestId, request.getConstructionPrices());
         return ResponseEntity.ok(null);
 
+    }
+
+    @GetMapping("/users")
+    @PreAuthorize("ROLE_USER")
+    public ResponseEntity<List<EstimateRequestResponse>> findAllUserReceivedRequests(@AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        return ResponseEntity.ok(queryService.getAllEstimateRequestByUser(userDetails.getUsername()));
+    }
+
+
+    @GetMapping("/{requestId}/estimates")
+    @PreAuthorize("ROLE_USER")
+    public void getAllEstimateOnEstimateRequest(@RequestParam Long requestId,
+                                                @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+
+        String username = userDetails.getUsername();
+        queryService.findAllEstimateOnEstimateRequest(requestId, username);
     }
 
 }

@@ -15,7 +15,6 @@ import java.util.List;
 public class EstimateResult {
 
     // 업체에게 보내는 요청
-
     private Long companyId;
 
     private Long estimateRequestId;
