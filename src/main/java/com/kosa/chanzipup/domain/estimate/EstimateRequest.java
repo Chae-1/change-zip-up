@@ -97,4 +97,8 @@ public class EstimateRequest {
     public String getFullAddress() {
         return String.format("%s %s", address, detailedAddress);
     }
+
+    public void ongoing() {
+        this.status = EstimateRequestStatus.ONGOING;
+    }
 }

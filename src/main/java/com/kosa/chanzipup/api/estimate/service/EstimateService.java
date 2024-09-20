@@ -129,16 +129,23 @@ public class EstimateService {
         estimateRepository.save(estimate);
     }
 
+    // todo: 현재는 상태만 변경하는데, 맞는 로직을 작성
     @Transactional
     public void acceptEstimate(Long requestId, Long estimateId) {
         // 1. request가 ongoing 상태로 된다.
-        EstimateRequest request = estimateRequestRepository.findById(requestId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 요청 정보입니다."));
-
         Estimate estimate = estimateRepository.findById(estimateId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 견적 정보입니다."));
+
         // 2. estimate accepted 상태가 된다.
-        estimate.accepted();
-        
+        estimate.accept();
     }
+
+    @Transactional
+    public void rejectEstimate(Long requestId, Long estimateId) {
+        Estimate estimate = estimateRepository.findById(estimateId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 견적 정보입니다."));
+
+        estimate.reject();
+    }
+
 }

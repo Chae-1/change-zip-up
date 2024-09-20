@@ -96,7 +96,6 @@ public class EstimateRequestController {
     public ResponseEntity<EstimateDetailResponse> getAllEstimateOnEstimateRequest(@PathVariable Long requestId,
                                                                                   @PathVariable Long estimateId,
                                                                                   @AuthenticationPrincipal UnifiedUserDetails userDetails) {
-
         return ResponseEntity.ok(queryService.getEstimateDetail(requestId, estimateId));
     }
 
@@ -116,7 +115,7 @@ public class EstimateRequestController {
                                                @PathVariable Long estimateId,
                                                @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
-        estimateService.rejectEstimateByMember(requestId, userDetails.getUsername(), estimateId);
+        estimateService.rejectEstimate(requestId, estimateId);
         return ResponseEntity.ok(null);
 
     }

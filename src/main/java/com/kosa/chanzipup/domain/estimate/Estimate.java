@@ -49,7 +49,8 @@ public class Estimate {
         );
     }
 
-    private List<EstimatePrice> toEstimatePrices(List<EstimateConstructionType> estimateConstructionTypes, Map<Long, Integer> estimatePrices) {
+    private List<EstimatePrice> toEstimatePrices(List<EstimateConstructionType> estimateConstructionTypes,
+                                                 Map<Long, Integer> estimatePrices) {
         return estimateConstructionTypes
                 .stream()
                 .map(type -> new EstimatePrice(this, type, estimatePrices.get(type.getId())))
@@ -101,8 +102,12 @@ public class Estimate {
                 .sum();
     }
 
-
-    public void accepted() {
+    public void accept() {
         this.estimateStatus = EstimateStatus.ACCEPTED;
+        estimateRequest.ongoing();
+    }
+
+    public void reject() {
+        this.estimateStatus = EstimateStatus.REJECTED;
     }
 }
