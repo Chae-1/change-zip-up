@@ -24,4 +24,7 @@ public interface EstimateRequestRepository extends JpaRepository<EstimateRequest
 
     // 추가: 특정 유저의 가장 최근 견적 요청을 가져오는 쿼리
     Optional<EstimateRequest> findFirstByMemberOrderByRegDateDesc(Member member);
+
+    @Query("select er from EstimateRequest er left join er.constructionTypes types where er.id = :estimateRequestId")
+    Optional<EstimateRequest> findByIdWithAll(Long estimateRequestId);
 }

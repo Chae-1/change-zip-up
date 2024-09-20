@@ -66,7 +66,7 @@ public class EstimateRequestController {
                                                     @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
         String email = userDetails.getUsername();
-        estimateRequestService.writePrices(email, estimateRequestId, request.getConstructionPrices());
+        estimateRequestService.writePricesOfNewEstimate(email, estimateRequestId, request.getConstructionPrices());
         return ResponseEntity.ok(null);
 
     }

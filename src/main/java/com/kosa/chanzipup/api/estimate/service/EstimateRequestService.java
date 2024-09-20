@@ -2,7 +2,6 @@ package com.kosa.chanzipup.api.estimate.service;
 
 
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRequestDTO;
-import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
@@ -13,10 +12,8 @@ import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
 import com.kosa.chanzipup.domain.estimate.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,6 +31,9 @@ public class EstimateRequestService {
     private final BuildingTypeRepository buildingTypeRepository;
     private final ConstructionTypeRepository constructionTypeRepository;
     private final CompanyRepository companyRepository;
+    private final EstimateRepository estimateRepository;
+    private final EstimateConstructionTypeRepository estimateConstructionTypeRepository;
+
 
     @Transactional
     public void createEstimate(EstimateRequestDTO estimateRequestDTO, String email) {
@@ -68,7 +68,7 @@ public class EstimateRequestService {
         for (Long constructionTypeId : constructionTypeIds) {
             // ConstructionType 조회
             ConstructionType constructionType = constructionTypeRepository.findById(constructionTypeId)
-                .orElseThrow(() -> new IllegalArgumentException("시공 유형이 존재하지 않습니다."));
+                    .orElseThrow(() -> new IllegalArgumentException("시공 유형이 존재하지 않습니다."));
 
             // EstimateConstructionType 생성
             EstimateConstructionType estimateConstructionType = new EstimateConstructionType(constructionType, estimate);
@@ -93,27 +93,28 @@ public class EstimateRequestService {
         return currentYearMonthDay + nextId;
     }
 
+    // 업체에 의해 새로운 견적이 고객에게 전송된다.
     @Transactional
-    public void writePrices(String email, Long estimateRequestId, Map<Long, Integer> constructionPrices) {
+    public void writePricesOfNewEstimate(String email, Long estimateRequestId, Map<Long, Integer> constructionPrices) {
 
-        EstimateRequest request = estimateRequestRepository.findById(estimateRequestId)
+        EstimateRequest request = estimateRequestRepository.findByIdWithAll(estimateRequestId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 요청 정보입니다."));
 
         Company company = companyRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 기업 정보입니다."));
 
-        Estimate estimate = Estimate.send(company, request);
-//
-//        constructionPrices
-//                .entrySet()
-//                .stream()
-//                .map(entry -> {
-//                    new EstimatePrice(entry.getKey())
-//                })
+        List<EstimateConstructionType> constructionTypes = estimateConstructionTypeRepository
+                .findAllByIdWithConstructionType(constructionPrices.keySet());
 
-
-
-
+        // 1.기존 견적이 존재하지 않으면 업체에 의해 새로운 견적이 고객에게 전송된다.
+        // 2. 고객이 보냈던 견적이 존재하면 가격 정보에 대한 응답을 업데이트하여 고객에게 전송한다.
+        estimateRepository.findByCompanyEmail(email)
+                .ifPresentOrElse((estimate) -> {
+                    estimate.updatePrices(constructionTypes, constructionPrices);
+                }, () -> {
+                    Estimate estimate = Estimate.sent(company, request, constructionTypes, constructionPrices);
+                    estimateRepository.save(estimate);
+                });
 
     }
 }

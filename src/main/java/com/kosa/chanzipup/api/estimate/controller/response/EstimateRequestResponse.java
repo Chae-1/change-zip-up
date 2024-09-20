@@ -1,7 +1,6 @@
 package com.kosa.chanzipup.api.estimate.controller.response;
 
 import com.kosa.chanzipup.domain.estimate.Estimate;
-import com.kosa.chanzipup.domain.estimate.EstimateConstructionType;
 import com.kosa.chanzipup.domain.estimate.EstimateRequest;
 import lombok.Getter;
 
