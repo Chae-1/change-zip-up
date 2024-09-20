@@ -36,7 +36,7 @@ public class NaverOAuth2UserDetails implements UnifiedUserDetails {
 
     @Override
     public String nickName() {
-        return String.valueOf(attributes.get("nickName"));
+        return String.valueOf(attributes.get("nickname"));
     }
 
     @Override

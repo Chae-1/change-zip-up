@@ -77,4 +77,14 @@ public class EstimateRequestController {
         return ResponseEntity.ok(queryService.getAllEstimateRequestByUser(userDetails.getUsername()));
     }
 
+
+    @GetMapping("/{requestId}/estimates")
+    @PreAuthorize("ROLE_USER")
+    public void getAllEstimateOnEstimateRequest(@RequestParam Long requestId,
+                                                @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+
+        String username = userDetails.getUsername();
+        queryService.findAllEstimateOnEstimateRequest(requestId, username);
+    }
+
 }

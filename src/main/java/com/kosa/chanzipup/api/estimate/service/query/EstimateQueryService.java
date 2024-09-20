@@ -103,4 +103,18 @@ public class EstimateQueryService {
                 .map(estimateRequest -> new EstimateRequestResponse(estimateRequest))
                 .toList();
     }
+
+    public void findAllEstimateOnEstimateRequest(Long requestId, String username) {
+        List<Estimate> fetch = factory.select(estimate)
+                .from(estimate) // 1
+                .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin() // 1
+                .leftJoin(estimate.company, company).fetchJoin() // 1
+                .leftJoin(estimateRequest.member, member).fetchJoin() // 1
+                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin() // 1
+                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin() // n - 1
+                .where(estimateRequest.status.eq(EstimateRequestStatus.WAITING))
+                .fetch();
+
+    }
 }

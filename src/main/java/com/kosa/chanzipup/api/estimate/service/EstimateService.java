@@ -83,21 +83,6 @@ public class EstimateService {
 
 
     @Transactional
-    public void rejectEstimateByCompany(Long estimateRequestId, String companyEmail) {
-        Company company = companyRepository.findByEmail(companyEmail)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회사 정보입니다."));
-
-        Estimate estimate = estimateRepository.findByEstimateRequestIdAndCompanyId(estimateRequestId, company.getId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 요청에 대한 견적이 존재하지 않거나 권한이 없습니다: " + estimateRequestId));
-
-
-
-
-    }
-
-
-
-    @Transactional
     public void rejectEstimateByMember(Long estimateRequestId, String memberEmail, Long companyId) {
 
         // companyEmail을 통해 회사 정보 조회
@@ -113,6 +98,20 @@ public class EstimateService {
 
         // 업데이트된 견적을 저장
         estimateRepository.save(estimate);
+    }
+
+
+    @Transactional
+    public void rejectEstimateByCompany(Long estimateRequestId, String companyEmail) {
+        Company company = companyRepository.findByEmail(companyEmail)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회사 정보입니다."));
+
+        Estimate estimate = estimateRepository.findByEstimateRequestIdAndCompanyId(estimateRequestId, company.getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 요청에 대한 견적이 존재하지 않거나 권한이 없습니다: " + estimateRequestId));
+
+
+
+
     }
 
     @Transactional
