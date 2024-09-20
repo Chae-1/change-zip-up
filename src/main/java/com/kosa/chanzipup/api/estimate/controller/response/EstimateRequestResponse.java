@@ -45,7 +45,9 @@ public class EstimateRequestResponse {
                 .stream()
                 .map(type -> type.getTypeName())
                 .toList();
+        this.isSend = false;
     }
+
 
     public EstimateRequestResponse(Estimate estimate, String companyEmail) {
         this(estimate.getEstimateRequest());

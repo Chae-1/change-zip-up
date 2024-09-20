@@ -64,8 +64,6 @@ public class EstimateQueryService {
 
     }
 
-
-
     public List<EstimateConstructionResponse> getEstimatePriceDetail(Long estimateRequestId) {
 
         Optional<EstimateRequest> findRequest = Optional.of(
@@ -88,4 +86,21 @@ public class EstimateQueryService {
         return estimateConstructionResponses;
     }
 
+    public List<EstimateRequestResponse> getAllEstimateRequestByUser(String userEmail) {
+
+        List<EstimateRequest> requests = factory.select(estimateRequest)
+                .from(estimateRequest)
+                .leftJoin(estimateRequest.buildingType).fetchJoin()
+                .leftJoin(estimateRequest.member, member).fetchJoin() // 1
+                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin() // 1
+                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
+                .where(member.email.eq(userEmail),
+                        estimateRequest.status.eq(EstimateRequestStatus.WAITING))
+                .fetch();// n - 1
+
+        return requests.stream()
+                .map(estimateRequest -> new EstimateRequestResponse(estimateRequest))
+                .toList();
+    }
 }
