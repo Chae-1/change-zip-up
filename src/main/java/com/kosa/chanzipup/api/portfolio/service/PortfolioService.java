@@ -143,7 +143,9 @@ public class PortfolioService {
                     companyName,
                     companyAddress,
                     companyPhone,
-                    companyLogo
+                    companyLogo,
+                    portfolio.getCreatedAt(),
+                    portfolio.getUpdatedAt()
             );
         } else {
             // Company가 아니면 일반 Account 정보를 반환
@@ -162,7 +164,9 @@ public class PortfolioService {
                     account.getName(),
                     "No Address",
                     companyPhone,
-                    ""
+                    "",
+                    portfolio.getCreatedAt(),
+                    portfolio.getUpdatedAt()
             );
         }
     }
