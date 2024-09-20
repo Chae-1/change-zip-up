@@ -100,4 +100,9 @@ public class Estimate {
                 .mapToInt(EstimatePrice::getPrice)
                 .sum();
     }
+
+
+    public void accepted() {
+        this.estimateStatus = EstimateStatus.ACCEPTED;
+    }
 }

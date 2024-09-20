@@ -110,9 +110,6 @@ public class EstimateService {
         Estimate estimate = estimateRepository.findByEstimateRequestIdAndCompanyId(estimateRequestId, company.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 요청에 대한 견적이 존재하지 않거나 권한이 없습니다: " + estimateRequestId));
 
-
-
-
     }
 
     @Transactional
@@ -132,6 +129,7 @@ public class EstimateService {
         estimateRepository.save(estimate);
     }
 
+    @Transactional
     public void acceptEstimate(Long requestId, Long estimateId) {
         // 1. request가 ongoing 상태로 된다.
         EstimateRequest request = estimateRequestRepository.findById(requestId)
@@ -139,5 +137,8 @@ public class EstimateService {
 
         Estimate estimate = estimateRepository.findById(estimateId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 견적 정보입니다."));
+        // 2. estimate accepted 상태가 된다.
+        estimate.accepted();
+        
     }
 }
