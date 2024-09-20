@@ -126,6 +126,7 @@ public class PortfolioService {
             Company company = optionalCompany.get();
             String companyName = company.getCompanyName();
             String companyAddress = company.getAddress();
+            String companyLogo = company.getCompanyLogoUrl();
 
             return new PortfolioDetailResponse(
                     portfolio.getId(),
@@ -141,7 +142,10 @@ public class PortfolioService {
                     companyId,
                     companyName,
                     companyAddress,
-                    companyPhone
+                    companyPhone,
+                    companyLogo,
+                    portfolio.getCreatedAt(),
+                    portfolio.getUpdatedAt()
             );
         } else {
             // Company가 아니면 일반 Account 정보를 반환
@@ -159,7 +163,10 @@ public class PortfolioService {
                     companyId,
                     account.getName(),
                     "No Address",
-                    companyPhone
+                    companyPhone,
+                    "",
+                    portfolio.getCreatedAt(),
+                    portfolio.getUpdatedAt()
             );
         }
     }
