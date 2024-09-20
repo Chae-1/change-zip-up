@@ -90,7 +90,6 @@ public class EstimateQueryService {
 
         List<EstimateRequest> requests = factory.select(estimateRequest)
                 .from(estimateRequest)
-                .leftJoin(estimateRequest.buildingType).fetchJoin()
                 .leftJoin(estimateRequest.member, member).fetchJoin() // 1
                 .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin() // 1
                 .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
