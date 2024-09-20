@@ -80,8 +80,8 @@ public class EstimateRequestController {
 
 
     @GetMapping("/{requestId}/estimates")
-    @PreAuthorize("ROLE_USER")
-    public ResponseEntity<List<SimpleEstimateResponse>> getAllEstimateOnEstimateRequest(@RequestParam Long requestId,
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<List<SimpleEstimateResponse>> getAllEstimateOnEstimateRequest(@PathVariable Long requestId,
                                                                                         @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
         return ResponseEntity.ok(queryService.findAllEstimateSimpleOnEstimateRequest(requestId));

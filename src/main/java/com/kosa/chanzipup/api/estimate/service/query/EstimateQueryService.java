@@ -129,6 +129,7 @@ public class EstimateQueryService {
                 .where(estimateRequest.id.eq(requestId), estimate.estimateStatus.eq(EstimateStatus.SENT)) // requestId 에 대한 요청이면서 업체가 보낸 견적이면
                 .fetch();
 
+        // null
         Map<Company, List<Estimate>> companyEstimates = fetch.stream()
                 .collect(groupingBy(Estimate::getCompany, toList()));
 
@@ -136,7 +137,6 @@ public class EstimateQueryService {
         return fetch.stream()
                 .map(estimate -> new SimpleEstimateResponse(estimate, companyEstimates))
                 .toList();
-
 
 
     }

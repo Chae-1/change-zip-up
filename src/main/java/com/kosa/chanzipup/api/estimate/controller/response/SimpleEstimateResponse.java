@@ -3,6 +3,7 @@ package com.kosa.chanzipup.api.estimate.controller.response;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.estimate.Estimate;
 import com.kosa.chanzipup.domain.estimate.EstimatePrice;
+import com.kosa.chanzipup.domain.estimate.EstimateStatus;
 import lombok.Getter;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class SimpleEstimateResponse {
     private int totalPrice;
 
     public SimpleEstimateResponse(Estimate estimate, Map<Company, List<Estimate>> companyEstimates) {
+
         Company company = estimate.getCompany();
         this.companyLogoUrl = company.getCompanyLogoUrl();
         this.companyName = company.getCompanyName();
@@ -26,6 +28,9 @@ public class SimpleEstimateResponse {
 
         this.completeEstimateCount = companyEstimates
                 .get(company)
+                .stream()
+                .filter(e -> e.getEstimateStatus() == EstimateStatus.ACCEPTED)
+                .toList()
                 .size();
 
         this.totalPrice = estimate.getEstimatePrices()
