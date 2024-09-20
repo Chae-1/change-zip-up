@@ -31,17 +31,6 @@ public class EstimateRequestResponse {
     private boolean isSend;
 
 
-    public EstimateRequestResponse(Long requestId, String fullAddress, Integer floor, String budget, String schedule, String nickName
-            , String buildingTypeName, LocalDateTime regDate, List<EstimateConstructionTypeResponse> constructionTypes) {
-        this.requestId = requestId;
-        this.fullAddress = fullAddress;
-        this.floor = floor;
-        this.budget = budget;
-        this.schedule = schedule;
-        this.nickName = nickName;
-        this.buildingTypeName = buildingTypeName;
-        this.regDate = regDate;
-    }
 
     public EstimateRequestResponse(EstimateRequest estimateRequest) {
         this.requestId = estimateRequest.getId();
@@ -58,7 +47,8 @@ public class EstimateRequestResponse {
                 .toList();
     }
 
-    public EstimateRequestResponse(Estimate estimate) {
+    public EstimateRequestResponse(Estimate estimate, String companyEmail) {
         this(estimate.getEstimateRequest());
+        this.isSend = estimate.getCompany().getEmail().equals(companyEmail);
     }
 }

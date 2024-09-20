@@ -39,8 +39,8 @@ public class EstimateRequestController {
 
     @GetMapping
     @PreAuthorize("ROLE_COMPANY")
-    public ResponseEntity<List<EstimateRequestResponse>> getAllEstimateRequests(){
-        List<EstimateRequestResponse> estimateRequestResponses = queryService.getEstimateRequestResponsesOnWaiting();
+    public ResponseEntity<List<EstimateRequestResponse>> getAllEstimateRequests(@AuthenticationPrincipal UnifiedUserDetails userDetails){
+        List<EstimateRequestResponse> estimateRequestResponses = queryService.getEstimateRequestResponsesOnWaiting(userDetails.getUsername());
         return ResponseEntity.ok(estimateRequestResponses);
     }
 
