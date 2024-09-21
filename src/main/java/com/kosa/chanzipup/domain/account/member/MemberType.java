@@ -41,7 +41,7 @@ public enum MemberType {
             return new NaverOAuth2UserDetails((Map<String, Object>) attributes.get("response"), registrationId);
         } else if (KAKAO == memberType) {
             // 현재 전달된 회원 정보가 kakao 정보이면,
-            return new KaKaoOAuth2UserDetails((Map<String, Object>) attributes.get("response"), registrationId);
+            return new KaKaoOAuth2UserDetails(attributes, registrationId);
         }
         throw new IllegalArgumentException("지원하지 않는 로그인 방식입니다.");
     }
