@@ -83,7 +83,7 @@ public class EstimateRequestController {
 
 
     @GetMapping("/{requestId}/estimates")
-    @PreAuthorize("ROLE_COMPANY")
+    @PreAuthorize("ROLE_USER")
     public ResponseEntity<List<SimpleEstimateResponse>> getAllEstimateOnEstimateRequest(@PathVariable Long requestId,
                                                                                         @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
@@ -92,7 +92,7 @@ public class EstimateRequestController {
 
 
     @GetMapping("/{requestId}/estimates/{estimateId}")
-    @PreAuthorize("ROLE_COMPANY")
+    @PreAuthorize("ROLE_USER")
     public ResponseEntity<EstimateDetailResponse> getAllEstimateOnEstimateRequest(@PathVariable Long requestId,
                                                                                   @PathVariable Long estimateId,
                                                                                   @AuthenticationPrincipal UnifiedUserDetails userDetails) {
