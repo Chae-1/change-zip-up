@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.domain.account.member;
 
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
+import com.kosa.chanzipup.config.security.userdetail.oauth2.userdetails.KaKaoOAuth2UserDetails;
 import com.kosa.chanzipup.config.security.userdetail.oauth2.userdetails.NaverOAuth2UserDetails;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,7 @@ public enum MemberType {
             return new NaverOAuth2UserDetails((Map<String, Object>) attributes.get("response"), registrationId);
         } else if (KAKAO == memberType) {
             // 현재 전달된 회원 정보가 kakao 정보이면,
+            return new KaKaoOAuth2UserDetails((Map<String, Object>) attributes.get("response"), registrationId);
         }
         throw new IllegalArgumentException("지원하지 않는 로그인 방식입니다.");
     }

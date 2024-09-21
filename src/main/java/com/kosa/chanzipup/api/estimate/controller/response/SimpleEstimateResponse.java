@@ -11,6 +11,7 @@ import java.util.Map;
 
 @Getter
 public class SimpleEstimateResponse {
+    private Long estimateId;
     private String companyName;
     private String companyLogoUrl;
     private double rating;
@@ -20,6 +21,7 @@ public class SimpleEstimateResponse {
     private int totalPrice;
 
     public SimpleEstimateResponse(Estimate estimate, Map<Company, List<Estimate>> companyEstimates) {
+        this.estimateId = estimate.getId();
 
         Company company = estimate.getCompany();
         this.companyLogoUrl = company.getCompanyLogoUrl();
