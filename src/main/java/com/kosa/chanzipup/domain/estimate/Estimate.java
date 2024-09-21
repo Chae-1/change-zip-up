@@ -2,10 +2,7 @@ package com.kosa.chanzipup.domain.estimate;
 
 import com.kosa.chanzipup.domain.account.company.Company;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,6 +14,7 @@ import java.util.Map;
 @Getter
 @Table(name = "estimate")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(of = "id")
 public class Estimate {
 
     @Id
@@ -51,7 +49,8 @@ public class Estimate {
         );
     }
 
-    private List<EstimatePrice> toEstimatePrices(List<EstimateConstructionType> estimateConstructionTypes, Map<Long, Integer> estimatePrices) {
+    private List<EstimatePrice> toEstimatePrices(List<EstimateConstructionType> estimateConstructionTypes,
+                                                 Map<Long, Integer> estimatePrices) {
         return estimateConstructionTypes
                 .stream()
                 .map(type -> new EstimatePrice(this, type, estimatePrices.get(type.getId())))
@@ -101,5 +100,14 @@ public class Estimate {
                 .stream()
                 .mapToInt(EstimatePrice::getPrice)
                 .sum();
+    }
+
+    public void accept() {
+        this.estimateStatus = EstimateStatus.ACCEPTED;
+        estimateRequest.ongoing();
+    }
+
+    public void reject() {
+        this.estimateStatus = EstimateStatus.REJECTED;
     }
 }

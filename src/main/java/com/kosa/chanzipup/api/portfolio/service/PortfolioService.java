@@ -7,6 +7,8 @@ import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioRegisterRes
 
 import com.kosa.chanzipup.domain.account.Account;
 
+import com.kosa.chanzipup.domain.account.company.Company;
+import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.buildingtype.BuildingTypeRepository;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class PortfolioService {
     private final ConstructionTypeRepository constructionTypeRepository;
     private final PortfolioConstructionTypeRepository portfolioConstructionTypeRepository;
     private final BuildingTypeRepository buildingTypeRepository;
+    private final CompanyRepository companyRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -111,18 +115,59 @@ public class PortfolioService {
         // 빌딩 타입 이름 가져오기
         String buildingTypeName = (portfolio.getBuildingType() != null) ? portfolio.getBuildingType().getName() : "Unknown Building Type";
 
-        // PortfolioDetailResponse 생성 및 반환
-        return new PortfolioDetailResponse(
-                portfolio.getId(),
-                portfolio.getTitle(),
-                portfolio.getContent(),
-                portfolio.getProjectArea(),
-                portfolio.getProjectBudget(),
-                portfolio.getProjectLocation(),
-                portfolio.getStartDate(),
-                portfolio.getEndDate(),
-                buildingTypeName,
-                services
-        );
+        // Account에서 회사 정보 가져오기 (Account가 Company인 경우)
+        Account account = portfolio.getAccount();
+        Long companyId = account.getId();
+        String companyPhone = account.getPhoneNumber();
+
+        // Company가 존재하는지 확인하여 가져오기
+        Optional<Company> optionalCompany = companyRepository.findById(companyId);
+        if (optionalCompany.isPresent()) {
+            Company company = optionalCompany.get();
+            String companyName = company.getCompanyName();
+            String companyAddress = company.getAddress();
+            String companyLogo = company.getCompanyLogoUrl();
+
+            return new PortfolioDetailResponse(
+                    portfolio.getId(),
+                    portfolio.getTitle(),
+                    portfolio.getContent(),
+                    portfolio.getProjectArea(),
+                    portfolio.getProjectBudget(),
+                    portfolio.getProjectLocation(),
+                    portfolio.getStartDate(),
+                    portfolio.getEndDate(),
+                    buildingTypeName,
+                    services,
+                    companyId,
+                    companyName,
+                    companyAddress,
+                    companyPhone,
+                    companyLogo,
+                    portfolio.getCreatedAt(),
+                    portfolio.getUpdatedAt()
+            );
+        } else {
+            // Company가 아니면 일반 Account 정보를 반환
+            return new PortfolioDetailResponse(
+                    portfolio.getId(),
+                    portfolio.getTitle(),
+                    portfolio.getContent(),
+                    portfolio.getProjectArea(),
+                    portfolio.getProjectBudget(),
+                    portfolio.getProjectLocation(),
+                    portfolio.getStartDate(),
+                    portfolio.getEndDate(),
+                    buildingTypeName,
+                    services,
+                    companyId,
+                    account.getName(),
+                    "No Address",
+                    companyPhone,
+                    "",
+                    portfolio.getCreatedAt(),
+                    portfolio.getUpdatedAt()
+            );
+        }
     }
 }

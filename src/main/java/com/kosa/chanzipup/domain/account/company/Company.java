@@ -3,6 +3,7 @@ package com.kosa.chanzipup.domain.account.company;
 import com.kosa.chanzipup.domain.account.Account;
 import com.kosa.chanzipup.domain.account.AccountRole;
 
+import com.kosa.chanzipup.domain.estimate.Estimate;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -30,6 +31,9 @@ public class Company extends Account {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "company", fetch = FetchType.LAZY)
     private List<CompanyConstructionType> constructionTypes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    private List<Estimate> estimates;
 
     @Builder
     private Company(AccountRole accountRole, String email, String password, String phoneNumber, boolean isVerified,

@@ -3,6 +3,7 @@ package com.kosa.chanzipup.api.estimate.service;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRegisterRequest;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateResult;
 import com.kosa.chanzipup.domain.account.company.Company;
+import com.kosa.chanzipup.domain.account.company.CompanyException;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
@@ -109,9 +110,6 @@ public class EstimateService {
         Estimate estimate = estimateRepository.findByEstimateRequestIdAndCompanyId(estimateRequestId, company.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 요청에 대한 견적이 존재하지 않거나 권한이 없습니다: " + estimateRequestId));
 
-
-
-
     }
 
     @Transactional
@@ -130,4 +128,24 @@ public class EstimateService {
         // 업데이트된 견적을 저장
         estimateRepository.save(estimate);
     }
+
+    // todo: 현재는 상태만 변경하는데, 맞는 로직을 작성
+    @Transactional
+    public void acceptEstimate(Long requestId, Long estimateId) {
+        // 1. request가 ongoing 상태로 된다.
+        Estimate estimate = estimateRepository.findById(estimateId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 견적 정보입니다."));
+
+        // 2. estimate accepted 상태가 된다.
+        estimate.accept();
+    }
+
+    @Transactional
+    public void rejectEstimate(Long requestId, Long estimateId) {
+        Estimate estimate = estimateRepository.findById(estimateId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 견적 정보입니다."));
+
+        estimate.reject();
+    }
+
 }

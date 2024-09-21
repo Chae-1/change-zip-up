@@ -99,17 +99,20 @@ public class VerificationMailSender {
     }
 
     private boolean sendToLocalUserAuthenticationCode(String toEmail, String subject, String htmlContent) {
-        MimeMessage message = mailSender.createMimeMessage();
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
-            helper.setTo(toEmail);  // 수신자 이메일 주소
-            helper.setSubject(subject);  // 이메일 제목
-            helper.setText(htmlContent, true);  // true는 HTML 콘텐츠를 의미함
-            mailSender.send(message);
-            return true;
-        } catch (MessagingException e) {
-            throw new IllegalStateException("인증 메시지를 전송하지 못했습니다.", e);
-        }
+        new Thread(() -> {
+            try {
+                MimeMessage message = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
+                helper.setTo(toEmail);  // 수신자 이메일 주소
+                helper.setSubject(subject);  // 이메일 제목
+                helper.setText(htmlContent, true);  // true는 HTML 콘텐츠를 의미함
+                mailSender.send(message);
+                log.info("이메일 전송 완료 했습니다.");
+            } catch (MessagingException e) {
+                throw new IllegalStateException("인증 메시지를 전송하지 못했습니다.", e);
+            }
+        }).start();
+        return true;
     }
 
 }

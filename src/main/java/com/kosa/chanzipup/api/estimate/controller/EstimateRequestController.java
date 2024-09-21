@@ -3,8 +3,11 @@ package com.kosa.chanzipup.api.estimate.controller;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimatePriceRequest;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRequestDTO;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateConstructionResponse;
+import com.kosa.chanzipup.api.estimate.controller.response.EstimateDetailResponse;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
+import com.kosa.chanzipup.api.estimate.controller.response.SimpleEstimateResponse;
 import com.kosa.chanzipup.api.estimate.service.EstimateRequestService;
+import com.kosa.chanzipup.api.estimate.service.EstimateService;
 import com.kosa.chanzipup.api.estimate.service.query.EstimateQueryService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class EstimateRequestController {
 
     private final EstimateRequestService estimateRequestService;
     private final EstimateQueryService queryService;
+    private final EstimateService estimateService;
 
     @PostMapping
     public ResponseEntity<?> createEstimate(@RequestBody EstimateRequestDTO estimateRequestDTO,
@@ -79,12 +83,40 @@ public class EstimateRequestController {
 
 
     @GetMapping("/{requestId}/estimates")
-    @PreAuthorize("ROLE_USER")
-    public void getAllEstimateOnEstimateRequest(@RequestParam Long requestId,
-                                                @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<List<SimpleEstimateResponse>> getAllEstimateOnEstimateRequest(@PathVariable Long requestId,
+                                                                                        @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
-        String username = userDetails.getUsername();
-        queryService.findAllEstimateOnEstimateRequest(requestId, username);
+        return ResponseEntity.ok(queryService.findAllEstimateSimpleOnEstimateRequest(requestId));
     }
 
+
+    @GetMapping("/{requestId}/estimates/{estimateId}")
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<EstimateDetailResponse> getAllEstimateOnEstimateRequest(@PathVariable Long requestId,
+                                                                                  @PathVariable Long estimateId,
+                                                                                  @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        return ResponseEntity.ok(queryService.getEstimateDetail(requestId, estimateId));
+    }
+
+
+    @PostMapping("/{requestId}/estimates/{estimateId}/accept")
+    @PreAuthorize("ROLE_USER")
+    public ResponseEntity<Void> acceptEstimate(@PathVariable Long requestId,
+                                               @PathVariable Long estimateId,
+                                               @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        estimateService.acceptEstimate(requestId, estimateId);
+        return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/{requestId}/estimates/{estimateId}/reject")
+    @PreAuthorize("ROLE_USER")
+    public ResponseEntity<Void> rejectEstimate(@PathVariable Long requestId,
+                                               @PathVariable Long estimateId,
+                                               @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+
+        estimateService.rejectEstimate(requestId, estimateId);
+        return ResponseEntity.ok(null);
+
+    }
 }

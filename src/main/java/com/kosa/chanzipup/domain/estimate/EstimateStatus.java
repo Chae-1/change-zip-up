@@ -11,6 +11,5 @@ public enum EstimateStatus {
     ACCEPTED("견적이 성공적으로 채택되어 완료되거나 진행 중인 상태."),  // 완료 견적
     REJECTED("견적을 거절 당하거나 다른 회사에 의해 견적 요청이 완료되었다.");  // 받은 견적
 
-
     private final String status;
 }

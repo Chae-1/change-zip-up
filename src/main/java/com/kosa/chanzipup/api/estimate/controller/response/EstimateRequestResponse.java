@@ -32,7 +32,7 @@ public class EstimateRequestResponse {
 
 
 
-    public EstimateRequestResponse(EstimateRequest estimateRequest) {
+    public EstimateRequestResponse(EstimateRequest estimateRequest, boolean contains) {
         this.requestId = estimateRequest.getId();
         this.fullAddress = estimateRequest.getFullAddress();
         this.floor = estimateRequest.getFloor();
@@ -45,12 +45,11 @@ public class EstimateRequestResponse {
                 .stream()
                 .map(type -> type.getTypeName())
                 .toList();
-        this.isSend = false;
+        this.isSend = contains;
     }
 
 
-    public EstimateRequestResponse(Estimate estimate, String companyEmail) {
-        this(estimate.getEstimateRequest());
-        this.isSend = estimate.getCompany().getEmail().equals(companyEmail);
+    public EstimateRequestResponse(Estimate estimate) {
+        this(estimate.getEstimateRequest(), false);
     }
 }

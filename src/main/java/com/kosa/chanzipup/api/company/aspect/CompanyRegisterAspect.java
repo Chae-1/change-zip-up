@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.api.company.aspect;
 
+import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterResponse;
 import com.kosa.chanzipup.api.member.controller.response.MemberRegisterResponse;
 import com.kosa.chanzipup.application.VerificationMailSender;
 import com.kosa.chanzipup.application.VerificationCode;
@@ -22,17 +23,19 @@ public class CompanyRegisterAspect {
 
     @Around("execution(* com.kosa.chanzipup.api.company.service.CompanyService.registerCompany(..))")
     public Object sendVerificationEmailAfterRegistration(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        log.info("이메일 전송 중.");
+
         Object executionResult = joinPoint.proceed();
 
-        if (executionResult instanceof MemberRegisterResponse response) {
+        if (executionResult instanceof CompanyRegisterResponse response) {
             String email = response.getEmail();
             VerificationCode verificationCode = verificationService.createVerificationCode(email);
+            // 비동기 처리 요망.
             boolean sendResult = sender.sendVerificationTo(verificationCode.getEmail(),
                     verificationCode.getVerificationCode());
 
-            if (sendResult) {
-                log.info("이메일 전송 완료!");
-            }
+            log.info("이메일 전송 완료!");
 
             return executionResult;
         }
