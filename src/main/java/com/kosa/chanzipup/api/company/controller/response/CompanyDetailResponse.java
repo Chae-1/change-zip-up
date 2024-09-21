@@ -1,7 +1,5 @@
 package com.kosa.chanzipup.api.company.controller.response;
 
-import com.kosa.chanzipup.api.review.controller.response.ReviewDetail;
-import com.kosa.chanzipup.api.review.controller.response.ReviewListResponse;
 import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.portfolio.Portfolio;

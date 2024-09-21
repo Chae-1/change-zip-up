@@ -4,7 +4,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: <your-username>
     password: <your-password>
-
   jpa:
     hibernate:
       ddl-auto: validate

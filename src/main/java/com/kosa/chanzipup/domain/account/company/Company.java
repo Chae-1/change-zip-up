@@ -23,11 +23,12 @@ public class Company extends Account {
     private String companyName;
     private String companyNumber;
     private String companyDesc;
-    private String companyLogoUrl;
     private LocalDate publishDate;
     private String address;
     private String owner;
     private double rating;
+    private String companyLogoUrl;
+
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "company", fetch = FetchType.LAZY)
     private List<CompanyConstructionType> constructionTypes = new ArrayList<>();
