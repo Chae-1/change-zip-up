@@ -27,7 +27,7 @@ public class Company extends Account {
     private LocalDate publishDate;
     private String address;
     private String owner;
-    private float rating;
+    private double rating;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "company", fetch = FetchType.LAZY)
     private List<CompanyConstructionType> constructionTypes = new ArrayList<>();
@@ -100,5 +100,9 @@ public class Company extends Account {
     @Override
     public String getName() {
         return owner;
+    }
+
+    public void updateRating(double companyRating) {
+        this.rating = companyRating;
     }
 }

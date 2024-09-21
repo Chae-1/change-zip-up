@@ -19,7 +19,7 @@ public class CompanyListResponse {
 
     private String companyLogoUrl;
 
-    private float rating;
+    private double rating;
 
     private List<String> services;
 

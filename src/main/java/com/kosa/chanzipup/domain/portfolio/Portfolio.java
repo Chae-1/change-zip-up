@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.domain.portfolio;
 
+import com.kosa.chanzipup.domain.BaseEntity;
 import com.kosa.chanzipup.domain.account.Account;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Portfolio {
+public class Portfolio extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -51,11 +52,8 @@ public class Portfolio {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "portfolio", fetch = FetchType.LAZY)
     private List<PortfolioConstructionType> constructionTypes = new ArrayList<>();
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "portfolio")
+    private List<PortfolioImage> portfolioImages = new ArrayList<>();
 
     @Builder
     private Portfolio(String title, String content, int projectArea, int projectBudget,

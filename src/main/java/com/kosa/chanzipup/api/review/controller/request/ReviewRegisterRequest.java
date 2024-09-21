@@ -25,14 +25,6 @@ public class ReviewRegisterRequest {
 
     private String companyName;
 
-//    private List<ReviewImages> reviewImages;
-//
-//    @NotBlank(message = "건물 종류는 반드시 입력되어야 합니다.")
-//    private Long buildingTypeId;
-//
-//    @NotBlank(message = "시공 종류는 반드시 입력되어야 합니다.")
-//    private List<Long> constructionService;
-
     @NotNull(message = "시공 금액은 반드시 입력되어야 합니다.")
     private Long totalPrice;
 
@@ -42,4 +34,5 @@ public class ReviewRegisterRequest {
     private Long buildingTypeId;
 
     private List<Long> constructionTypes;
+
 }

@@ -45,6 +45,7 @@ public class ReviewService {
         // 1. 작성자 조회, company 조회, 이후 review 초기 정보 저장.
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
         Company company = companyRepository.findByCompanyName(request.getCompanyName())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 파트너입니다."));
 
@@ -61,46 +62,30 @@ public class ReviewService {
 
         reviewRepository.save(review);
 
+        updateCompanyRating(company);
+
         return new ReviewRegisterResponse(review.getId());
+    }
+
+    private void updateCompanyRating(Company company) {
+        double companyRating = reviewRepository.findByCompanyId(company.getId())
+                .stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .getAsDouble();
+
+        company.updateRating(companyRating);
     }
 
     // 이전에 올렸던 코드인데 시공시작일과 종료일 필드타입이 바껴서 그에 맞춰 수정했습니다
     // 전체 리뷰 목록 조회
     public List<ReviewResponse> getAllReviews() {
-//        List<Review> reviews = reviewRepository.findAllWithAll();
-//
-//        List<ReviewListResponse> responses = new ArrayList<>();
-//        for (Review review : reviews) {
-//            List<ReviewImages> reviewImages = review.getReviewImages();
-//            List<ReviewImagesForReviewResponse> imageList = reviewImages.stream()
-//                    .map(ReviewImagesForReviewResponse::new)
-//                    .toList();
-//
-//            responses.add(new ReviewListResponse(
-//                            review.getId(),
-//                            review.getTitle(),
-//                            review.getContent(),
-//                            review.getRegDate(),
-//                            review.getWorkStartDate(),
-//                            review.getWorkEndDate(),
-//                            review.getRating(),
-//                            new MemberForReviewResponse(review.getMember()),
-//                            new CompanyForReviewResponse(review.getCompany()),
-//                            imageList,
-//                            new BuildingTypeForReivewResponse(review.getBuildingType()),
-//                            new ConstructionTypeForReivewResponse(review.getReviewConstructionTypes()),
-//                            review.getTotalPrice(),
-//                            review.getFloor()
-//                    )
-//            );
-//        }
-//
+
         List<Review> reviews = reviewRepository.findAllWithAll();
 
         Map<Long, List<ReviewImages>> reviewImageMap = getReviewImageMap(reviews);
 
         Map<Long, List<ReviewConstructionType>> reviewConstructionTypes = getConstructionTypes(reviews);
-
 
         List<ReviewResponse> reviewResponses = reviews
                 .stream()
