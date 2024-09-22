@@ -62,7 +62,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String requestURI = request.getRequestURI();
             log.info("토큰 재발급 요청 여부 확인: {}", requestURI);
             if (!request.getMethod().equals("GET") || !REFRESH_URI.equals(requestURI)) {
-                throw ex;
+                log.info("인증 실패!!");
+                response.setStatus(401);
+                return ;
             }
             filterChain.doFilter(request, response);
         }

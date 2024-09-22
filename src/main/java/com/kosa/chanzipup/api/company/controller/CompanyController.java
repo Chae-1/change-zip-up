@@ -23,7 +23,6 @@ public class CompanyController {
 
     private final CompanyQueryService companyQueryService;
 
-
     // 업체 등록
     @PostMapping
     public ResponseEntity<CompanyRegisterResponse> addCompany(@Valid @RequestBody CompanyRegisterRequest registerRequest) {

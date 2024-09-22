@@ -24,14 +24,15 @@ import java.util.function.Function;
 public class JwtProvider {
 
     // accessToken 유효 시간 30분
-    private static final int ACCESS_TOKEN_EXPIRE_AMOUNT = 1;
+    private static final int ACCESS_TOKEN_EXPIRE_AMOUNT = 30;
     // refreshToken 유효 시간 7일
     private static final int REFRESH_TOKEN_EXPIRE_AMOUNT = 24 * 60 * 30;
 
     private final Map<TokenType, String> keyMap;
     private final Map<TokenType, Integer> expireAmount;
 
-    public JwtProvider(@Value("${jwt.access.key}") String accessKey, @Value("${jwt.refresh.key}") String refreshKey) {
+    public JwtProvider(@Value("${jwt.access.key}") String accessKey,
+                       @Value("${jwt.refresh.key}") String refreshKey) {
         keyMap = Map.of(
                 TokenType.ACCESS, accessKey,
                 TokenType.REFRESH, refreshKey
