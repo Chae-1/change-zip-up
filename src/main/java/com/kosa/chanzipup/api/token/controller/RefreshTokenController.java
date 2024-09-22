@@ -22,6 +22,7 @@ public class RefreshTokenController {
     @PostMapping("/refreshToken")
     public ApiResponse<String> issueAccessTokenUsingRefreshToken(@AuthenticationPrincipal UnifiedUserDetails userDetails,
                                                                  @CookieValue("refreshToken") String refreshToken) {
+        log.info("재발급 시작");
         String accessToken = refreshTokenService.reIssueAccessToken(refreshToken);
         log.info("accessToken = {}", accessToken);
         return ApiResponse.ok(accessToken);
