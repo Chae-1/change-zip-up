@@ -24,7 +24,7 @@ import java.util.function.Function;
 public class JwtProvider {
 
     // accessToken 유효 시간 30분
-    private static final int ACCESS_TOKEN_EXPIRE_AMOUNT = 30;
+    private static final int ACCESS_TOKEN_EXPIRE_AMOUNT = 1;
     // refreshToken 유효 시간 7일
     private static final int REFRESH_TOKEN_EXPIRE_AMOUNT = 24 * 60 * 30;
 

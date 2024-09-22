@@ -35,7 +35,7 @@ public class RefreshToken {
     }
 
     public boolean isExpired(LocalDateTime today) {
-        return expireDateTime.isAfter(today);
+        return expireDateTime.isBefore(today);
     }
 
     public void updateToken(String token, LocalDateTime expireDateTime) {

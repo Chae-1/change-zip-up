@@ -31,8 +31,8 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
-
-    private static final int REFRESH_EXPIRY_DURATION = 7 * 24 * 60 * 60;
+    private static final int REFRESH_EXPIRY_DAY = 7;
+    private static final int REFRESH_EXPIRY_DURATION = REFRESH_EXPIRY_DAY * 24 * 60 * 60;
 
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
@@ -56,7 +56,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = createAccessToken(email);
         String refreshToken = createAndSaveRefreshToken(email);
 
-
         // todo: 토큰 전달 방식을 수정하자.
         // oauth -> redirect를 해주고
         // formLogin 방식이면, response로 전달한다.
@@ -79,7 +78,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             response.addCookie(cookie);
             String uri = redirectURI(accessToken, nickName, role);
             response.sendRedirect(uri);
-            return ;
+            return;
         }
 
         // 2. 멤버 로그인이면, accessToken을 Authorization Header로 전달.
@@ -87,12 +86,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType("application/json;charset=utf-8");
         response.setStatus(HttpStatus.OK.value());
 
-        // CORS 설정
-        response.setHeader("Access-Control-Allow-Origin", "*");  // 또는 특정 도메인 설정
-        response.setHeader("Access-Control-Allow-Credentials", "true");  // 쿠키 및 인증정보 허용
-        response.setHeader("Access-Control-Expose-Headers", "Authorization");  // Authorization 헤더를 클라이언트에서 노출 허용
         response.getWriter().write(successDto);
-
     }
 
     private String redirectURI(String accessToken, String nickName, String role) throws UnsupportedEncodingException {
@@ -112,15 +106,17 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     private String createAndSaveRefreshToken(String email) {
-        RefreshToken refreshToken = refreshTokenService.saveRefreshTokenByAccountEmail(email);
-        return refreshToken.getToken();
+        LocalDateTime expiryDateTime = LocalDateTime.now().plusDays(REFRESH_EXPIRY_DAY);
+        return refreshTokenService.saveRefreshTokenByAccountEmail(email, expiryDateTime);
     }
 
     private void sendRefreshTokenUsingCookie(String refreshToken, HttpServletResponse response) {
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setPath("/"); // 쿠키의 유효 범위
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setMaxAge(REFRESH_EXPIRY_DURATION);
+        refreshTokenCookie.setHttpOnly(true); //
+        refreshTokenCookie.setSecure(false);
+        refreshTokenCookie.setMaxAge(REFRESH_EXPIRY_DURATION); //
+
         response.addCookie(refreshTokenCookie);
     }
 
