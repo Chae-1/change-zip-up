@@ -49,15 +49,6 @@ public class Review {
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewImages> reviewImages;
 
-//    @ManyToOne(fetch = FetchType.LAZY)    // EstimateRequest 엔티티 추후에 연결할 예정
-//    @JoinColumn(name = "estimate_id")
-//    private EstimateRequest estimateRequest;
-
-    //    @ManyToOne(fetch = FetchType.LAZY)    // Estimate 엔티티 추후에 연결할 예정
-//    @JoinColumn(name = "estimate_id")
-//    private Estimate estimate;
-
-//    EstimateRequest Estimate 엔티티에서 가져와야 할 것들인데 이것 또한 입력하는 것으로 가정한다
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "building_type_id")
     private BuildingType buildingType;

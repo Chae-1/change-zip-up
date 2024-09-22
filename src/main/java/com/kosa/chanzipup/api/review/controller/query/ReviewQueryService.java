@@ -96,6 +96,7 @@ public class ReviewQueryService {
 
         Member findMember = memberRepository.findByEmail(userDetails.getName())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 정보입니다."));
+
         Review review = reviewRepository.findByIdWithMember(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 리뷰 정보입니다."));
 
@@ -105,7 +106,6 @@ public class ReviewQueryService {
 
         return Expressions.asBoolean(false);
     }
-
 
     public ReviewCreationPage reviewCreationPage() {
         List<BuildingTypeResponse> buildingTypeResponses = buildingTypeRepository.findAll()

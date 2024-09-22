@@ -21,7 +21,8 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    private final CompanyQueryService queryService;
+    private final CompanyQueryService companyQueryService;
+
 
     // 업체 등록
     @PostMapping
@@ -40,14 +41,14 @@ public class CompanyController {
     // 업체 리스트 조회
     @GetMapping("/list")
     public ResponseEntity<List<CompanyListResponse>> getAllCompany(@ModelAttribute CompanySearchCondition searchCondition) {
-        List<CompanyListResponse> companies = queryService.getAllCompanies(searchCondition);
+        List<CompanyListResponse> companies = companyQueryService.getAllCompanies(searchCondition);
         return ResponseEntity.ok(companies);
     }
 
     // 업체 상세 조회
     @GetMapping("/{id}")
     public ResponseEntity<CompanyDetailResponse> getCompanyById(@PathVariable Long id) {
-        CompanyDetailResponse companyResponse = companyService.getCompanyById(id);
+        CompanyDetailResponse companyResponse = companyQueryService.getCompanyDetailResponse(id);
         return ResponseEntity.ok(companyResponse);
     }
 

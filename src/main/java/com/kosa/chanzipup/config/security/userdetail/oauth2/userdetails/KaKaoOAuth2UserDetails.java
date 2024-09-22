@@ -13,11 +13,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-@RequiredArgsConstructor
 public class KaKaoOAuth2UserDetails implements UnifiedUserDetails {
 
     private final Map<String, Object> attributes;
     private final String registrationId; // kakao, naver 식별자.
+    private final Map<String, String> properties;
+    private final Map<String, Object> kakaoAccountMap;
+    public KaKaoOAuth2UserDetails(Map<String, Object> attributes, String registrationId) {
+        this.attributes = attributes;
+        this.properties = (Map<String, String>) attributes.get("properties");
+        this.kakaoAccountMap = (Map<String, Object>) attributes.get("kakao_account");
+        this.registrationId = registrationId;
+    }
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -31,13 +38,12 @@ public class KaKaoOAuth2UserDetails implements UnifiedUserDetails {
 
     @Override
     public String getName() {
-        return String.valueOf(attributes.get("email"));
+        return String.valueOf(kakaoAccountMap.get("email"));
     }
-
 
     @Override
     public String nickName() {
-        return String.valueOf(attributes.get("nickname"));
+        return String.valueOf(properties.get("nickname"));
     }
 
     @Override
@@ -52,17 +58,16 @@ public class KaKaoOAuth2UserDetails implements UnifiedUserDetails {
 
     @Override
     public String getUsername() {
-        return String.valueOf(attributes.get("email"));
+        return String.valueOf(kakaoAccountMap.get("email"));
     }
 
     @Override
     public Member toEntity(String encodedPassword) {
-        String name = String.valueOf(attributes.get("name"));
-        String email = String.valueOf(attributes.get("email"));
-        String nickName = String.valueOf(attributes.get("nickname"));
-        String mobile = String.valueOf(attributes.get("mobile"));
 
-        return Member.ofSocial(AccountRole.USER, email, encodedPassword, mobile,
-                MemberType.NAVER, nickName, name);
+        String nickName = String.valueOf(properties.get("nickname"));
+        String email = String.valueOf(kakaoAccountMap.get("email"));
+
+        return Member.ofSocial(AccountRole.USER, email, encodedPassword, "01000000000",
+                MemberType.KAKAO, nickName, "실명없음");
     }
 }

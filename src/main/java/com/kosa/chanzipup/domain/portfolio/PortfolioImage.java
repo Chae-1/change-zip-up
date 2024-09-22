@@ -1,10 +1,12 @@
 package com.kosa.chanzipup.domain.portfolio;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PortfolioImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,6 +15,7 @@ public class PortfolioImage {
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
 
 }
