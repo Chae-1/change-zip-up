@@ -24,11 +24,11 @@ public class Portfolio extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Lob
-    @Column(name = "content", columnDefinition = "TEXT")
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
     private int projectArea;
@@ -42,11 +42,11 @@ public class Portfolio extends BaseEntity {
     private LocalDate endDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "company_id", nullable = false)
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "building_type_id")
+    @JoinColumn(name = "building_type_id", nullable = false)
     private BuildingType buildingType;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "portfolio", fetch = FetchType.LAZY)
@@ -55,10 +55,17 @@ public class Portfolio extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "portfolio")
     private List<PortfolioImage> portfolioImages = new ArrayList<>();
 
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
     @Builder
-    private Portfolio(String title, String content, int projectArea, int projectBudget,
-                      String projectLocation, LocalDate startDate, LocalDate endDate,
-                      Account account, BuildingType buildingType) {
+    public Portfolio(String title, String content, int projectArea, int projectBudget,
+                     String projectLocation, LocalDate startDate, LocalDate endDate,
+                     Account account, BuildingType buildingType) {
         this.title = title;
         this.content = content;
         this.projectArea = projectArea;
@@ -86,10 +93,6 @@ public class Portfolio extends BaseEntity {
                 .account(account)
                 .buildingType(buildingType)
                 .build();
-    }
-
-    public void addConstructionType(PortfolioConstructionType constructionType) {
-        constructionTypes.add(constructionType);
     }
 
 }
