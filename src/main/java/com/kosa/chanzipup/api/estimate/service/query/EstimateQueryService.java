@@ -1,9 +1,6 @@
 package com.kosa.chanzipup.api.estimate.service.query;
 
-import com.kosa.chanzipup.api.estimate.controller.response.EstimateConstructionResponse;
-import com.kosa.chanzipup.api.estimate.controller.response.EstimateDetailResponse;
-import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestResponse;
-import com.kosa.chanzipup.api.estimate.controller.response.SimpleEstimateResponse;
+import com.kosa.chanzipup.api.estimate.controller.response.*;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.estimate.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -19,6 +16,8 @@ import static com.kosa.chanzipup.domain.account.company.QCompany.company;
 import static com.kosa.chanzipup.domain.account.member.QMember.member;
 import static com.kosa.chanzipup.domain.buildingtype.QBuildingType.buildingType;
 import static com.kosa.chanzipup.domain.constructiontype.QConstructionType.constructionType;
+import static com.kosa.chanzipup.domain.estimate.EstimateRequestStatus.ONGOING;
+import static com.kosa.chanzipup.domain.estimate.EstimateStatus.ACCEPTED;
 import static com.kosa.chanzipup.domain.estimate.QEstimate.estimate;
 import static com.kosa.chanzipup.domain.estimate.QEstimateConstructionType.estimateConstructionType;
 import static com.kosa.chanzipup.domain.estimate.QEstimatePrice.estimatePrice;
@@ -137,20 +136,22 @@ public class EstimateQueryService {
         return fetch.stream()
                 .map(estimate -> new SimpleEstimateResponse(estimate, companyEstimates))
                 .toList();
-
-
     }
 
-    public EstimateDetailResponse getEstimateDetail(Long requestId, Long estimateId) {
+    public EstimateDetailResponse getEstimateDetailOf(Long requestId, Long estimateId,
+                                                      EstimateStatus status, EstimateRequestStatus requestStatus) {
         Optional<Estimate> findEstimate = Optional.of(
                 factory.select(estimate)
-                .from(estimate) // 1
-                .leftJoin(estimate.company, company)
+                .from(estimate)
+                .leftJoin(estimate.company, company).fetchJoin()
                 .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin() // 1
                 .leftJoin(estimate.estimatePrices, estimatePrice).fetchJoin()
-                .leftJoin(estimatePrice.constructionType, estimateConstructionType)
-                .leftJoin(estimateConstructionType.constructionType, constructionType)
-                .where(estimate.id.eq(estimateId), estimateRequest.id.eq(requestId)) // requestId 에 대한 요청이면서 업체가 보낸 견적이면
+                .leftJoin(estimatePrice.constructionType, estimateConstructionType).fetchJoin()
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
+                .where(estimateRequest.id.eq(requestId),
+                        estimate.id.eq(estimateId),
+                        estimate.estimateStatus.eq(status),
+                        estimateRequest.status.eq(requestStatus))
                 .fetchOne()
         );
 
@@ -158,5 +159,24 @@ public class EstimateQueryService {
         return findEstimate
                 .map(EstimateDetailResponse::new)
                 .orElse(null);
+    }
+
+    public EstimateDetailResponse getAcceptedEstimateDetailOf(Long requestId) {
+        EstimateRequest request = factory.selectFrom(estimateRequest)
+                .leftJoin(estimateRequest.estimates, estimate).fetchJoin()
+                .where(estimateRequest.id.eq(requestId), estimate.estimateStatus.eq(ACCEPTED))
+                .fetchOne();
+
+        Optional<Estimate> acceptedEstimate = request.getEstimates()
+                .stream()
+                .filter(estimate -> estimate.getEstimateStatus() == ACCEPTED)
+                .findAny();
+
+        if (acceptedEstimate.isPresent()) {
+            Estimate findEstimate = acceptedEstimate.get();
+            return getEstimateDetailOf(requestId, findEstimate.getId(), ACCEPTED, ONGOING);
+        }
+
+        return null;
     }
 }
