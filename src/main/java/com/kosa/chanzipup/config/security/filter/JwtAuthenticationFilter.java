@@ -26,9 +26,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final static String REFRESH_URI = "/refreshToken";
+
     private final JwtProvider jwtProvider;
 
     private final UserDetailsService userDetailsService;
+
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -55,8 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException ex) {
-            if (!request.getMethod().equals("GET")) {
-                throw ex;
+            String requestURI = request.getRequestURI();
+            log.info("토큰 재발급 요청 여부 확인: {}", requestURI);
+            if (!request.getMethod().equals("GET") || !REFRESH_URI.equals(requestURI)) {
+                log.info("인증 실패!!");
+                response.setStatus(401);
+                return ;
             }
             filterChain.doFilter(request, response);
         }

@@ -36,6 +36,7 @@ public class CompanyQueryService {
 
     private final JPAQueryFactory factory;
 
+    // todo: 멤버십에 따른 분류를 수행해야한다.
     public List<CompanyListResponse> getAllCompanies(CompanySearchCondition searchCondition) {
         log.info("지역 : {}", searchCondition.getCity());
         log.info("구 : {}", searchCondition.getDistrict());

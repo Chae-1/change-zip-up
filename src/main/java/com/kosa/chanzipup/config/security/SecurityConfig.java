@@ -55,7 +55,7 @@ public class SecurityConfig {
         // 기본 설정
         http
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/refreshToken").permitAll()
+                        .requestMatchers("/refreshToken", "/form/login").permitAll()
                         .requestMatchers("/api/payment/**", "/api/memberships/**").hasRole("COMPANY") // ROLE_COMPANY Role, Authority
                         .requestMatchers("/api/memberships/**").hasRole("COMPANY")
                         .requestMatchers("/api/**", "/", "/oauth2/**").permitAll()
@@ -97,6 +97,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.setAllowedMethods(List.of("GET", "POST", "DELETE", "UPDATE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
+        configuration.addExposedHeader("Authorization");
         configuration.setAllowCredentials(true);
 
 

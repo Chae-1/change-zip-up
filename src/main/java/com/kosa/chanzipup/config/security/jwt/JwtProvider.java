@@ -31,7 +31,8 @@ public class JwtProvider {
     private final Map<TokenType, String> keyMap;
     private final Map<TokenType, Integer> expireAmount;
 
-    public JwtProvider(@Value("${jwt.access.key}") String accessKey, @Value("${jwt.refresh.key}") String refreshKey) {
+    public JwtProvider(@Value("${jwt.access.key}") String accessKey,
+                       @Value("${jwt.refresh.key}") String refreshKey) {
         keyMap = Map.of(
                 TokenType.ACCESS, accessKey,
                 TokenType.REFRESH, refreshKey
