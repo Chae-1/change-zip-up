@@ -32,7 +32,7 @@ public class QPortfolio extends EntityPathBase<Portfolio> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Integer> projectArea = createNumber("projectArea", Integer.class);
+    public final NumberPath<Integer>  = createNumber("", Integer.class);
 
     public final NumberPath<Integer> projectBudget = createNumber("projectBudget", Integer.class);
 

@@ -50,7 +50,6 @@ public class ReviewQueryService {
     private final JPAQueryFactory factory;
     private final BuildingTypeRepository buildingTypeRepository;
     private final ConstructionTypeRepository constructionTypeRepository;
-    private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
     private final AccountRepository accountRepository;
 

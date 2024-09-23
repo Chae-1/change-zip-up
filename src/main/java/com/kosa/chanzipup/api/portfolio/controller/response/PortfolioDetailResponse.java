@@ -19,7 +19,7 @@ public class PortfolioDetailResponse {
     @Lob
     private String content;
 
-    private int projectArea;
+    private int floor;
 
     private int projectBudget;
 

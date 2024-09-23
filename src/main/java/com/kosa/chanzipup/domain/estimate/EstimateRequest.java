@@ -65,6 +65,8 @@ public class EstimateRequest {
     @Enumerated(EnumType.STRING)
     private EstimateRequestStatus status;
 
+    @OneToMany(mappedBy = "estimateRequest", cascade = CascadeType.ALL)
+    private List<Estimate> estimates = new ArrayList<>();
 
     @Builder
     public EstimateRequest(String identification, String schedule, String budget,

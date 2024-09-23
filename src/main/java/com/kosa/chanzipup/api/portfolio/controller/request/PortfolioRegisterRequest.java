@@ -15,7 +15,7 @@ public class PortfolioRegisterRequest {
     @NotBlank(message = "내용은 반드시 입력되어야 합니다.")
     private String content;
 
-    private int projectArea;
+    private int floor;
 
     @NotNull(message = "예산은 반드시 입력되어야 합니다.")
     private int projectBudget;

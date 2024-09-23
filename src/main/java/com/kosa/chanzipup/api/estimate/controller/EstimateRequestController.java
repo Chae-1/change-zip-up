@@ -8,6 +8,7 @@ import com.kosa.chanzipup.api.estimate.service.EstimateService;
 import com.kosa.chanzipup.api.estimate.service.query.EstimateQueryService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.estimate.EstimateRequestStatus;
+import com.kosa.chanzipup.domain.estimate.EstimateStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -92,10 +93,10 @@ public class EstimateRequestController {
 
     @GetMapping("/{requestId}/estimates/accept")
     @PreAuthorize("ROLE_USER")
-    public ResponseEntity<List<EstimateResponse>> getAcceptedEstimateOnEstimateRequest(@PathVariable Long requestId,
-                                                                                       @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+    public ResponseEntity<EstimateDetailResponse> getAcceptedEstimateOnEstimateRequest(@PathVariable Long requestId,
+                                                                                 @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
-        return null;
+        return ResponseEntity.ok(queryService.getAcceptedEstimateDetailOf(requestId));
     }
 
 
@@ -104,7 +105,8 @@ public class EstimateRequestController {
     public ResponseEntity<EstimateDetailResponse> getAllEstimateOnEstimateRequest(@PathVariable Long requestId,
                                                                                   @PathVariable Long estimateId,
                                                                                   @AuthenticationPrincipal UnifiedUserDetails userDetails) {
-        return ResponseEntity.ok(queryService.getEstimateDetail(requestId, estimateId));
+        return ResponseEntity.ok(queryService.getEstimateDetailOf(requestId, estimateId,
+                EstimateStatus.SENT, EstimateRequestStatus.WAITING));
     }
 
 
@@ -125,6 +127,5 @@ public class EstimateRequestController {
 
         estimateService.rejectEstimate(requestId, estimateId);
         return ResponseEntity.ok(null);
-
     }
 }
