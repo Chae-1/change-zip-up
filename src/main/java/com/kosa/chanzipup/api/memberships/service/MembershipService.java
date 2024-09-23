@@ -40,7 +40,7 @@ public class MembershipService {
         // todo : 기존에 가입한 멤버십이 있다면?
 
         // 2. 가입 한 멤버십은 MEMBERSHIP_EXPIRE_DAY 만큼 유지된다.
-        Membership membership = createMembership(company, membershipType);
+        Membership membership = createMembership(company, membershipType, paymentResult.getImpUid());
         membershipRepository.save(membership);
 
         return MembershipResponse.of(membershipType.getName().name(), membershipType.getPrice(),
@@ -49,10 +49,10 @@ public class MembershipService {
 
 
     // 2. 가입 한 멤버십은 MEMBERSHIP_EXPIRE_DAY 만큼 유지된다.
-    private Membership createMembership(Company company, MembershipType membershipType) {
+    private Membership createMembership(Company company, MembershipType membershipType, String impUid) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiredDateTime = now.plusDays(MEMBERSHIP_EXPIRE_DAY);
 
-        return Membership.ofNewMembership(company, membershipType, now, expiredDateTime);
+        return Membership.ofNewMembership(company, membershipType, now, expiredDateTime, impUid);
     }
 }

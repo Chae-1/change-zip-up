@@ -30,7 +30,10 @@ public class Membership extends BaseEntity {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    private Membership(LocalDateTime startDateTime, LocalDateTime endDateTime, MembershipType membershipType, Company company) {
+    private String impUid;
+
+    private Membership(LocalDateTime startDateTime, LocalDateTime endDateTime,
+                       MembershipType membershipType, Company company, String impUid) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.membershipType = membershipType;
@@ -39,8 +42,8 @@ public class Membership extends BaseEntity {
 
     public static Membership ofNewMembership(Company company, MembershipType membershipType,
                                              LocalDateTime startDateTime,
-                                             LocalDateTime endDateTime) {
-        return new Membership(startDateTime, endDateTime, membershipType, company);
+                                             LocalDateTime endDateTime, String impUid) {
+        return new Membership(startDateTime, endDateTime, membershipType, company, impUid);
     }
 
     public boolean isValid() {
