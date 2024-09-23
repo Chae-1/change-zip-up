@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.kosa.chanzipup.domain.account.company.QCompany.company;
 import static com.kosa.chanzipup.domain.account.member.QMember.member;
@@ -32,7 +31,7 @@ import static java.util.stream.Collectors.*;
 public class EstimateQueryService {
     private final JPAQueryFactory factory;
 
-    public List<EstimateRequestResponse> getEstimateRequestResponsesOnWaiting(String companyEmail) {
+    public List<EstimateRequestResponse> getEstimateRequestResponsesOn(String companyEmail, EstimateRequestStatus status) {
 
         List<EstimateRequest> fetch = factory.select(estimateRequest)
                 .from(estimateRequest) // 1
@@ -40,7 +39,7 @@ public class EstimateQueryService {
                 .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin() // 1
                 .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
                 .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin() // n - 1
-                .where(estimateRequest.status.eq(EstimateRequestStatus.WAITING))
+                .where(estimateRequest.status.eq(status))
                 .fetch();
 
 
@@ -103,7 +102,7 @@ public class EstimateQueryService {
         return estimateConstructionResponses;
     }
 
-    public List<EstimateRequestResponse> getAllEstimateRequestByUser(String userEmail) {
+    public List<EstimateRequestResponse> getAllEstimateRequestByUser(String userEmail, EstimateRequestStatus status) {
 
         List<EstimateRequest> requests = factory.select(estimateRequest)
                 .from(estimateRequest)
@@ -112,8 +111,8 @@ public class EstimateQueryService {
                 .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
                 .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
                 .where(member.email.eq(userEmail),
-                        estimateRequest.status.eq(EstimateRequestStatus.WAITING))
-                .fetch();// n - 1
+                        estimateRequest.status.eq(status))
+                .fetch();
 
         return requests.stream()
                 .map(estimateRequest -> new EstimateRequestResponse(estimateRequest, false))
