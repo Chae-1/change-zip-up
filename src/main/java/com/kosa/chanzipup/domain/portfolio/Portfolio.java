@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.domain.portfolio;
 
+import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioUpdateRequest;
 import com.kosa.chanzipup.domain.BaseEntity;
 import com.kosa.chanzipup.domain.account.Account;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
@@ -92,4 +93,7 @@ public class Portfolio extends BaseEntity {
         constructionTypes.add(constructionType);
     }
 
+    public void update(PortfolioUpdateRequest portfolioRequest) {
+        this.content = portfolioRequest.getContent();
+    }
 }
