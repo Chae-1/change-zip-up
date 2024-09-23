@@ -2,6 +2,7 @@ package com.kosa.chanzipup.api.estimate.controller.response;
 
 public class EstimateResponse {
 
+
     private String content;
     private boolean isWrite;
 

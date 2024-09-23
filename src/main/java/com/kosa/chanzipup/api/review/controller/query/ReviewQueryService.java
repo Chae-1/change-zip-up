@@ -16,6 +16,8 @@ import com.kosa.chanzipup.api.review.controller.response.create.ConstructionType
 import com.kosa.chanzipup.api.review.controller.response.create.ReviewCreationPage;
 import com.kosa.chanzipup.api.review.controller.response.ReviewDetail;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
+import com.kosa.chanzipup.domain.account.Account;
+import com.kosa.chanzipup.domain.account.AccountRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
@@ -50,6 +52,7 @@ public class ReviewQueryService {
     private final ConstructionTypeRepository constructionTypeRepository;
     private final MemberRepository memberRepository;
     private final ReviewRepository reviewRepository;
+    private final AccountRepository accountRepository;
 
     // 리뷰 정보와,
     public ReviewDetail getUserDetail(Long reviewId, UnifiedUserDetails userDetails) {
@@ -94,7 +97,7 @@ public class ReviewQueryService {
             return Expressions.asBoolean(false);
         }
 
-        Member findMember = memberRepository.findByEmail(userDetails.getName())
+        Account findMember = accountRepository.findByEmail(userDetails.getName())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 정보입니다."));
 
         Review review = reviewRepository.findByIdWithMember(reviewId)
