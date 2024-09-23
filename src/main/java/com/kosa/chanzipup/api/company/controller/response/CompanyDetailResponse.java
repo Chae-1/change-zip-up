@@ -3,8 +3,11 @@ package com.kosa.chanzipup.api.company.controller.response;
 import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.portfolio.Portfolio;
+import com.kosa.chanzipup.domain.portfolio.PortfolioImage;
 import com.kosa.chanzipup.domain.review.Review;
 import java.time.LocalDateTime;
+
+import com.kosa.chanzipup.domain.review.ReviewImages;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -72,10 +75,8 @@ public class CompanyDetailResponse {
         public SimpleReviewResponse(Review review) {
             this.reviewId = review.getId();
             this.title = review.getTitle();
-            this.reviewImageUrl = review
-                    .getReviewImages()
-                    .get(0)
-                    .getImageUrl();
+            List<ReviewImages> reviewImages = review.getReviewImages();
+            this.reviewImageUrl = reviewImages.isEmpty() ? "" : reviewImages.get(0).getImageUrl();
             this.regDate = review.getRegDate();
         }
     }
@@ -83,6 +84,7 @@ public class CompanyDetailResponse {
 
     @Getter
     static class SimplePortfolioResponse {
+        private Long portfolioId;
         private String title;
         private String buildingTypeName;
         private int floor;
@@ -90,8 +92,10 @@ public class CompanyDetailResponse {
         private String location;
         private LocalDate startDate;
         private LocalDate endDate;
+        private String imageUrl;
 
         public SimplePortfolioResponse(Portfolio portfolio) {
+            this.portfolioId = portfolio.getId();
             this.title = portfolio.getTitle();
             this.buildingTypeName = portfolio.getBuildingType().getName();
             this.floor = portfolio.getProjectArea();
@@ -99,6 +103,9 @@ public class CompanyDetailResponse {
             this.location = portfolio.getProjectLocation();
             this.startDate = portfolio.getStartDate();
             this.endDate = portfolio.getEndDate();
+
+            List<PortfolioImage> portfolioImages = portfolio.getPortfolioImages();
+            this.imageUrl = portfolioImages.isEmpty() ? "" : portfolioImages.get(0).getImageUrl();
         }
     }
 }
