@@ -42,23 +42,39 @@ public class EstimateRequestController {
 
     @GetMapping
     @PreAuthorize("ROLE_COMPANY")
-    public ResponseEntity<List<EstimateRequestResponse>> getAllEstimateRequests(@AuthenticationPrincipal UnifiedUserDetails userDetails,
-                                                                                @RequestParam(value = "status") EstimateRequestStatus status) {
-        List<EstimateRequestResponse> estimateRequestResponses = queryService.getEstimateRequestResponsesOn(userDetails.getUsername(), status);
+    public ResponseEntity<List<EstimateRequestResponse>> getAllEstimateRequests(
+            @AuthenticationPrincipal UnifiedUserDetails userDetails,
+            @RequestParam(value = "status") EstimateRequestStatus status) {
+        List<EstimateRequestResponse> estimateRequestResponses = queryService.getEstimateRequestResponsesOn(
+                userDetails.getUsername(), status);
+        return ResponseEntity.ok(estimateRequestResponses);
+    }
+
+    @GetMapping("/sent")
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<List<EstimateResponse>> getAllSentEstimate(
+            @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        List<EstimateResponse> estimateRequestResponses = queryService.getAllSentEstimate(
+                userDetails.getUsername());
         return ResponseEntity.ok(estimateRequestResponses);
     }
 
     @GetMapping("/received")
     @PreAuthorize("ROLE_COMPANY")
-    public ResponseEntity<List<EstimateRequestResponse>> getAllReceivedEstimate(@AuthenticationPrincipal UnifiedUserDetails userDetails) {
-        List<EstimateRequestResponse> estimateRequestResponses = queryService.getAllReceivedEstimate(userDetails.getUsername());
+    public ResponseEntity<List<EstimateRequestResponse>> getAllReceivedEstimate(
+            @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        List<EstimateRequestResponse> estimateRequestResponses = queryService.getAllReceivedEstimate(
+                userDetails.getUsername());
         return ResponseEntity.ok(estimateRequestResponses);
     }
 
 
+
+
     @GetMapping("/{estimateRequestId}/write")
     @PreAuthorize("ROLE_COMPANY")
-    public ResponseEntity<List<EstimateConstructionResponse>> getEstimatePriceDetail(@PathVariable Long estimateRequestId) {
+    public ResponseEntity<List<EstimateConstructionResponse>> getEstimatePriceDetail(
+            @PathVariable Long estimateRequestId) {
         return ResponseEntity.ok(queryService.getEstimatePriceDetail(estimateRequestId));
     }
 
@@ -75,10 +91,30 @@ public class EstimateRequestController {
 
     }
 
+    @PostMapping("/{estimateRequestId}/cancel")
+    @PreAuthorize("ROLE_USER")
+    public ResponseEntity<Boolean> cancelEstimateRequest(@PathVariable Long estimateRequestId,
+                                                         @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+
+        estimateRequestService.cancelRequest(estimateRequestId);
+
+        return ResponseEntity.ok(true);
+    }
+
+
+    @PostMapping("/{estimateRequestId}/complete")
+    public ResponseEntity<Boolean> completeEstimateRequest(@PathVariable Long estimateRequestId,
+                                                           @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+
+        estimateRequestService.completeRequest(estimateRequestId);
+        return ResponseEntity.ok(true);
+    }
+
     @GetMapping("/users")
     @PreAuthorize("ROLE_USER")
-    public ResponseEntity<List<EstimateRequestResponse>> findAllUserReceivedRequests(@AuthenticationPrincipal UnifiedUserDetails userDetails,
-                                                                                     @RequestParam("status") EstimateRequestStatus status) {
+    public ResponseEntity<List<EstimateRequestResponse>> findAllUserReceivedRequests(
+            @AuthenticationPrincipal UnifiedUserDetails userDetails,
+            @RequestParam("status") EstimateRequestStatus status) {
         return ResponseEntity.ok(queryService.getAllEstimateRequestByUser(userDetails.getUsername(), status));
     }
 
@@ -94,7 +130,7 @@ public class EstimateRequestController {
     @GetMapping("/{requestId}/estimates/accept")
     @PreAuthorize("ROLE_USER")
     public ResponseEntity<EstimateDetailResponse> getAcceptedEstimateOnEstimateRequest(@PathVariable Long requestId,
-                                                                                 @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+                                                                                       @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
         return ResponseEntity.ok(queryService.getAcceptedEstimateDetailOf(requestId));
     }

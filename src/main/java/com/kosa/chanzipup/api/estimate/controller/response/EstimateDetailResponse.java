@@ -22,10 +22,13 @@ public class EstimateDetailResponse {
     private String companyAddress;
     private String companyEmail;
 
+
     private Map<String, Integer> constructionPrices;
     private int totalPrice;
+    private Long countOfCompleteEstimate;
 
-    public EstimateDetailResponse(Estimate estimate) {
+
+    public EstimateDetailResponse(Estimate estimate, Long countOfCompleteEstimate) {
         Company company = estimate.getCompany();
         this.estimateId = estimate.getId();
         this.phoneNumber = company.getPhoneNumber();
@@ -46,6 +49,8 @@ public class EstimateDetailResponse {
                 .stream()
                 .mapToInt(Integer::intValue)
                 .sum();
+
+        this.countOfCompleteEstimate = countOfCompleteEstimate;
     }
 
 

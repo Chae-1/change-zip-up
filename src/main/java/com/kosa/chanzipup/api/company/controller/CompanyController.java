@@ -60,5 +60,4 @@ public class CompanyController {
         CompanyDetailResponse companyResponse = companyQueryService.getCompanyDetailResponse(id);
         return ResponseEntity.ok(companyResponse);
     }
-
 }

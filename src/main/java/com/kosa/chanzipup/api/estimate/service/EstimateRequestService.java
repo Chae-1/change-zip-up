@@ -117,4 +117,27 @@ public class EstimateRequestService {
                 });
 
     }
+
+    @Transactional
+    public boolean cancelRequest(Long estimateRequestId) {
+        // 1. 시공이 마음에 안들어서 취소할 수 있다.
+        EstimateRequest estimateRequest = estimateRequestRepository.findByIdWithSpecifiedEstimate(estimateRequestId,
+                        EstimateStatus.ACCEPTED)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 시공 요청입니다."));
+
+        estimateRequest.cancel();
+
+        return true;
+    }
+
+
+    @Transactional
+    public boolean completeRequest(Long estimateRequestId) {
+        EstimateRequest estimateRequest = estimateRequestRepository.findByIdWithSpecifiedEstimate(estimateRequestId,
+                        EstimateStatus.ACCEPTED)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 시공 요청입니다."));
+
+        estimateRequest.complete();
+        return true;
+    }
 }

@@ -4,6 +4,7 @@ import com.kosa.chanzipup.api.payment.controller.response.PaymentPrepareResponse
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyException;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
+import com.kosa.chanzipup.domain.membership.MembershipRepository;
 import com.kosa.chanzipup.domain.membership.MembershipType;
 import com.kosa.chanzipup.domain.membership.MembershipTypeRepository;
 import com.kosa.chanzipup.domain.payment.Payment;
@@ -27,6 +28,9 @@ public class PaymentService {
     private final CompanyRepository companyRepository;
 
     private final MembershipTypeRepository membershipTypeRepository;
+
+    private final MembershipRepository membershipRepository;
+
 
     @Transactional
     public PaymentPrepareResponse createNewPayment(String email, Long membershipId) {

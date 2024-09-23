@@ -18,6 +18,8 @@ public class Member extends Account {
 
     private String name;
 
+    private String phoneNumber;
+
     @Builder
     private Member(AccountRole accountRole, String email, String password, boolean isVerified,
                    String phoneNumber, MemberType memberType, String nickName, String name) {
