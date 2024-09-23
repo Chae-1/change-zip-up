@@ -32,7 +32,7 @@ public class QReview extends EntityPathBase<Review> {
 
     public final com.kosa.chanzipup.domain.account.member.QMember member;
 
-    public final NumberPath<Integer> projectArea = createNumber("projectArea", Integer.class);
+    public final NumberPath<Integer>  = createNumber("", Integer.class);
 
     public final NumberPath<Double> rating = createNumber("rating", Double.class);
 

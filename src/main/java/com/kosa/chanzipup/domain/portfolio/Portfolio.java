@@ -32,7 +32,7 @@ public class Portfolio extends BaseEntity {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    private int projectArea;
+    private int floor;
 
     private int projectBudget;
 
@@ -63,12 +63,12 @@ public class Portfolio extends BaseEntity {
     private LocalDateTime updatedAt;
 
     @Builder
-    private Portfolio(String title, String content, int projectArea, int projectBudget,
+    private Portfolio(String title, String content, int floor, int projectBudget,
                       String projectLocation, LocalDate startDate, LocalDate endDate,
                       Account account, BuildingType buildingType) {
         this.title = title;
         this.content = content;
-        this.projectArea = projectArea;
+        this.floor = floor;
         this.projectBudget = projectBudget;
         this.projectLocation = projectLocation;
         this.startDate = startDate;
@@ -78,14 +78,14 @@ public class Portfolio extends BaseEntity {
     }
 
     public static Portfolio ofNewPortfolio(String title, String content,
-                                           int projectArea, int projectBudget,
+                                           int floor, int projectBudget,
                                            String projectLocation, LocalDate startDate,
                                            LocalDate endDate, Account account,
                                            BuildingType buildingType) {
         return Portfolio.builder()
                 .title(title)
                 .content(content)
-                .projectArea(projectArea)
+                .floor(floor)
                 .projectBudget(projectBudget)
                 .projectLocation(projectLocation)
                 .startDate(startDate)

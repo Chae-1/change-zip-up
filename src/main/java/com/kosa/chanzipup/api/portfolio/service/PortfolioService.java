@@ -58,7 +58,7 @@ public class PortfolioService {
         Portfolio portfolio = Portfolio.ofNewPortfolio(
                 request.getTitle(),
                 request.getContent(),
-                request.getProjectArea(),
+                request.getFloor(),
                 request.getProjectBudget(),
                 request.getProjectLocation(),
                 request.getStartDate(),
@@ -85,26 +85,11 @@ public class PortfolioService {
 
     // 시공사례 리스트 조회
     public List<PortfolioListResponse> getAllPortfolios() {
-        List<Portfolio> portfolios = portfolioRepository.findAll();
-        List<PortfolioListResponse> portfolioResponses = new ArrayList<>();
-
-        for (Portfolio portfolio : portfolios) {
-            // BuildingType이 null인 경우 처리
-            BuildingType buildingType = portfolio.getBuildingType();
-            String buildingTypeName = (buildingType != null) ? buildingType.getName() : "Unknown Building Type";  // null 체크
-
-            PortfolioListResponse portfolioResponse = new PortfolioListResponse(
-                    portfolio.getId(),
-                    portfolio.getTitle(),
-                    portfolio.getProjectArea(),
-                    portfolio.getProjectLocation(),
-                    buildingTypeName
-            );
-
-            portfolioResponses.add(portfolioResponse);
-        }
-
-        return portfolioResponses;
+        List<Portfolio> portfolios = portfolioRepository.findAllWithImages();
+        return portfolios
+                .stream()
+                .map(PortfolioListResponse::new)
+                .toList();
     }
 
     // 시공사례 상세 조회
@@ -138,7 +123,7 @@ public class PortfolioService {
                     portfolio.getId(),
                     portfolio.getTitle(),
                     portfolio.getContent(),
-                    portfolio.getProjectArea(),
+                    portfolio.getFloor(),
                     portfolio.getProjectBudget(),
                     portfolio.getProjectLocation(),
                     portfolio.getStartDate(),
@@ -159,7 +144,7 @@ public class PortfolioService {
                     portfolio.getId(),
                     portfolio.getTitle(),
                     portfolio.getContent(),
-                    portfolio.getProjectArea(),
+                    portfolio.getFloor(),
                     portfolio.getProjectBudget(),
                     portfolio.getProjectLocation(),
                     portfolio.getStartDate(),
