@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class PaymentConfirmation {
+
     @NotBlank(message = "멤버십 결제 ID는 필수입니다.")
     private String merchantUid; // 멤버십 결제 내역 UUID
     @NotBlank(message = "결제 ID는 필수입니다.")
