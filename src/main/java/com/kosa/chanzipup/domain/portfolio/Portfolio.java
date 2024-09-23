@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.domain.portfolio;
 
+import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioUpdateRequest;
 import com.kosa.chanzipup.domain.BaseEntity;
 import com.kosa.chanzipup.domain.account.Account;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
@@ -24,11 +25,11 @@ public class Portfolio extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title")
     private String title;
 
     @Lob
-    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     private int projectArea;
@@ -42,11 +43,11 @@ public class Portfolio extends BaseEntity {
     private LocalDate endDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
+    @JoinColumn(name = "company_id")
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "building_type_id", nullable = false)
+    @JoinColumn(name = "building_type_id")
     private BuildingType buildingType;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "portfolio", fetch = FetchType.LAZY)
@@ -56,16 +57,15 @@ public class Portfolio extends BaseEntity {
     private List<PortfolioImage> portfolioImages = new ArrayList<>();
 
     @CreationTimestamp
-    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @Builder
-    public Portfolio(String title, String content, int projectArea, int projectBudget,
-                     String projectLocation, LocalDate startDate, LocalDate endDate,
-                     Account account, BuildingType buildingType) {
+    private Portfolio(String title, String content, int projectArea, int projectBudget,
+                      String projectLocation, LocalDate startDate, LocalDate endDate,
+                      Account account, BuildingType buildingType) {
         this.title = title;
         this.content = content;
         this.projectArea = projectArea;
@@ -93,6 +93,14 @@ public class Portfolio extends BaseEntity {
                 .account(account)
                 .buildingType(buildingType)
                 .build();
+    }
+
+    public void addConstructionType(PortfolioConstructionType constructionType) {
+        constructionTypes.add(constructionType);
+    }
+
+    public void update(PortfolioUpdateRequest portfolioRequest) {
+        this.content = portfolioRequest.getContent();
     }
 
 }

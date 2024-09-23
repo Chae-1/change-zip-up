@@ -10,6 +10,7 @@ import com.kosa.chanzipup.api.estimate.service.EstimateRequestService;
 import com.kosa.chanzipup.api.estimate.service.EstimateService;
 import com.kosa.chanzipup.api.estimate.service.query.EstimateQueryService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
+import com.kosa.chanzipup.domain.estimate.EstimateRequestStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +44,9 @@ public class EstimateRequestController {
 
     @GetMapping
     @PreAuthorize("ROLE_COMPANY")
-    public ResponseEntity<List<EstimateRequestResponse>> getAllEstimateRequests(@AuthenticationPrincipal UnifiedUserDetails userDetails){
-        List<EstimateRequestResponse> estimateRequestResponses = queryService.getEstimateRequestResponsesOnWaiting(userDetails.getUsername());
+    public ResponseEntity<List<EstimateRequestResponse>> getAllEstimateRequests(@AuthenticationPrincipal UnifiedUserDetails userDetails,
+                                                                                @RequestParam(value = "status") EstimateRequestStatus status){
+        List<EstimateRequestResponse> estimateRequestResponses = queryService.getEstimateRequestResponsesOn(userDetails.getUsername(), status);
         return ResponseEntity.ok(estimateRequestResponses);
     }
 
@@ -77,8 +79,9 @@ public class EstimateRequestController {
 
     @GetMapping("/users")
     @PreAuthorize("ROLE_USER")
-    public ResponseEntity<List<EstimateRequestResponse>> findAllUserReceivedRequests(@AuthenticationPrincipal UnifiedUserDetails userDetails) {
-        return ResponseEntity.ok(queryService.getAllEstimateRequestByUser(userDetails.getUsername()));
+    public ResponseEntity<List<EstimateRequestResponse>> findAllUserReceivedRequests(@AuthenticationPrincipal UnifiedUserDetails userDetails,
+                                                                                     @RequestParam("status") EstimateRequestStatus status) {
+        return ResponseEntity.ok(queryService.getAllEstimateRequestByUser(userDetails.getUsername(), status));
     }
 
 

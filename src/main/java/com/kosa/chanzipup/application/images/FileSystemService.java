@@ -43,6 +43,7 @@ public class FileSystemService implements ImageService {
                 throw new RuntimeException(
                         "Cannot store file outside current directory.");
             }
+
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile,
                         StandardCopyOption.REPLACE_EXISTING);

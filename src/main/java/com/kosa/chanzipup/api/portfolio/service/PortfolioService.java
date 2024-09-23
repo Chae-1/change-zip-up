@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.api.portfolio.service;
 
 import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioRegisterRequest;
+import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioUpdateRequest;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioDetailResponse;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioListResponse;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioRegisterResponse;
@@ -38,11 +39,16 @@ public class PortfolioService {
     private final BuildingTypeRepository buildingTypeRepository;
     private final CompanyRepository companyRepository;
 
+
     @Value("${file.upload-dir}")
     private String uploadDir;
 
     @Transactional
-    public PortfolioRegisterResponse registerPortfolio(PortfolioRegisterRequest request, Account account) throws IOException {
+    public PortfolioRegisterResponse registerPortfolio(PortfolioRegisterRequest request,
+                                                       String email) throws IOException {
+
+        Company company = companyRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email: " + email));
 
         // 빌딩 타입 조회
         BuildingType buildingType = buildingTypeRepository.findById(request.getBuildingTypeId())
@@ -57,7 +63,7 @@ public class PortfolioService {
                 request.getProjectLocation(),
                 request.getStartDate(),
                 request.getEndDate(),
-                account,
+                company,
                 buildingType
         );
 
@@ -169,5 +175,16 @@ public class PortfolioService {
                     portfolio.getUpdatedAt()
             );
         }
+    }
+
+    @Transactional
+    public String updatePortfolio(Long portfolioId, PortfolioUpdateRequest portfolioRequest) {
+
+        Portfolio portfolio = portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 시공 사례입니다."));
+
+        portfolio.update(portfolioRequest);
+
+        return portfolio.getContent();
     }
 }
