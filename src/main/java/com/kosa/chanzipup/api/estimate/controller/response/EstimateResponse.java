@@ -1,21 +1,10 @@
 package com.kosa.chanzipup.api.estimate.controller.response;
 
+import com.kosa.chanzipup.api.company.controller.response.CompanyDetailResponse;
+
 public class EstimateResponse {
 
+    private CompanyDetailResponse companyDetailResponse;
+    private EstimateDetailResponse estimateDetailResponse;
 
-    private String content;
-    private boolean isWrite;
-
-    private EstimateResponse(String content, boolean isWrite) {
-        this.content = content;
-        this.isWrite = isWrite;
-    }
-
-    public static EstimateResponse write(String content, boolean isWrite) {
-        return new EstimateResponse(content, isWrite);
-    }
-
-    public static EstimateResponse noWrite(String content, boolean isWrite) {
-        return new EstimateResponse(content, isWrite);
-    }
 }

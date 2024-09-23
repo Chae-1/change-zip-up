@@ -91,7 +91,6 @@ public class CompanyQueryService {
 
     }
 
-
     private BooleanExpression addressLike(String city, String strict) {
 
         if (city == null || city.isBlank()) {
