@@ -109,7 +109,7 @@ public class CompanyDetailResponse {
             this.portfolioId = portfolio.getId();
             this.title = portfolio.getTitle();
             this.buildingTypeName = portfolio.getBuildingType().getName();
-            this.floor = portfolio.getProjectArea();
+            this.floor = portfolio.getFloor();
             this.budget = String.format("%d 만원", portfolio.getProjectBudget());
             this.location = portfolio.getProjectLocation();
             this.startDate = portfolio.getStartDate();
