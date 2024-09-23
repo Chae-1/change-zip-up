@@ -32,7 +32,7 @@ public class EstimateRequestResponse {
 
 
 
-    public EstimateRequestResponse(EstimateRequest estimateRequest, boolean contains) {
+    public EstimateRequestResponse(EstimateRequest estimateRequest, boolean isSend) {
         this.requestId = estimateRequest.getId();
         this.fullAddress = estimateRequest.getFullAddress();
         this.floor = estimateRequest.getFloor();
@@ -45,7 +45,7 @@ public class EstimateRequestResponse {
                 .stream()
                 .map(type -> type.getTypeName())
                 .toList();
-        this.isSend = contains;
+        this.isSend = isSend;
     }
 
 
