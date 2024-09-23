@@ -127,6 +127,5 @@ public class EstimateRequestController {
 
         estimateService.rejectEstimate(requestId, estimateId);
         return ResponseEntity.ok(null);
-
     }
 }

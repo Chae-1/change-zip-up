@@ -60,6 +60,7 @@ public class CompanyQueryService {
 
         // 1. 고객들이 작성한 회사의 시공 후기
         List<Review> companyReviewList = factory.selectFrom(review)
+                .leftJoin(review.buildingType, buildingType).fetchJoin()
                 .leftJoin(review.reviewImages, reviewImages).fetchJoin()
                 .leftJoin(review.member, member).fetchJoin()
                 .leftJoin(review.company, company)

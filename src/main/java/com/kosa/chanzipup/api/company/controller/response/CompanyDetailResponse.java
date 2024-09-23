@@ -72,12 +72,23 @@ public class CompanyDetailResponse {
         private String reviewImageUrl;
         private LocalDateTime regDate;
 
+        private int floor;
+        private String buildingTypeName;
+        private LocalDate startDate;
+        private LocalDate endDate;
+
         public SimpleReviewResponse(Review review) {
             this.reviewId = review.getId();
             this.title = review.getTitle();
+
             List<ReviewImages> reviewImages = review.getReviewImages();
             this.reviewImageUrl = reviewImages.isEmpty() ? "" : reviewImages.get(0).getImageUrl();
             this.regDate = review.getRegDate();
+
+            this.floor = review.getFloor();
+            this.buildingTypeName = review.getBuildingType().getName();
+            this.startDate = review.getWorkStartDate();
+            this.endDate = review.getWorkEndDate();
         }
     }
 
