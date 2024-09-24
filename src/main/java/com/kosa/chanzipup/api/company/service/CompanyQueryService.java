@@ -47,8 +47,7 @@ public class CompanyQueryService {
 
     private final JPAQueryFactory factory;
 
-    // todo: 멤버십에 따른 분류를 수행해야한다.
-    public List<CompanyListResponse> getAllCompanies(CompanySearchCondition searchCondition) {
+    public Map<MembershipName, List<CompanyListResponse>> getAllCompanies(CompanySearchCondition searchCondition) {
         log.info("지역 : {}", searchCondition.getCity());
         log.info("구 : {}", searchCondition.getDistrict());
         log.info("서비스 리스트 : {}", searchCondition.getServices());
@@ -64,12 +63,17 @@ public class CompanyQueryService {
 
         List<Company> filteredCompanies = companyList.stream()
                 .filter(company -> {
+                    if (constIds == null)
+                        return true;
+
                     List<ConstructionType> constructions = company.getConstructionTypes()
                             .stream()
                             .map(CompanyConstructionType::getConstructionType)
                             .toList();
 
-                    return constructions
+                    return constructions.stream()
+                            .map(ConstructionType::getId)
+                            .toList()
                             .containsAll(constIds);
                 })
                 .toList();
@@ -84,52 +88,8 @@ public class CompanyQueryService {
                 .stream()
                 .collect(groupingBy(membership -> membership.getCompany().getId(), toList()));
 
-        Map<MembershipName, List<Company>> membershipCompany = new HashMap<>();
-        filteredCompanies.stream()
-                .forEach(company -> {
-                    List<Membership> memberships = membershipMap.get(company.getId());
-                    if (memberships == null) {
-                        membershipCompany.getOrDefault(MembershipName.NO, new ArrayList<>()).add(company);
-                    }
-
-                    Membership membership = findMembership(memberships);
-                    if (membership.isValid()) {
-                        membershipCompany.getOrDefault(membership.getMembershipType().getName(), new ArrayList<>()).add(company);
-                    } else {
-                        membershipCompany.getOrDefault(MembershipName.NO, new ArrayList<>()).add(company);
-                    }
-                });
-
-        return filteredCompanies.stream()
-                .map(company -> new CompanyListResponse(company))
-                .toList();
-    }
-
-    public Map<MembershipName, List<CompanyListResponse>> getAllCompanies2(CompanySearchCondition searchCondition) {
-        log.info("지역 : {}", searchCondition.getCity());
-        log.info("구 : {}", searchCondition.getDistrict());
-        log.info("서비스 리스트 : {}", searchCondition.getServices());
-
-        List<Company> companyList = factory.select(company)
-                .from(company)
-                .leftJoin(company.constructionTypes, companyConstructionType).fetchJoin()
-                .leftJoin(companyConstructionType.constructionType, constructionType).fetchJoin()
-                .where(constructionTypeIn(searchCondition.getServices()),
-                        addressLike(searchCondition.getCity(), searchCondition.getDistrict()))
-                .fetch();
-
-        // companyId 별 membership
-        // 1:1인데
-        Map<Long, List<Membership>> membershipMap = factory.selectFrom(membership)
-                .leftJoin(membership.company, company).fetchJoin()
-                .leftJoin(membership.membershipType, membershipType).fetchJoin()
-                .orderBy(membership.startDateTime.desc())
-                .fetch()
-                .stream()
-                .collect(groupingBy(membership -> membership.getCompany().getId(), toList()));
-
         Map<MembershipName, List<CompanyListResponse>> membershipCompany = createMembership();
-        companyList.stream()
+        filteredCompanies.stream()
                 .forEach(company -> {
                     List<Membership> memberships = membershipMap.get(company.getId());
                     if (memberships == null) {
