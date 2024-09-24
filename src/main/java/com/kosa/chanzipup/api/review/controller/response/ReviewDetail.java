@@ -28,11 +28,13 @@ public class ReviewDetail {
     // 고객 정보
     private String memberNickName;
     private Long memberId;
-    // 작성자 여부
-    private boolean isUpdatable;
 
+    // 작성자 여부
     private List<ReviewImageResponse> reviewImageResponses;
     private List<ReviewConstructionTypeResponse> reviewConstructionTypeResponses;
+
+    //
+    private boolean isUpdatable;
     private String buildingTypeName;
 
     public ReviewDetail(Long reviewId, String content, String title, LocalDateTime regDate, LocalDate workStartDate,
