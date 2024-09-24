@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.kosa.chanzipup.domain.account.company.QCompany.company;
@@ -49,19 +51,18 @@ public class EstimateQueryService {
 
 
         // 현재 업체 회원이 견적서를 보낸 requestId의 모든 id
-        List<Long> writeEstimateRequestIds = factory.select(estimate)
+        List<Estimate> companyEstimates = factory.select(estimate)
                 .from(estimate)
                 .leftJoin(estimate.estimateRequest, estimateRequest)
                 .leftJoin(estimate.company, company)
                 .where(company.email.eq(companyEmail))
-                .fetch()
-                .stream()
-                .map(estimate -> estimate.getEstimateRequest().getId())
-                .toList();
+                .fetch();
 
+        Map<Long, List<Estimate>> requestPerEstimate = companyEstimates.stream()
+                .collect(groupingBy(estimate -> estimate.getEstimateRequest().getId(), toList()));
 
         return fetch.stream()
-                .map(estimateRequest -> new EstimateRequestResponse(estimateRequest, writeEstimateRequestIds.contains(estimateRequest.getId())))
+                .map(estimateRequest -> new EstimateRequestResponse(estimateRequest, requestPerEstimate.get(estimateRequest.getId())))
                 .toList();
     }
 
@@ -134,7 +135,7 @@ public class EstimateQueryService {
                 .where(estimateRequest.id.eq(requestId), estimate.estimateStatus.eq(EstimateStatus.SENT)) // requestId 에 대한 요청이면서 업체가 보낸 견적이면
                 .fetch();
 
-        // null
+        //
         Map<Company, List<Estimate>> companyEstimates = fetch.stream()
                 .collect(groupingBy(Estimate::getCompany, toList()));
 
