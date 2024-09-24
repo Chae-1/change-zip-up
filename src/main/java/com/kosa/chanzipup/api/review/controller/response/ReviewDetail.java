@@ -33,6 +33,7 @@ public class ReviewDetail {
     private List<ReviewImageResponse> reviewImageResponses;
     private List<ReviewConstructionTypeResponse> reviewConstructionTypeResponses;
 
+    //
     private boolean isUpdatable;
     private String buildingTypeName;
 
