@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.kosa.chanzipup.api.review.controller.request.ReviewRegisterRequest;
 import com.kosa.chanzipup.api.review.controller.response.*;
-import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
+import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -81,6 +80,7 @@ public class ReviewService {
 
     // 이전에 올렸던 코드인데 시공시작일과 종료일 필드타입이 바껴서 그에 맞춰 수정했습니다
     // 전체 리뷰 목록 조회
+
     public List<ReviewResponse> getAllReviews() {
 
         List<Review> reviews = reviewRepository.findAllWithAll();
@@ -97,6 +97,24 @@ public class ReviewService {
 
         return reviewResponses;
     }
+
+    public Page<List<ReviewResponse>> getAllReviewsWithPage(int pageSize, int pageNumber) {
+
+        List<Review> reviews = reviewRepository.findAllWithAll();
+
+        Map<Long, List<ReviewImages>> reviewImageMap = getReviewImageMap(reviews);
+
+        Map<Long, List<ReviewConstructionType>> reviewConstructionTypes = getConstructionTypes(reviews);
+
+        List<ReviewResponse> reviewResponses = reviews
+                .stream()
+                .map((review) -> new ReviewResponse(review, review.getCompany(), review.getMember(),
+                        reviewImageMap.get(review.getId()), reviewConstructionTypes.get(review.getId()), review.getBuildingType()))
+                .toList();
+
+        return Page.of(reviewResponses, pageSize, pageNumber);
+    }
+
 
 
     private Map<Long, List<ReviewImages>> getReviewImageMap(List<Review> reviews) {

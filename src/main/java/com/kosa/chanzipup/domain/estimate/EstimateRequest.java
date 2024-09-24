@@ -73,7 +73,7 @@ public class EstimateRequest {
     public EstimateRequest(String identification, String schedule, String budget,
                            String address, String detailedAddress, LocalDate measureDate, int floor,
                            BuildingType buildingType, Member member, LocalDateTime regDate,
-                           EstimateRequestStatus status) {
+                           EstimateRequestStatus status, List<ConstructionType> constructionTypes) {
         this.identification = identification;
         this.schedule = schedule;
         this.budget = budget;
@@ -85,6 +85,11 @@ public class EstimateRequest {
         this.member = member;
         this.regDate = regDate;
         this.status = status;
+        this.constructionTypes.addAll(
+                constructionTypes.stream()
+                .map(type -> new EstimateConstructionType(type, this))
+                .toList()
+        );
     }
 
     public void addConstructionType(EstimateConstructionType estimateConstructionType) {
@@ -127,7 +132,7 @@ public class EstimateRequest {
         accepted.ifPresentOrElse(estimate -> {
             estimate.complete();
             this.status = EstimateRequestStatus.COMPLETE;
-        } , () -> {
+        }, () -> {
             throw new IllegalArgumentException("estimate가 존재하지 않습니다.");
         });
     }

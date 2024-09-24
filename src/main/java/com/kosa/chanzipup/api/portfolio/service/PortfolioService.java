@@ -6,6 +6,7 @@ import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioDetailRespo
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioListResponse;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioRegisterResponse;
 
+import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.account.Account;
 
 import com.kosa.chanzipup.domain.account.company.Company;
@@ -185,5 +186,9 @@ public class PortfolioService {
         portfolio.update(portfolioRequest);
 
         return portfolio.getContent();
+    }
+
+    public Page<List<PortfolioListResponse>> getAllPortfoliosWithPage(int pageNumber, int pageSize) {
+        return Page.of(getAllPortfolios(), pageSize, pageNumber);
     }
 }
