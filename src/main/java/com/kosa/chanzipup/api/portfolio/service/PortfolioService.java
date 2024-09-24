@@ -26,7 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -86,9 +90,19 @@ public class PortfolioService {
     // 시공사례 리스트 조회
     public List<PortfolioListResponse> getAllPortfolios() {
         List<Portfolio> portfolios = portfolioRepository.findAllWithImages();
+
+        List<Long> portfolioIds = portfolios.stream()
+                .map(Portfolio::getId)
+                .toList();
+
+        Map<Long, List<PortfolioConstructionType>> types = portfolioConstructionTypeRepository
+                .findByPortfolioIdIn(portfolioIds)
+                .stream()
+                .collect(Collectors.groupingBy(type -> type.getPortfolio().getId(), toList()));
+
         return portfolios
                 .stream()
-                .map(PortfolioListResponse::new)
+                .map(portfolio -> new PortfolioListResponse(portfolio, types.get(portfolio.getId())))
                 .toList();
     }
 

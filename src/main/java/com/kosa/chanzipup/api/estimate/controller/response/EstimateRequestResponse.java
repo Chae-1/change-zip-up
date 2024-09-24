@@ -34,6 +34,8 @@ public class EstimateRequestResponse {
 
     private EstimateStatus status;
 
+    private Long estimateId;
+
     public EstimateRequestResponse(EstimateRequest estimateRequest, boolean isSend) {
         this.requestId = estimateRequest.getId();
         this.fullAddress = estimateRequest.getFullAddress();
@@ -59,7 +61,9 @@ public class EstimateRequestResponse {
     public EstimateRequestResponse(EstimateRequest estimateRequest, List<Estimate> requestEstimates) {
         this(estimateRequest, isSend(requestEstimates));
         if (isSend) {
-            status = requestEstimates.get(0).getEstimateStatus();
+            Estimate estimate = requestEstimates.get(0);
+            status = estimate.getEstimateStatus();
+            estimateId = estimate.getId();
         } else {
             status = null;
         }
