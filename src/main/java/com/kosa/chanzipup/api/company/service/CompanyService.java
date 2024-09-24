@@ -5,6 +5,7 @@ import com.kosa.chanzipup.api.company.controller.request.CompanySearchCondition;
 import com.kosa.chanzipup.api.company.controller.response.CompanyDetailResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyListResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterResponse;
+import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.domain.account.company.CompanyConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
@@ -25,6 +26,7 @@ import java.util.List;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final ImageService imageService;
     private final ConstructionTypeRepository constructionTypeRepository;
     private final AccountRepository accountRepository;
     private final PasswordEncoder encoder;
@@ -36,6 +38,8 @@ public class CompanyService {
         if (isEmailDuplicated(request.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
+
+        String path = imageService.store("company", request.getLogoFile());
 
         Company company = Company.ofNewCompany(request.getEmail(), request.getCompanyName(), encoder.encode(request.getPassword()),
                 request.getPhoneNumber(), request.getOwner(), request.getCompanyNumber(), request.getPublishDate(),
