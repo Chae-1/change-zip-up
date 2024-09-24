@@ -41,15 +41,8 @@ public class CompanyController {
 
     // 업체 리스트 조회
     @GetMapping("/list")
-    public ResponseEntity<List<CompanyListResponse>> getAllCompany(@ModelAttribute CompanySearchCondition searchCondition) {
-        List<CompanyListResponse> companies = companyQueryService.getAllCompanies(searchCondition);
-        return ResponseEntity.ok(companies);
-    }
-
-    // 업체 리스트 조회
-    @GetMapping("/list2")
-    public ResponseEntity<Map<MembershipName, List<CompanyListResponse>>> getAllCompany2(@ModelAttribute CompanySearchCondition searchCondition) {
-        Map<MembershipName, List<CompanyListResponse>> map = companyQueryService.getAllCompanies2(searchCondition);
+    public ResponseEntity<Map<MembershipName, List<CompanyListResponse>>> getAllCompany(@ModelAttribute CompanySearchCondition searchCondition) {
+        Map<MembershipName, List<CompanyListResponse>> map = companyQueryService.getAllCompanies(searchCondition);
         return ResponseEntity.ok(map);
     }
 
