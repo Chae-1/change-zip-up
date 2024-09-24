@@ -29,4 +29,8 @@ public class EstimatePrice {
         this.constructionType = constructionType;
         this.price = price;
     }
+
+    public void updatePrice(Integer price) {
+        this.price = price;
+    }
 }
