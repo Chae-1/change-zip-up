@@ -3,7 +3,6 @@ package com.kosa.chanzipup.domain.estimate;
 import com.kosa.chanzipup.domain.account.company.Company;
 import jakarta.persistence.*;
 import lombok.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,6 +83,12 @@ public class Estimate {
 
     public void updateEstimateStatus(EstimateStatus newStatus) {
         this.estimateStatus = newStatus;
+    }
+
+    public void updatePrices(Map<Long, Integer> constructionPrices) {
+        updateEstimateStatus(EstimateStatus.SENT);
+        this.estimatePrices.stream()
+                .forEach(price -> price.updatePrice(constructionPrices.get()));
     }
 
     public void updatePrices(List<EstimateConstructionType> constructionTypes, Map<Long, Integer> constructionPrices) {

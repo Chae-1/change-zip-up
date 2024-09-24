@@ -122,4 +122,6 @@ public class ReviewQueryService {
 
         return new ReviewCreationPage(buildingTypeResponses, constructionTypes);
     }
+
+
 }

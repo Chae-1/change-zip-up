@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.kosa.chanzipup.api.review.controller.request.ReviewRegisterRequest;
 import com.kosa.chanzipup.api.review.controller.response.*;
+import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -128,5 +130,24 @@ public class ReviewService {
 
         return reviewConstructionTypes.stream()
                 .collect(groupingBy((type) -> type.getReview().getId(), toList()));
+    }
+
+    @Transactional
+    public List<String> deleteReview(Long reviewId, String userEmail) {
+        Review review = reviewRepository.findByIdAndUserEmail(reviewId, userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("삭제 할 수 없습니다."));
+
+        List<String> imageUrls = review.getReviewImages()
+                .stream()
+                .map(ReviewImages::getImageUrl)
+                .toList();
+
+
+        // 연관 객체 삭제
+        reviewImagesRepository.deleteByReviewId(review.getId());
+        reviewConstructionTypeRepository.deleteByReviewId(review.getId());
+        reviewRepository.deleteById(reviewId);
+
+        return imageUrls;
     }
 }

@@ -3,7 +3,6 @@ package com.kosa.chanzipup.api.review.controller;
 import com.kosa.chanzipup.api.review.controller.query.ReviewQueryService;
 import com.kosa.chanzipup.api.review.controller.request.ReviewRegisterRequest;
 import com.kosa.chanzipup.api.review.controller.response.ReviewDetail;
-import com.kosa.chanzipup.api.review.controller.response.ReviewListResponse;
 import com.kosa.chanzipup.api.review.controller.response.ReviewRegisterResponse;
 import com.kosa.chanzipup.api.review.controller.response.ReviewResponse;
 import com.kosa.chanzipup.api.review.service.ReviewImagesService;
@@ -29,7 +28,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    private final ImageService uploadService;
+    private final ImageService imageService;
 
     private final ReviewQueryService reviewQueryService;
 
@@ -48,7 +47,7 @@ public class ReviewController {
     // 이렇게 대체된 content의 크기는 비교할 수 없을 정도로 크기가 작아지고, 마지막에 이 content를 update하면 된다.
     @PostMapping
     public ResponseEntity<ReviewRegisterResponse> createReview(@AuthenticationPrincipal UnifiedUserDetails userDetails,
-                                          @RequestBody ReviewRegisterRequest request) {
+                                                               @RequestBody ReviewRegisterRequest request) {
         log.info("review startDate = {}", request.getWorkStartDate());
 
         return ResponseEntity.ok(reviewService.registerReview(request, userDetails.getName()));
@@ -62,7 +61,7 @@ public class ReviewController {
     @PostMapping("/{reviewId}/images")
     public ResponseEntity<String> uploadReviewImages(@PathVariable("reviewId") Long reviewId, MultipartFile file) {
         String name = file.getName();
-        String uploadEndPoint = uploadService.store("reviews", file);
+        String uploadEndPoint = imageService.store("reviews", file);
         String uploadFullPath = reviewImagesService.addReviewImage(reviewId, pathMatchService.match(uploadEndPoint));
         log.info("name = {}, uploadFullPath = {}", name, uploadFullPath);
         return ResponseEntity.ok(uploadFullPath);
@@ -87,4 +86,12 @@ public class ReviewController {
         return ResponseEntity.ok(reviewQueryService.getUserDetail(reviewId, userDetails));
     }
 
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Boolean> deleteReview(@PathVariable("reviewId") Long reviewId,
+                                                @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        List<String> deleteImageUrls = reviewService.deleteReview(reviewId, userDetails.getUsername());
+        imageService.deleteAllImages(deleteImageUrls);
+
+        return ResponseEntity.ok(true);
+    }
 }

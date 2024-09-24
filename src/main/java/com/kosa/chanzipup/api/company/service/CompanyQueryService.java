@@ -4,7 +4,9 @@ import com.kosa.chanzipup.api.company.controller.request.CompanySearchCondition;
 import com.kosa.chanzipup.api.company.controller.response.CompanyDetailResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyListResponse;
 import com.kosa.chanzipup.domain.account.company.Company;
+import com.kosa.chanzipup.domain.account.company.CompanyConstructionType;
 import com.kosa.chanzipup.domain.buildingtype.QBuildingType;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.membership.*;
 import com.kosa.chanzipup.domain.portfolio.Portfolio;
 import com.kosa.chanzipup.domain.portfolio.QPortfolio;
@@ -55,9 +57,22 @@ public class CompanyQueryService {
                 .from(company)
                 .leftJoin(company.constructionTypes, companyConstructionType).fetchJoin()
                 .leftJoin(companyConstructionType.constructionType, constructionType).fetchJoin()
-                .where(constructionTypeIn(searchCondition.getServices()),
-                        addressLike(searchCondition.getCity(), searchCondition.getDistrict()))
+                .where(addressLike(searchCondition.getCity(), searchCondition.getDistrict()))
                 .fetch();
+
+        List<Long> constIds = searchCondition.getServices();
+
+        List<Company> filteredCompanies = companyList.stream()
+                .filter(company -> {
+                    List<ConstructionType> constructions = company.getConstructionTypes()
+                            .stream()
+                            .map(CompanyConstructionType::getConstructionType)
+                            .toList();
+
+                    return constructions
+                            .containsAll(constIds);
+                })
+                .toList();
 
         // companyId 별 membership
         // 1:1인데
@@ -70,7 +85,7 @@ public class CompanyQueryService {
                 .collect(groupingBy(membership -> membership.getCompany().getId(), toList()));
 
         Map<MembershipName, List<Company>> membershipCompany = new HashMap<>();
-        companyList.stream()
+        filteredCompanies.stream()
                 .forEach(company -> {
                     List<Membership> memberships = membershipMap.get(company.getId());
                     if (memberships == null) {
@@ -85,7 +100,7 @@ public class CompanyQueryService {
                     }
                 });
 
-        return companyList.stream()
+        return filteredCompanies.stream()
                 .map(company -> new CompanyListResponse(company))
                 .toList();
     }

@@ -8,6 +8,5 @@ import java.util.Map;
 @Getter
 @Setter
 public class EstimatePriceRequest {
-
     Map<Long, Integer> constructionPrices;
 }
