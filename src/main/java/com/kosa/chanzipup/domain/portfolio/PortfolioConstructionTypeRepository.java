@@ -10,5 +10,4 @@ public interface PortfolioConstructionTypeRepository extends JpaRepository<Portf
     @Query("select type from PortfolioConstructionType type left join fetch type.constructionType c" +
             " left join fetch type.portfolio p where p.id in :portfolioIds")
     List<PortfolioConstructionType> findByPortfolioIdIn(@Param("portfolioIds") List<Long> portfolioIds);
-
 }
