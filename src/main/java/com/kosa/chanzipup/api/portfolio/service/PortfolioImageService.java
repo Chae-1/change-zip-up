@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.api.portfolio.service;
 
+import com.kosa.chanzipup.application.PathMatchService;
 import com.kosa.chanzipup.domain.portfolio.PortFolioImageRepository;
 import com.kosa.chanzipup.domain.portfolio.Portfolio;
 import com.kosa.chanzipup.domain.portfolio.PortfolioImage;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class PortfolioImageService {
 
@@ -21,20 +23,14 @@ public class PortfolioImageService {
 
     private final PortFolioImageRepository portFolioImageRepository;
 
-    private final String domainAddress;
+    private final PathMatchService pathMatchService;
 
-    public PortfolioImageService(PortfolioRepository portfolioRepository, PortFolioImageRepository portFolioImageRepository,
-                                 @Value("${domain.address}") String domainAddress) {
-        this.portfolioRepository = portfolioRepository;
-        this.portFolioImageRepository = portFolioImageRepository;
-        this.domainAddress = domainAddress;
-    }
 
     public String addPortfolioImage(Long portfolioId, String uploadEndPoint) {
         Portfolio portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new IllegalArgumentException());
 
-        PortfolioImage image = portFolioImageRepository.save(PortfolioImage.of(portfolio, String.format("%s%s", domainAddress, uploadEndPoint)));
+        PortfolioImage image = portFolioImageRepository.save(PortfolioImage.of(portfolio, pathMatchService.match(uploadEndPoint)));
         return image.getImageUrl();
 
     }

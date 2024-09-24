@@ -5,6 +5,7 @@ import com.kosa.chanzipup.api.company.controller.request.CompanySearchCondition;
 import com.kosa.chanzipup.api.company.controller.response.CompanyDetailResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyListResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterResponse;
+import com.kosa.chanzipup.application.PathMatchService;
 import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.domain.account.company.CompanyConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
@@ -30,6 +31,7 @@ public class CompanyService {
     private final ConstructionTypeRepository constructionTypeRepository;
     private final AccountRepository accountRepository;
     private final PasswordEncoder encoder;
+    private final PathMatchService pathMatchService;
 
     @Transactional
     public CompanyRegisterResponse registerCompany(CompanyRegisterRequest request) {
@@ -39,11 +41,11 @@ public class CompanyService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        String path = imageService.store("company", request.getLogoFile());
+        String uploadEndPoint = imageService.store("company", request.getLogoFile());
 
         Company company = Company.ofNewCompany(request.getEmail(), request.getCompanyName(), encoder.encode(request.getPassword()),
                 request.getPhoneNumber(), request.getOwner(), request.getCompanyNumber(), request.getPublishDate(),
-                request.getAddress(), request.getCompanyDesc());
+                request.getAddress(), request.getCompanyDesc(), pathMatchService.match(uploadEndPoint));
 
         // 선택된 시공 타입 저장
         List<Long> selectedTypeIds = request.getConstructionService();

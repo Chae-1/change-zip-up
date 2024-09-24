@@ -39,19 +39,20 @@ public class Company extends Account {
     @Builder
     private Company(AccountRole accountRole, String email, String password, String phoneNumber, boolean isVerified,
                     String companyNumber, String companyName, String owner, LocalDate publishDate, String address,
-                    String companyDesc) {
+                    String companyDesc, String companyLogoUrl) {
         super(accountRole, email, password, phoneNumber, isVerified);
         this.companyName = companyName;
         this.companyNumber = companyNumber;
         this.owner = owner;
         this.publishDate = publishDate;
         this.address = address;
+        this.companyLogoUrl = companyLogoUrl;
         this.companyDesc = companyDesc;
     }
 
     public static Company ofNewCompany(String email, String companyName, String password,
                                        String phoneNumber, String owner, String companyNumber,
-                                       LocalDate publishDate, String address, String companyDesc) {
+                                       LocalDate publishDate, String address, String companyDesc, String companyLogoUrl) {
         return Company.builder()
                 .email(email)
                 .password(password)
@@ -60,6 +61,7 @@ public class Company extends Account {
                 .phoneNumber(phoneNumber)
                 .companyName(companyName)
                 .isVerified(false)
+                .companyLogoUrl(companyLogoUrl)
                 .owner(owner)
                 .publishDate(publishDate)
                 .address(address)

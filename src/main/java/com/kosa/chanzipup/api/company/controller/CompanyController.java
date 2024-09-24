@@ -27,7 +27,7 @@ public class CompanyController {
 
     // 업체 등록
     @PostMapping
-    public ResponseEntity<CompanyRegisterResponse> addCompany(@Valid @RequestBody CompanyRegisterRequest registerRequest) {
+    public ResponseEntity<CompanyRegisterResponse> addCompany(@Valid CompanyRegisterRequest registerRequest) {
         CompanyRegisterResponse savedCompany = companyService.registerCompany(registerRequest);
         return ResponseEntity.ok(savedCompany);
     }
