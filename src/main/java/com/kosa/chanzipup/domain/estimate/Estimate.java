@@ -88,7 +88,7 @@ public class Estimate {
     public void updatePrices(Map<Long, Integer> constructionPrices) {
         updateEstimateStatus(EstimateStatus.SENT);
         this.estimatePrices.stream()
-                .forEach(price -> price.updatePrice(constructionPrices.get()));
+                .forEach(price -> price.updatePrice(constructionPrices.get(price.getId())));
     }
 
     public void updatePrices(List<EstimateConstructionType> constructionTypes, Map<Long, Integer> constructionPrices) {

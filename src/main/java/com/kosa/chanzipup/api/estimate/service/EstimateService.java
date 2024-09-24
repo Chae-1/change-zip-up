@@ -168,7 +168,6 @@ public class EstimateService {
 
         estimate.updatePrices(request.getConstructionPrices());
 
-
-        return null;
+        return true;
     }
 }
