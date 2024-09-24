@@ -1,14 +1,19 @@
 package com.kosa.chanzipup.api.estimate.controller;
 
 import com.kosa.chanzipup.api.ApiResponse;
+import com.kosa.chanzipup.api.estimate.controller.request.EstimatePriceRequest;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRegisterRequest;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateResult;
+import com.kosa.chanzipup.api.estimate.controller.response.EstimateUpdateResponse;
+import com.kosa.chanzipup.api.estimate.service.query.EstimateQueryService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.account.company.CompanyId;
 import com.kosa.chanzipup.domain.estimate.EstimateRequest;
 import com.kosa.chanzipup.api.estimate.service.EstimateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +26,11 @@ import java.util.List;
 public class EstimateController {
 
     private final EstimateService estimateService;
+    private final EstimateQueryService queryService;
 
     @PostMapping("/send")
     public ApiResponse<EstimateResult> sendEstimateToCompany(@RequestBody EstimateRegisterRequest request,
-                                             @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+                                                             @AuthenticationPrincipal UnifiedUserDetails userDetails) {
         // 견적 요청 사용자
         String userEmail = userDetails.getUsername();
         EstimateResult estimateResult = estimateService.sendEstimateToCompany(userEmail, request);
@@ -62,7 +68,7 @@ public class EstimateController {
 
     @PostMapping("/{estimateRequestId}/approval")
     public ApiResponse<Void> approvalEstimate(@PathVariable Long estimateRequestId,
-                                            @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+                                              @AuthenticationPrincipal UnifiedUserDetails userDetails) {
         // 로그인한 업체 이메일을 가져옴
         String companyEmail = userDetails.getUsername();
 
@@ -72,4 +78,27 @@ public class EstimateController {
     }
 
 
+    @GetMapping("/{estimateId}")
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<EstimateUpdateResponse> getUpdateEstimateData(@PathVariable("estimateId") Long estimateId,
+                                                                        @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+
+        return ResponseEntity.ok(queryService.updateEstimateResponse(estimateId, userDetails.getUsername()));
+    }
+
+    @DeleteMapping("/{estimateId}")
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<Boolean> deleteEstimate(@PathVariable("estimateId") Long estimateId,
+                                                  @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        return ResponseEntity.ok(estimateService.deleteEstimate(estimateId, userDetails.getUsername()));
+    }
+
+    @PatchMapping("/{estimateId}")
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<Boolean> updateEstimate(@PathVariable("estimateId") Long estimateId,
+                                                  @RequestBody EstimatePriceRequest request,
+                                                  @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+
+        return ResponseEntity.ok(estimateService.updateEstimate(estimateId, userDetails.getUsername(), request));
+    }
 }
