@@ -46,12 +46,11 @@ public class CompanyController {
         return ResponseEntity.ok(map);
     }
 
-
-    @GetMapping("/recommend")
-    public ResponseEntity<Map<MembershipName, List<CompanyListResponse>>> getRecommendCompanies(@ModelAttribute CompanySearchCondition searchCondition) {
-        Map<MembershipName, List<CompanyListResponse>> map = companyQueryService.getAllRecommendCompanies(searchCondition);
-        return ResponseEntity.ok(map);
-    }
+//    @GetMapping("/recommend")
+//    public ResponseEntity<Map<MembershipName, List<CompanyListResponse>>> getRecommendCompanies(@ModelAttribute CompanySearchCondition searchCondition) {
+//        Map<MembershipName, List<CompanyListResponse>> map = companyQueryService.getAllRecommendCompanies(searchCondition);
+//        return ResponseEntity.ok(map);
+//    }
 
 
     // 업체 상세 조회
