@@ -7,12 +7,15 @@ import com.kosa.chanzipup.api.review.controller.response.ReviewRegisterResponse;
 import com.kosa.chanzipup.api.review.controller.response.ReviewResponse;
 import com.kosa.chanzipup.api.review.service.ReviewImagesService;
 import com.kosa.chanzipup.api.review.service.ReviewService;
+import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.application.PathMatchService;
 import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.review.ReviewContent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -68,17 +71,24 @@ public class ReviewController {
     }
 
     @PatchMapping("/{reviewId}")
-    public ResponseEntity<Boolean> updateReviewContent(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewContent reviewContent) {
+    public ResponseEntity<Boolean> updateReviewContent(@PathVariable("reviewId") Long reviewId,
+                                                       @RequestBody ReviewContent reviewContent) {
         reviewService.updateReviewContent(reviewId, reviewContent.getContent());
         // review 등록 성공 여부를 전달.
         return ResponseEntity.ok(true);
     }
 
     @GetMapping
-    public ResponseEntity<List<ReviewResponse>> getAllCompany() {
+    public ResponseEntity<List<ReviewResponse>> getAllCompany(@PageableDefault Pageable pageable) {
         List<ReviewResponse> reviews = reviewService.getAllReviews();
         return ResponseEntity.ok(reviews);
     }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<List<ReviewResponse>>> getAllCompaniesWithPage(@PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(reviewService.getAllReviewsWithPage(pageable.getPageNumber(), pageable.getPageSize()));
+    }
+
 
     @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewDetail> review(@PathVariable("reviewId") Long reviewId,

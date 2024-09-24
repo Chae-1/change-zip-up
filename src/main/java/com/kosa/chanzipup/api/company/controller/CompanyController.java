@@ -7,9 +7,12 @@ import com.kosa.chanzipup.api.company.controller.response.CompanyListResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterResponse;
 import com.kosa.chanzipup.api.company.service.CompanyQueryService;
 import com.kosa.chanzipup.api.company.service.CompanyService;
+import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.membership.MembershipName;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,11 +49,22 @@ public class CompanyController {
         return ResponseEntity.ok(map);
     }
 
-//    @GetMapping("/recommend")
-//    public ResponseEntity<Map<MembershipName, List<CompanyListResponse>>> getRecommendCompanies(@ModelAttribute CompanySearchCondition searchCondition) {
-//        Map<MembershipName, List<CompanyListResponse>> map = companyQueryService.getAllRecommendCompanies(searchCondition);
-//        return ResponseEntity.ok(map);
-//    }
+    @GetMapping("/list2")
+    public ResponseEntity<Map<MembershipName, Page<List<CompanyListResponse>>>> getAllCompanyWithPage(@ModelAttribute CompanySearchCondition searchCondition) {
+        Map<MembershipName, Page<List<CompanyListResponse>>> allCompaniesWithDefaultPage = companyQueryService.getAllCompaniesWithDefaultPage(
+                searchCondition);
+        return ResponseEntity.ok(allCompaniesWithDefaultPage);
+    }
+
+
+    @GetMapping("/categorylist")
+    public ResponseEntity<Page<List<CompanyListResponse>>> getCompanyListWithPage(Pageable pageable,
+                                                                                  @ModelAttribute CompanySearchCondition searchCondition,
+                                                                                  @RequestParam("status") MembershipName membershipName) {
+
+        return ResponseEntity.ok(companyQueryService.getSpecifiedMembershipCompaniesWithPage(pageable.getPageNumber(),
+                pageable.getPageSize(), membershipName, searchCondition));
+    }
 
 
     // 업체 상세 조회
