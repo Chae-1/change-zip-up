@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.api.estimate.controller;
 
 import com.kosa.chanzipup.api.ApiResponse;
+import com.kosa.chanzipup.api.estimate.controller.request.EstimatePriceRequest;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRegisterRequest;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateResult;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateUpdateResponse;
@@ -95,7 +96,9 @@ public class EstimateController {
     @PatchMapping("/{estimateId}")
     @PreAuthorize("ROLE_COMPANY")
     public ResponseEntity<Boolean> updateEstimate(@PathVariable("estimateId") Long estimateId,
+                                                  @RequestBody EstimatePriceRequest request,
                                                   @AuthenticationPrincipal UnifiedUserDetails userDetails) {
-        return null;
+
+        return ResponseEntity.ok(estimateService.updateEstimate(estimateId, userDetails.getUsername(), request));
     }
 }

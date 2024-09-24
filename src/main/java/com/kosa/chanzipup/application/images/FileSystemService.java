@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -19,10 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileSystemService implements ImageService {
     private final Path rootLocation;
     private final String location;
+    private final String domainAddress;
 
-    public FileSystemService(@Value("${file.location}") String location) {
+    public FileSystemService(@Value("${file.location}") String location,
+                             @Value("${domain.address}") String domainAddress) {
         this.rootLocation = Paths.get(location);
         this.location = location;
+        this.domainAddress = domainAddress;
         init(rootLocation);
     }
 
@@ -74,6 +79,15 @@ public class FileSystemService implements ImageService {
         } catch (MalformedURLException e) {
             throw new RuntimeException("Could not read file: " + fileName, e);
         }
+    }
+
+    @Override
+    public void deleteAllImages(List<String> deleteImageUrls) {
+        List<String> imageSaveUrls = deleteImageUrls.stream()
+                .map(url -> url.replace(domainAddress, location))
+                .toList();
+
+
     }
 
     private void init(Path path) {

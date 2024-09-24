@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.api.estimate.service;
 
+import com.kosa.chanzipup.api.estimate.controller.request.EstimatePriceRequest;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRegisterRequest;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateResult;
 import com.kosa.chanzipup.domain.account.company.Company;
@@ -156,5 +157,18 @@ public class EstimateService {
         estimatePriceRepository.deleteByEstimateId(estimate.getId());
         estimateRepository.deleteById(estimate.getId());
         return true;
+    }
+
+    @Transactional
+    public Boolean updateEstimate(Long estimateId,
+                                  String username,
+                                  EstimatePriceRequest request) {
+        Estimate estimate = estimateRepository.findByIdWithPrices(estimateId, username)
+                .orElseThrow(() -> new IllegalArgumentException("수정 불가"));
+
+        estimate.updatePrices(request.getConstructionPrices());
+
+
+        return null;
     }
 }
