@@ -77,7 +77,7 @@ public class ReviewQueryService {
                         company.id.as("companyId"), company.companyName,
                         member.nickName.as("memberNickName"), member.id.as("memberId"),
                         isWriter(userDetails, reviewId), Expressions.asSimple(reviewImageResponses), Expressions.asSimple(reviewConstructionTypeResponses),
-                        buildingType.name.as("buildingTypeName"));
+                        buildingType.name.as("buildingTypeName"), company.companyLogoUrl, company.address);
 
         ReviewDetail reviewDetail = factory.select(constructor)
                 .from(review)
