@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -36,6 +37,8 @@ public class CompanyRegisterRequest {
     private String address;
 
     private String companyDesc;
+
+    private MultipartFile logoFile;
 
     @NotNull(message = "시공 서비스는 반드시 선택되어야 합니다.")
     protected List<Long> constructionService = new ArrayList<>();

@@ -37,12 +37,12 @@ public class ApplicationSetUp {
 
 //    @PostConstruct
     public void addAdmin() {
-        Member member = Member.ofLocalForTest(AccountRole.ADMIN, "admin@changzipup.com", encoder.encode("qweqwe123!"),
+        Member member = Member.ofLocalForTest(AccountRole.ADMIN, "admin@changzipup.com",
+                encoder.encode("qweqwe123!"),
                 "010-9393-0304",
                 MemberType.LOCAL, "체인집업관리자", "체인집업");
 
         memberRepository.save(member);
-
     }
 
 

@@ -9,7 +9,7 @@ import com.kosa.chanzipup.api.portfolio.service.PortfolioImageService;
 import com.kosa.chanzipup.api.portfolio.service.PortfolioService;
 import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
-import com.kosa.chanzipup.domain.portfolio.PortfolioRepository;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import retrofit2.http.Path;
 
 import java.io.IOException;
 import java.util.List;
@@ -76,8 +75,9 @@ public class PortfolioController {
     }
 
     @PatchMapping("/{portfolioId}")
-    public ResponseEntity<String> updatePortfolio(@PathVariable("portfolioId") Long portfolioId, @Valid @RequestBody PortfolioUpdateRequest updateRequest,
-                                                                   @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+    public ResponseEntity<String> updatePortfolio(@PathVariable("portfolioId") Long portfolioId,
+                                                  @Valid @RequestBody PortfolioUpdateRequest updateRequest,
+                                                  @AuthenticationPrincipal UnifiedUserDetails userDetails) {
         String updateContent = portfolioService.updatePortfolio(portfolioId, updateRequest);
         return ResponseEntity.ok(updateContent);
     }

@@ -2,10 +2,12 @@ package com.kosa.chanzipup.api.estimate.controller.response;
 
 import com.kosa.chanzipup.domain.estimate.Estimate;
 import com.kosa.chanzipup.domain.estimate.EstimateRequest;
+import com.kosa.chanzipup.domain.estimate.EstimateStatus;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public class EstimateRequestResponse {
@@ -30,7 +32,7 @@ public class EstimateRequestResponse {
 
     private boolean isSend;
 
-
+    private EstimateStatus status;
 
     public EstimateRequestResponse(EstimateRequest estimateRequest, boolean isSend) {
         this.requestId = estimateRequest.getId();
@@ -51,5 +53,19 @@ public class EstimateRequestResponse {
 
     public EstimateRequestResponse(Estimate estimate) {
         this(estimate.getEstimateRequest(), false);
+        status = null;
+    }
+
+    public EstimateRequestResponse(EstimateRequest estimateRequest, List<Estimate> requestEstimates) {
+        this(estimateRequest, isSend(requestEstimates));
+        if (isSend) {
+            status = requestEstimates.get(0).getEstimateStatus();
+        } else {
+            status = null;
+        }
+    }
+
+    private static boolean isSend(List<Estimate> requestEstimates) {
+        return requestEstimates != null && !requestEstimates.isEmpty();
     }
 }

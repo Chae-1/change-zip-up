@@ -22,11 +22,12 @@ public class ReviewDetail {
     // 회사 내용
     private Long companyId;
     private String companyName;
+    private String companyLogoUrl;
+    private String companyAddress;
 
     // 고객 정보
     private String memberNickName;
     private Long memberId;
-
     // 작성자 여부
     private boolean isUpdatable;
 
@@ -39,7 +40,7 @@ public class ReviewDetail {
                         String companyName,
                         String memberNickName, Long memberId, boolean isUpdatable, List<ReviewImageResponse> reviewImageResponses,
                         List<ReviewConstructionTypeResponse> reviewConstructionTypeResponses,
-                        String buildingTypeName) {
+                        String buildingTypeName, String companyLogoUrl, String address) {
 
         this.reviewId = reviewId;
         this.content = content;
@@ -58,6 +59,8 @@ public class ReviewDetail {
         this.reviewImageResponses = reviewImageResponses;
         this.reviewConstructionTypeResponses = reviewConstructionTypeResponses;
         this.buildingTypeName = buildingTypeName;
+        this.companyLogoUrl = companyLogoUrl;
+        this.companyAddress = address;
     }
 
 }
