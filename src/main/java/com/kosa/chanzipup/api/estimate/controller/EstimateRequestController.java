@@ -29,7 +29,7 @@ public class EstimateRequestController {
     private final EstimateService estimateService;
 
     @PostMapping
-    public ResponseEntity<?> createEstimateRequest(@RequestBody EstimateRequestDTO estimateRequestDTO,
+    public ResponseEntity<EstimateRequestCreateResponse> createEstimateRequest(@RequestBody EstimateRequestDTO estimateRequestDTO,
                                                    @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
         // JWT에서 이메일 추출

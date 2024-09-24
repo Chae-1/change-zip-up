@@ -182,7 +182,7 @@ public class CompanyQueryService {
         return constructionType.id.in(constructionIds);
     }
 
-    public Map<MembershipName, List<CompanyListResponse>> getAllRecommendCompanies(CompanySearchCondition searchCondition) {
-        return null;
-    }
+//    public Map<MembershipName, List<CompanyListResponse>> getAllRecommendCompanies(CompanySearchCondition searchCondition) {
+//        return null;
+//    }
 }
