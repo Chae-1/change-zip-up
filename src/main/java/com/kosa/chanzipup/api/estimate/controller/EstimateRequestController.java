@@ -29,15 +29,14 @@ public class EstimateRequestController {
     private final EstimateService estimateService;
 
     @PostMapping
-    public ResponseEntity<?> createEstimate(@RequestBody EstimateRequestDTO estimateRequestDTO,
-                                            @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+    public ResponseEntity<?> createEstimateRequest(@RequestBody EstimateRequestDTO estimateRequestDTO,
+                                                   @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
         // JWT에서 이메일 추출
         String email = userDetails.getUsername();
 
         // Estimate 생성
-        estimateRequestService.createEstimate(estimateRequestDTO, email);
-        return ResponseEntity.ok("Estimate has been created.");
+        return ResponseEntity.ok(estimateRequestService.createEstimateRequest(estimateRequestDTO, email));
     }
 
     @GetMapping
