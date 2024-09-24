@@ -11,13 +11,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.kosa.chanzipup.domain.account.company.QCompany.company;
 import static com.kosa.chanzipup.domain.account.member.QMember.member;
 import static com.kosa.chanzipup.domain.buildingtype.QBuildingType.buildingType;
 import static com.kosa.chanzipup.domain.constructiontype.QConstructionType.constructionType;
+import static com.kosa.chanzipup.domain.estimate.EstimateRequestStatus.COMPLETE;
 import static com.kosa.chanzipup.domain.estimate.EstimateRequestStatus.ONGOING;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.ACCEPTED;
+import static com.kosa.chanzipup.domain.estimate.EstimateStatus.RECEIVED;
+import static com.kosa.chanzipup.domain.estimate.EstimateStatus.REJECTED;
+import static com.kosa.chanzipup.domain.estimate.EstimateStatus.SENT;
 import static com.kosa.chanzipup.domain.estimate.QEstimate.estimate;
 import static com.kosa.chanzipup.domain.estimate.QEstimateConstructionType.estimateConstructionType;
 import static com.kosa.chanzipup.domain.estimate.QEstimatePrice.estimatePrice;
@@ -26,6 +31,7 @@ import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Slf4j
 public class EstimateQueryService {
     private final JPAQueryFactory factory;
@@ -140,24 +146,30 @@ public class EstimateQueryService {
 
     public EstimateDetailResponse getEstimateDetailOf(Long requestId, Long estimateId,
                                                       EstimateStatus status, EstimateRequestStatus requestStatus) {
-        Optional<Estimate> findEstimate = Optional.of(
-                factory.select(estimate)
+
+        // detail 정보
+        Estimate findEstimate = factory.select(estimate)
                 .from(estimate)
-                .leftJoin(estimate.company, company).fetchJoin()
+                .leftJoin(estimate.company, company).fetchJoin() // 1
                 .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin() // 1
-                .leftJoin(estimate.estimatePrices, estimatePrice).fetchJoin()
-                .leftJoin(estimatePrice.constructionType, estimateConstructionType).fetchJoin()
-                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
+                .leftJoin(estimate.estimatePrices, estimatePrice).fetchJoin() // n
+                .leftJoin(estimatePrice.constructionType, estimateConstructionType).fetchJoin() // n - 1
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin() // n -  1
                 .where(estimateRequest.id.eq(requestId),
                         estimate.id.eq(estimateId),
                         estimate.estimateStatus.eq(status),
                         estimateRequest.status.eq(requestStatus))
-                .fetchOne()
-        );
+                .fetchOne();
 
+        // findEstimate에서 조회된 companyId가 필요하다.
+        Long countOfCompleteEstimate = factory.select(estimate.count())
+                .from(estimate)
+                .leftJoin(estimate.company, company)
+                .where(company.id.eq(findEstimate.getCompany().getId()), estimate.estimateStatus.eq(EstimateStatus.COMPLETE))
+                .fetchOne();
 
-        return findEstimate
-                .map(EstimateDetailResponse::new)
+        return Optional.of(findEstimate)
+                .map(estimate -> new EstimateDetailResponse(estimate, countOfCompleteEstimate))
                 .orElse(null);
     }
 
@@ -166,6 +178,7 @@ public class EstimateQueryService {
                 .leftJoin(estimateRequest.estimates, estimate).fetchJoin()
                 .where(estimateRequest.id.eq(requestId), estimate.estimateStatus.eq(ACCEPTED))
                 .fetchOne();
+
 
         Optional<Estimate> acceptedEstimate = request.getEstimates()
                 .stream()
@@ -178,5 +191,24 @@ public class EstimateQueryService {
         }
 
         return null;
+    }
+
+
+    public List<EstimateResponse> getAllSentEstimate(String companyEmail) {
+        // 1. 회사가 전달한 모든 estimate 정보
+        List<Estimate> companyEstimates = factory.selectFrom(estimate)
+                .leftJoin(estimate.company, company).fetchJoin()
+                .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin()
+                .leftJoin(estimateRequest.member, member).fetchJoin()
+                .leftJoin(estimate.estimatePrices, estimatePrice).fetchJoin() // n
+                .leftJoin(estimatePrice.constructionType, estimateConstructionType).fetchJoin()
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
+                .where(company.email.eq(companyEmail), estimate.estimateStatus.in(ACCEPTED, REJECTED, SENT))
+                .fetchJoin()
+                .fetch();
+
+        return companyEstimates.stream()
+                .map(EstimateResponse::new)
+                .toList();
     }
 }

@@ -4,6 +4,7 @@ import com.kosa.chanzipup.api.payment.controller.response.PaymentPrepareResponse
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyException;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
+import com.kosa.chanzipup.domain.membership.MembershipRepository;
 import com.kosa.chanzipup.domain.membership.MembershipType;
 import com.kosa.chanzipup.domain.membership.MembershipTypeRepository;
 import com.kosa.chanzipup.domain.payment.Payment;
@@ -27,6 +28,9 @@ public class PaymentService {
     private final CompanyRepository companyRepository;
 
     private final MembershipTypeRepository membershipTypeRepository;
+
+    private final MembershipRepository membershipRepository;
+
 
     @Transactional
     public PaymentPrepareResponse createNewPayment(String email, Long membershipId) {
@@ -74,19 +78,21 @@ public class PaymentService {
 
         Payment payment = paymentRepository.findByMerchantUid(merchantUid)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 결제 정보입니다."));
+
         MembershipType membershipType = payment.getMembershipType();
+
         Company company = payment.getCompany();
 
         LocalDateTime completeDate = LocalDateTime.now();
         // 실제 pg사를 통해 결제가 처리되었을 경우 isSuccess == true
         if (isSuccess) {
             payment.success(impUid, paidAmount, completeDate);
-            return PaymentResult.of(true, membershipType.getId(), company.getId());
+            return PaymentResult.of(true, membershipType.getId(), company.getId(), impUid);
         }
 
         // 사용자가 결제를 취소하면, 서버에 있는 결제 내역을 삭제한다.
         handleFailedPayment(payment);
         // throw new PaymentException("결재에 실패하였습니다.");
-        return PaymentResult.of(false, membershipType.getId(), company.getId());
+        return PaymentResult.of(false, membershipType.getId(), company.getId(), null);
     }
 }

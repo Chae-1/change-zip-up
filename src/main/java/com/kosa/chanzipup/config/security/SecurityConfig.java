@@ -55,9 +55,9 @@ public class SecurityConfig {
         // 기본 설정
         http
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/refreshToken", "/form/login").permitAll()
                         .requestMatchers("/api/payment/**", "/api/memberships/**").hasRole("COMPANY") // ROLE_COMPANY Role, Authority
-                        .requestMatchers("/api/memberships/**").hasRole("COMPANY")
                         .requestMatchers("/api/**", "/", "/oauth2/**").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .anyRequest().permitAll())
@@ -108,7 +108,8 @@ public class SecurityConfig {
 
     @Bean
     public RoleHierarchy roleHierarchy() {
-        return RoleHierarchyImpl.fromHierarchy("ROLE_ADMIN > ROLE_USER");
+        return RoleHierarchyImpl.fromHierarchy("ROLE_ADMIN > ROLE_USER"
+                + "ROLE_ADMIN > ROLE_COMPANY");
     }
 
     @Bean

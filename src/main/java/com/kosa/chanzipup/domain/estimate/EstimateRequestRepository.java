@@ -27,4 +27,10 @@ public interface EstimateRequestRepository extends JpaRepository<EstimateRequest
 
     @Query("select er from EstimateRequest er left join er.constructionTypes types where er.id = :estimateRequestId")
     Optional<EstimateRequest> findByIdWithAll(Long estimateRequestId);
+
+
+    @Query("select er from EstimateRequest er left join fetch er.estimates e "
+            + "where er.id = :requestId and e.estimateStatus = :status")
+    Optional<EstimateRequest> findByIdWithSpecifiedEstimate(@Param("requestId") Long requestId,
+                                                            @Param("status") EstimateStatus status);
 }

@@ -6,6 +6,7 @@ import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
@@ -102,5 +103,32 @@ public class EstimateRequest {
 
     public void ongoing() {
         this.status = EstimateRequestStatus.ONGOING;
+    }
+
+    public void cancel() {
+        // 1. estimates 중, accept인 estimate를 찾는다.
+        Optional<Estimate> accepted = estimates.stream()
+                .filter(estimate -> estimate.getEstimateStatus() == EstimateStatus.ACCEPTED)
+                .findAny();
+
+        accepted.ifPresentOrElse(estimate -> {
+            estimate.cancel();
+            this.status = EstimateRequestStatus.WAITING;
+        } , () -> {
+            throw new IllegalArgumentException("estimate가 존재하지 않습니다.");
+        });
+    }
+
+    public void complete() {
+        Optional<Estimate> accepted = estimates.stream()
+                .filter(estimate -> estimate.getEstimateStatus() == EstimateStatus.ACCEPTED)
+                .findAny();
+
+        accepted.ifPresentOrElse(estimate -> {
+            estimate.complete();
+            this.status = EstimateRequestStatus.COMPLETE;
+        } , () -> {
+            throw new IllegalArgumentException("estimate가 존재하지 않습니다.");
+        });
     }
 }

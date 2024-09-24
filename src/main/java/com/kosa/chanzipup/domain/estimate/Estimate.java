@@ -110,4 +110,12 @@ public class Estimate {
     public void reject() {
         this.estimateStatus = EstimateStatus.REJECTED;
     }
+
+    public void cancel() {
+        this.estimateStatus = EstimateStatus.REJECTED;
+    }
+
+    public void complete() {
+        this.estimateStatus = EstimateStatus.COMPLETE;
+    }
 }

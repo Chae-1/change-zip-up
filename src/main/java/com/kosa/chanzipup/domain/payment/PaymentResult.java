@@ -7,14 +7,16 @@ public class PaymentResult {
     private boolean isSuccess;
     private Long membershipTypeId;
     private Long companyId;
+    private String impUid;
 
-    private PaymentResult(boolean isSuccess, Long membershipTypeId, Long companyId) {
+    private PaymentResult(boolean isSuccess, Long membershipTypeId, Long companyId, String impUid) {
         this.isSuccess = isSuccess;
         this.membershipTypeId = membershipTypeId;
         this.companyId = companyId;
+        this.impUid = impUid;
     }
 
-    public static PaymentResult of(boolean isSuccess, Long membershipTypeId, Long companyId) {
-        return new PaymentResult(isSuccess, membershipTypeId, companyId);
+    public static PaymentResult of(boolean isSuccess, Long membershipTypeId, Long companyId, String impUid) {
+        return new PaymentResult(isSuccess, membershipTypeId, companyId, impUid);
     }
 }
