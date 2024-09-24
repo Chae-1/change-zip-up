@@ -47,6 +47,13 @@ public class CompanyController {
     }
 
 
+    @GetMapping("/recommend")
+    public ResponseEntity<Map<MembershipName, List<CompanyListResponse>>> getRecommendCompanies(@ModelAttribute CompanySearchCondition searchCondition) {
+        Map<MembershipName, List<CompanyListResponse>> map = companyQueryService.getAllRecommendCompanies(searchCondition);
+        return ResponseEntity.ok(map);
+    }
+
+
     // 업체 상세 조회
     @GetMapping("/{id}")
     public ResponseEntity<CompanyDetailResponse> getCompanyById(@PathVariable Long id) {

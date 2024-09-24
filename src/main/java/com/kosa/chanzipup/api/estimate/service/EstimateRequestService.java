@@ -2,6 +2,7 @@ package com.kosa.chanzipup.api.estimate.service;
 
 
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRequestDTO;
+import com.kosa.chanzipup.api.estimate.controller.response.EstimateRequestCreateResponse;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
@@ -36,7 +37,7 @@ public class EstimateRequestService {
 
 
     @Transactional
-    public void createEstimate(EstimateRequestDTO estimateRequestDTO, String email) {
+    public EstimateRequestCreateResponse createEstimateRequest(EstimateRequestDTO estimateRequestDTO, String email) {
         // 이메일로 회원 정보 조회
         Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
@@ -47,6 +48,9 @@ public class EstimateRequestService {
 
         // 고유 식별자 생성
         String identification = generateIdentification();
+
+        List<Long> constructionTypeIds = estimateRequestDTO.getConstructionTypeIds();
+        List<ConstructionType> constructionTypes = constructionTypeRepository.findByIdIn(constructionTypeIds);
 
         // Estimate 객체 생성
         EstimateRequest estimate = EstimateRequest.builder()
@@ -61,22 +65,11 @@ public class EstimateRequestService {
                 .buildingType(findBuildingType)
                 .member(findMember)
                 .regDate(LocalDateTime.now())
+                .constructionTypes(constructionTypes)
                 .build();
 
-        // 시공 유형 추가
-        List<Long> constructionTypeIds = estimateRequestDTO.getConstructionTypeIds();
-        for (Long constructionTypeId : constructionTypeIds) {
-            // ConstructionType 조회
-            ConstructionType constructionType = constructionTypeRepository.findById(constructionTypeId)
-                    .orElseThrow(() -> new IllegalArgumentException("시공 유형이 존재하지 않습니다."));
-
-            // EstimateConstructionType 생성
-            EstimateConstructionType estimateConstructionType = new EstimateConstructionType(constructionType, estimate);
-            estimate.addConstructionType(estimateConstructionType); // Estimate에 추가
-        }
-
-        // Estimate 저장
         estimateRequestRepository.save(estimate);
+        return new EstimateRequestCreateResponse(constructionTypeIds, estimateRequestDTO.getAddress());
     }
 
     // 고유 식별자 생성 메서드 (현재 연도 + 월 + 일 + 5자리 정수)
@@ -85,8 +78,7 @@ public class EstimateRequestService {
         // 20241011_99999
         String currentYearMonthDay = currentDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        // 동시성 문제 발생
-        // 락 사용
+        // todo: 동시성 문제 발생 락 사용으로 수정
         long count = estimateRequestRepository.count(); // 현재까지 저장된 견적의 수를 조회
 
         String nextId = String.format("%05d", count + 1); // 000001부터 시작해 하나씩 증가
