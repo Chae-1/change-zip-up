@@ -3,7 +3,6 @@ package com.kosa.chanzipup.api.estimate.service;
 import com.kosa.chanzipup.api.estimate.controller.request.EstimateRegisterRequest;
 import com.kosa.chanzipup.api.estimate.controller.response.EstimateResult;
 import com.kosa.chanzipup.domain.account.company.Company;
-import com.kosa.chanzipup.domain.account.company.CompanyException;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
@@ -26,6 +25,7 @@ public class EstimateService {
     private final CompanyRepository companyRepository;
     private final MemberRepository memberRepository;
     private final EstimateRepository estimateRepository;
+    private final EstimatePriceRepository estimatePriceRepository;
 
     // 회사에 요청 견적을 보낸다.
     @Transactional
@@ -148,4 +148,13 @@ public class EstimateService {
         estimate.reject();
     }
 
+    @Transactional
+    public boolean deleteEstimate(Long estimateId, String companyEmail) {
+        Estimate estimate = estimateRepository.findByIdAndCompanyEmail(estimateId, companyEmail)
+                .orElseThrow(() -> new IllegalArgumentException("올바르지 않은 요청입니다."));
+
+        estimatePriceRepository.deleteByEstimateId(estimate.getId());
+        estimateRepository.deleteById(estimate.getId());
+        return true;
+    }
 }

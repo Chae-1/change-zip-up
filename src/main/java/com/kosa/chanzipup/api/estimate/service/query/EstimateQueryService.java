@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +18,8 @@ import static com.kosa.chanzipup.domain.account.company.QCompany.company;
 import static com.kosa.chanzipup.domain.account.member.QMember.member;
 import static com.kosa.chanzipup.domain.buildingtype.QBuildingType.buildingType;
 import static com.kosa.chanzipup.domain.constructiontype.QConstructionType.constructionType;
-import static com.kosa.chanzipup.domain.estimate.EstimateRequestStatus.COMPLETE;
 import static com.kosa.chanzipup.domain.estimate.EstimateRequestStatus.ONGOING;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.ACCEPTED;
-import static com.kosa.chanzipup.domain.estimate.EstimateStatus.RECEIVED;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.REJECTED;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.SENT;
 import static com.kosa.chanzipup.domain.estimate.QEstimate.estimate;
@@ -86,6 +83,28 @@ public class EstimateQueryService {
                 .toList();
     }
 
+    public EstimateUpdateResponse updateEstimateResponse(Long estimateId, String companyEmail) {
+
+        Optional<Estimate> findEstimate = Optional.of(
+                factory.selectFrom(estimate)
+                        .leftJoin(estimate.company)
+                        .leftJoin(estimate.estimatePrices, estimatePrice).fetchJoin()
+                        .leftJoin(estimatePrice.constructionType, estimateConstructionType).fetchJoin()
+                        .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
+                        .where(estimate.id.eq(estimateId), company.email.eq(companyEmail))
+                        .fetchOne()
+        );
+
+        if (findEstimate.isEmpty()) {
+            throw new IllegalArgumentException("견적서를 수정할 수 없습니다.");
+        }
+
+        return findEstimate
+                .map(EstimateUpdateResponse::new)
+                .orElse(null);
+    }
+
+
     public List<EstimateConstructionResponse> getEstimatePriceDetail(Long estimateRequestId) {
 
         Optional<EstimateRequest> findRequest = Optional.of(
@@ -135,7 +154,6 @@ public class EstimateQueryService {
                 .where(estimateRequest.id.eq(requestId), estimate.estimateStatus.eq(EstimateStatus.SENT)) // requestId 에 대한 요청이면서 업체가 보낸 견적이면
                 .fetch();
 
-        //
         Map<Company, List<Estimate>> companyEstimates = fetch.stream()
                 .collect(groupingBy(Estimate::getCompany, toList()));
 

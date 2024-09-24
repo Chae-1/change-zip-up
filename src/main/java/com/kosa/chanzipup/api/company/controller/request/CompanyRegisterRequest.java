@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 public class CompanyRegisterRequest {
 
     @NotBlank(message = "회사 이름은 반드시 입력되어야 합니다.")
@@ -41,6 +43,6 @@ public class CompanyRegisterRequest {
     private MultipartFile logoFile;
 
     @NotNull(message = "시공 서비스는 반드시 선택되어야 합니다.")
-    protected List<Long> constructionService = new ArrayList<>();
+    private List<Long> constructionService = new ArrayList<>();
 
 }

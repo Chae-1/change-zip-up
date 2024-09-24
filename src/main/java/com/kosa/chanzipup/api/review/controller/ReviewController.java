@@ -8,6 +8,7 @@ import com.kosa.chanzipup.api.review.controller.response.ReviewRegisterResponse;
 import com.kosa.chanzipup.api.review.controller.response.ReviewResponse;
 import com.kosa.chanzipup.api.review.service.ReviewImagesService;
 import com.kosa.chanzipup.api.review.service.ReviewService;
+import com.kosa.chanzipup.application.PathMatchService;
 import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.review.ReviewContent;
@@ -34,6 +35,7 @@ public class ReviewController {
 
     private final ReviewImagesService reviewImagesService;
 
+    private final PathMatchService pathMatchService;
 
     // 후기 등록
     // 1. 기본 내용을 삽입한다.
@@ -61,7 +63,7 @@ public class ReviewController {
     public ResponseEntity<String> uploadReviewImages(@PathVariable("reviewId") Long reviewId, MultipartFile file) {
         String name = file.getName();
         String uploadEndPoint = uploadService.store("reviews", file);
-        String uploadFullPath = reviewImagesService.addReviewImage(reviewId, uploadEndPoint);
+        String uploadFullPath = reviewImagesService.addReviewImage(reviewId, pathMatchService.match(uploadEndPoint));
         log.info("name = {}, uploadFullPath = {}", name, uploadFullPath);
         return ResponseEntity.ok(uploadFullPath);
     }

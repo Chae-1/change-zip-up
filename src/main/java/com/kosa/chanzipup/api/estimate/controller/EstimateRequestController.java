@@ -69,8 +69,6 @@ public class EstimateRequestController {
     }
 
 
-
-
     @GetMapping("/{estimateRequestId}/write")
     @PreAuthorize("ROLE_COMPANY")
     public ResponseEntity<List<EstimateConstructionResponse>> getEstimatePriceDetail(
@@ -164,4 +162,5 @@ public class EstimateRequestController {
         estimateService.rejectEstimate(requestId, estimateId);
         return ResponseEntity.ok(null);
     }
+
 }
