@@ -14,9 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
-import retrofit2.http.Path;
 
 import java.util.List;
 
@@ -87,11 +85,17 @@ public class EstimateController {
         return ResponseEntity.ok(queryService.updateEstimateResponse(estimateId, userDetails.getUsername()));
     }
 
-
     @DeleteMapping("/{estimateId}")
     @PreAuthorize("ROLE_COMPANY")
-    public void removeEstimate(@PathVariable("estimateId") Long estimateId,
-                               @AuthenticationPrincipal UnifiedUserDetails userDetails) {
-        estimateService.deleteEstimate(estimateId, userDetails.getUsername());
+    public ResponseEntity<Boolean> deleteEstimate(@PathVariable("estimateId") Long estimateId,
+                                                  @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        return ResponseEntity.ok(estimateService.deleteEstimate(estimateId, userDetails.getUsername()));
+    }
+
+    @PatchMapping("/{estimateId}")
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<Boolean> updateEstimate(@PathVariable("estimateId") Long estimateId,
+                                                  @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        return null;
     }
 }

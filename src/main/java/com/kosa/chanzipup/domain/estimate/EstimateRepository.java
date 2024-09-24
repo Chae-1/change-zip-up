@@ -26,4 +26,6 @@ public interface EstimateRepository extends JpaRepository<Estimate, Long> {
     @Query("select e from Estimate e join fetch e.company c join e.estimateRequest r where c.email = :email and r.id = :estimateRequestId")
     Optional<Estimate> findByCompanyEmailAndEstimateRequestId(@Param("email") String email, @Param("estimateRequestId") Long estimateRequestId);
 
+    @Query("select e from Estimate e join fetch e.company c where c.email = :companyEmail and e.id = :estimateId")
+    Optional<Estimate> findByIdAndCompanyEmail(@Param("estimateId") Long estimateId, @Param("companyEmail") String companyEmail);
 }

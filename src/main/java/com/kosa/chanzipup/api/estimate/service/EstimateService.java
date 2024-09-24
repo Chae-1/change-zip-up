@@ -148,9 +148,13 @@ public class EstimateService {
         estimate.reject();
     }
 
-    public void deleteEstimate(Long estimateId, String companyEmail) {
+    @Transactional
+    public boolean deleteEstimate(Long estimateId, String companyEmail) {
+        Estimate estimate = estimateRepository.findByIdAndCompanyEmail(estimateId, companyEmail)
+                .orElseThrow(() -> new IllegalArgumentException("올바르지 않은 요청입니다."));
 
-
-
+        estimatePriceRepository.deleteByEstimateId(estimate.getId());
+        estimateRepository.deleteById(estimate.getId());
+        return true;
     }
 }
