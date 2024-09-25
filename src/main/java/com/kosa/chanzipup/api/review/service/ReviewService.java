@@ -68,13 +68,13 @@ public class ReviewService {
     }
 
     private void updateCompanyRating(Company company) {
-        double companyRating = Math.round(
-                (reviewRepository.findByCompanyId(company.getId())
+        double companyRating = reviewRepository.findByCompanyId(company.getId())
                         .stream()
                         .mapToDouble(Review::getRating)
                         .average()
-                        .getAsDouble() * 10) / 10.0
-        );
+                        .orElse(0.0); // 만약 평점이 없을 경우 0.0을 반환하도록 처리
+        // 소수점 첫째 자리까지 반올림
+        companyRating = Math.round(companyRating * 10) / 10.0;
         company.updateRating(companyRating);
     }
 
