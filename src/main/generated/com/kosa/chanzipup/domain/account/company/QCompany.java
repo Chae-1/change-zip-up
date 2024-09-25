@@ -45,6 +45,8 @@ public class QCompany extends EntityPathBase<Company> {
     //inherited
     public final StringPath email;
 
+    public final ListPath<com.kosa.chanzipup.domain.estimate.Estimate, com.kosa.chanzipup.domain.estimate.QEstimate> estimates = this.<com.kosa.chanzipup.domain.estimate.Estimate, com.kosa.chanzipup.domain.estimate.QEstimate>createList("estimates", com.kosa.chanzipup.domain.estimate.Estimate.class, com.kosa.chanzipup.domain.estimate.QEstimate.class, PathInits.DIRECT2);
+
     //inherited
     public final NumberPath<Long> id;
 
@@ -64,7 +66,7 @@ public class QCompany extends EntityPathBase<Company> {
 
     public final DatePath<java.time.LocalDate> publishDate = createDate("publishDate", java.time.LocalDate.class);
 
-    public final NumberPath<Float> rating = createNumber("rating", Float.class);
+    public final NumberPath<Double> rating = createNumber("rating", Double.class);
 
     // inherited
     public final com.kosa.chanzipup.domain.account.token.QRefreshToken refreshToken;
