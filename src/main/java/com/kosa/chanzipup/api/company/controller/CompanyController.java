@@ -48,26 +48,19 @@ public class CompanyController {
 
     // 업체 리스트 조회
     @GetMapping("/list")
-    public ResponseEntity<Map<MembershipName, List<CompanyListResponse>>> getAllCompany(@ModelAttribute CompanySearchCondition searchCondition) {
-        Map<MembershipName, List<CompanyListResponse>> map = companyQueryService.getAllCompanies(searchCondition);
+    public ResponseEntity<Map<MembershipName, Page<List<CompanyListResponse>>>> getAllCompany(
+            Pageable pageable,
+            @ModelAttribute CompanySearchCondition searchCondition) {
+        Map<MembershipName, Page<List<CompanyListResponse>>> map = companyQueryService.getAllCompanies(pageable, searchCondition);
         return ResponseEntity.ok(map);
     }
-
-    @GetMapping("/list2")
-    public ResponseEntity<Map<MembershipName, Page<List<CompanyListResponse>>>> getAllCompanyWithPage(@ModelAttribute CompanySearchCondition searchCondition) {
-        Map<MembershipName, Page<List<CompanyListResponse>>> allCompaniesWithDefaultPage = companyQueryService.getAllCompaniesWithDefaultPage(
-                searchCondition);
-        return ResponseEntity.ok(allCompaniesWithDefaultPage);
-    }
-
 
     @GetMapping("/categorylist")
     public ResponseEntity<Page<List<CompanyListResponse>>> getCompanyListWithPage(Pageable pageable,
                                                                                   @ModelAttribute CompanySearchCondition searchCondition,
-                                                                                  @RequestParam("status") MembershipName membershipName) {
+                                                                                  @RequestParam("status") MembershipName status) {
 
-        return ResponseEntity.ok(companyQueryService.getSpecifiedMembershipCompaniesWithPage(pageable.getPageNumber(),
-                pageable.getPageSize(), membershipName, searchCondition));
+        return ResponseEntity.ok(companyQueryService.getSpecifiedMembershipCompaniesWithPage(pageable, status, searchCondition));
     }
 
 

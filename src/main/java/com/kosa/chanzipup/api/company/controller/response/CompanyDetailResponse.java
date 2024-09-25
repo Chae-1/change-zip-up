@@ -49,11 +49,16 @@ public class CompanyDetailResponse {
         this.companyId = findCompany.getId();
         this.companyName = findCompany.getName();
         this.owner = findCompany.getOwner();
+
         this.companyLogoUrl = findCompany.getCompanyLogoUrl();
         this.phoneNumber = findCompany.getPhoneNumber();
         this.companyDesc = findCompany.getCompanyDesc();
         this.address = findCompany.getAddress();
         this.rating = findCompany.getRating();
+        this.publishDate = findCompany.getPublishDate();
+        this.companyNumber = findCompany.getCompanyNumber();
+
+
         this.reviews = Page.ofDefault(
                 reviewList.stream()
                 .map(SimpleReviewResponse::new)
