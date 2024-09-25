@@ -21,9 +21,9 @@ public abstract class Account extends BaseEntity {
 
     private String email;
 
-    private String password;
+    protected String password;
 
-    private String phoneNumber;
+    protected String phoneNumber;
 
     private boolean isVerified;
 
