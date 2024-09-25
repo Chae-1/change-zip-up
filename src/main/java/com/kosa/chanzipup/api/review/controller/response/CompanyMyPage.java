@@ -9,6 +9,7 @@ import java.util.List;
 
 @Getter
 public class CompanyMyPage {
+    private String companyDesc;
     private String companyName;
     private String companyNumber;
     private String companyLogoUrl;
@@ -22,8 +23,9 @@ public class CompanyMyPage {
     private List<ConstructionTypeResponse> allServices;
 
     public CompanyMyPage(Company company, List<ConstructionType> constructionTypes) {
+        this.companyDesc = company.getCompanyDesc();
         this.companyNumber = company.getCompanyNumber();
-        this.companyName = company.getCompanyDesc();
+        this.companyName = company.getCompanyName();
         this.companyLogoUrl = company.getCompanyLogoUrl();
         this.owner = company.getOwner();
         this.address = company.getAddress();
