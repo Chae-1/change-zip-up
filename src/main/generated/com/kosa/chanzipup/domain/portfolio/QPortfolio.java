@@ -22,17 +22,29 @@ public class QPortfolio extends EntityPathBase<Portfolio> {
 
     public static final QPortfolio portfolio = new QPortfolio("portfolio");
 
+    public final com.kosa.chanzipup.domain.QBaseEntity _super = new com.kosa.chanzipup.domain.QBaseEntity(this);
+
     public final com.kosa.chanzipup.domain.account.QAccount account;
 
     public final com.kosa.chanzipup.domain.buildingtype.QBuildingType buildingType;
 
+    public final ListPath<PortfolioConstructionType, QPortfolioConstructionType> constructionTypes = this.<PortfolioConstructionType, QPortfolioConstructionType>createList("constructionTypes", PortfolioConstructionType.class, QPortfolioConstructionType.class, PathInits.DIRECT2);
+
     public final StringPath content = createString("content");
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdDateTime = _super.createdDateTime;
 
     public final DatePath<java.time.LocalDate> endDate = createDate("endDate", java.time.LocalDate.class);
 
+    public final NumberPath<Integer> floor = createNumber("floor", Integer.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Integer>  = createNumber("", Integer.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> lastUpdatedDateTime = _super.lastUpdatedDateTime;
+
+    public final ListPath<PortfolioImage, QPortfolioImage> portfolioImages = this.<PortfolioImage, QPortfolioImage>createList("portfolioImages", PortfolioImage.class, QPortfolioImage.class, PathInits.DIRECT2);
 
     public final NumberPath<Integer> projectBudget = createNumber("projectBudget", Integer.class);
 
