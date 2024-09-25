@@ -85,7 +85,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.getCompanyMyPage(email));
     }
 
-    @PatchMapping("/myage")
+    @PatchMapping("/mypage")
     public ResponseEntity<Boolean> afterUpdateCompany(@AuthenticationPrincipal UnifiedUserDetails userDetails,
                                                             @RequestBody CompanyUpdateRequest request) {
         String email = userDetails.getUsername();

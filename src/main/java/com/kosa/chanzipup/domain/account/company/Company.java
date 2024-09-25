@@ -116,4 +116,8 @@ public class Company extends Account {
         constructionTypes
                 .forEach(type -> addConstructionType(new CompanyConstructionType(type, this)));
     }
+
+    public void removeAllConstructionTypes() {
+        constructionTypes.clear();
+    }
 }
