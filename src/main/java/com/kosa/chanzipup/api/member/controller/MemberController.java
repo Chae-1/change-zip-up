@@ -47,8 +47,8 @@ public class MemberController {
     }
 
     @PatchMapping("/mypage")
-    public ResponseEntity<MyPageResponse> afterUpdateMyPage(@AuthenticationPrincipal UnifiedUserDetails userDetails,
+    public ResponseEntity<Boolean> afterUpdateMyPage(@AuthenticationPrincipal UnifiedUserDetails userDetails,
                                                             @RequestBody MemberUpdateRequest request) {
-        return ResponseEntity.ok(memberService.updateMember(userDetails.getUsername(), request));
+        return ResponseEntity.ok(true);
     }
 }
