@@ -5,6 +5,8 @@ import com.kosa.chanzipup.domain.account.AccountRole;
 
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.estimate.Estimate;
+import com.kosa.chanzipup.domain.membership.Membership;
+import com.kosa.chanzipup.domain.membership.MembershipName;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,16 +24,25 @@ import java.util.List;
 public class Company extends Account {
 
     private String companyName;
+
     private String companyNumber;
+
     private String companyDesc;
+
     private LocalDate publishDate;
+
     private String address;
+
     private String owner;
+
     private double rating;
+
     private String companyLogoUrl;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "company")
+    private List<Membership> memberships = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "company", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "company")
     private List<CompanyConstructionType> constructionTypes = new ArrayList<>();
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
@@ -106,6 +117,14 @@ public class Company extends Account {
     @Override
     public String getName() {
         return owner;
+    }
+
+    // 현재 활성 중인 멤버십은 단 하나밖에 존재하지 않는다.
+    public Membership getActiveMembership() {
+        return memberships.stream()
+                .filter(Membership::isValid)
+                .findAny()
+                .orElse(null);
     }
 
     public void updateRating(double companyRating) {

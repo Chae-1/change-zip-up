@@ -53,4 +53,8 @@ public class Membership extends BaseEntity {
     public boolean isValid() {
         return endDateTime.isAfter(startDateTime);
     }
+
+    public MembershipName getMembershipName() {
+        return membershipType.getName();
+    }
 }
