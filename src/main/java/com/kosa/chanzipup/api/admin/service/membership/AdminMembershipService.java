@@ -4,7 +4,9 @@ import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCom
 import com.kosa.chanzipup.api.admin.service.membership.query.AdminMembershipQueryRepository;
 import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.membership.Membership;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,8 @@ public class AdminMembershipService {
         int pageSize = pageable.getPageSize();
         int pageNumber = pageable.getPageNumber();
 
-        List<MembershipCompanyResponse> membershipCompanyResponses = memberships.stream()
+        List<MembershipCompanyResponse> membershipCompanyResponses = memberships
+                .stream()
                 .map(MembershipCompanyResponse::new)
                 .toList();
 

@@ -24,7 +24,7 @@ public class Membership extends BaseEntity {
     private LocalDateTime endDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "membership_internal_id")
+    @JoinColumn(name = "membership_type_id")
     private MembershipType membershipType;
 
     @OneToOne(fetch = FetchType.LAZY)
