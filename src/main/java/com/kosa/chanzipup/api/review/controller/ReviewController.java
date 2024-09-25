@@ -79,13 +79,13 @@ public class ReviewController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReviewResponse>> getAllCompany(@PageableDefault Pageable pageable) {
+    public ResponseEntity<List<ReviewResponse>> getAllReviews(@PageableDefault Pageable pageable) {
         List<ReviewResponse> reviews = reviewService.getAllReviews();
         return ResponseEntity.ok(reviews);
     }
 
     @GetMapping("/page")
-    public ResponseEntity<Page<List<ReviewResponse>>> getAllCompaniesWithPage(@PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<List<ReviewResponse>>> getAllReviewsWithPage(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(reviewService.getAllReviewsWithPage(pageable.getPageNumber(), pageable.getPageSize()));
     }
 
