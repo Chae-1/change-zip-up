@@ -33,8 +33,12 @@ public class AdminController {
 
 
     @GetMapping("/memberships")
-    public ResponseEntity<Page<List<MembershipCompanyResponse>>> getAllMembershipAccounts(@PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<List<MembershipCompanyResponse>>> getAllMembershipAccounts(
+            @PageableDefault Pageable pageable
+    ) {
         log.info("pageable = {}", pageable);
-        return ResponseEntity.ok(adminMembershipService.getAllMembershipCompanies(pageable));
+        return ResponseEntity.ok(
+                adminMembershipService.getAllMembershipCompanies(pageable)
+        );
     }
 }
