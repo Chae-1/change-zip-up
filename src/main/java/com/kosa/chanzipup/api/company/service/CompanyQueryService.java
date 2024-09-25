@@ -119,6 +119,8 @@ public class CompanyQueryService {
         return membershipType.name.eq(membershipName);
     }
 
+    // 시공 요청 서비스 id : 1,2,3
+    // 시공사는 1,2,3
     private List<Company> getFilteredCompanies(List<Company> companyList, List<Long> constIds) {
 
         return companyList.stream()
@@ -127,15 +129,16 @@ public class CompanyQueryService {
                         return true;
                     }
 
+                    // 회사가 지원하는 서비스
                     List<ConstructionType> constructions = company.getConstructionTypes()
                             .stream()
                             .map(CompanyConstructionType::getConstructionType)
                             .toList();
-
+                    // 1,2,3,4
+                    // 1, 2
                     return constructions.stream()
                             .map(ConstructionType::getId)
-                            .toList()
-                            .containsAll(constIds);
+                            .toList().containsAll(constIds);
                 })
                 .toList();
     }
