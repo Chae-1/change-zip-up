@@ -42,7 +42,6 @@ public class ReviewService {
 
     @Transactional
     public ReviewRegisterResponse registerReview(ReviewRegisterRequest request, String email) {
-
         // 1. 작성자 조회, company 조회, 이후 review 초기 정보 저장.
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -70,18 +69,14 @@ public class ReviewService {
 
     private void updateCompanyRating(Company company) {
         double companyRating = Math.round(
-                reviewRepository.findByCompanyId(company.getId())
-                .stream()
-                .mapToDouble(Review::getRating)
-                .average()
-                .getAsDouble()
+                (reviewRepository.findByCompanyId(company.getId())
+                        .stream()
+                        .mapToDouble(Review::getRating)
+                        .average()
+                        .getAsDouble() * 10) / 10.0
         );
-
         company.updateRating(companyRating);
     }
-
-    // 이전에 올렸던 코드인데 시공시작일과 종료일 필드타입이 바껴서 그에 맞춰 수정했습니다
-    // 전체 리뷰 목록 조회
 
     public List<ReviewResponse> getAllReviews() {
 
@@ -93,8 +88,9 @@ public class ReviewService {
 
         return reviews
                 .stream()
-                .map((review) -> new ReviewResponse(review, review.getCompany(), review.getMember(),
-                        reviewImageMap.get(review.getId()), reviewConstructionTypes.get(review.getId()), review.getBuildingType()))
+                .map((review) -> new ReviewResponse(review, review.getCompany(),
+                        review.getMember(), reviewImageMap.get(review.getId()),
+                        reviewConstructionTypes.get(review.getId()), review.getBuildingType()))
                 .toList();
     }
 
@@ -114,7 +110,6 @@ public class ReviewService {
 
         return Page.of(reviewResponses, pageSize, pageNumber);
     }
-
 
 
     private Map<Long, List<ReviewImages>> getReviewImageMap(List<Review> reviews) {

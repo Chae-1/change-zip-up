@@ -51,8 +51,7 @@ public class QMember extends EntityPathBase<Member> {
     //inherited
     public final StringPath password;
 
-    //inherited
-    public final StringPath phoneNumber;
+    public final StringPath phoneNumber = createString("phoneNumber");
 
     // inherited
     public final com.kosa.chanzipup.domain.account.token.QRefreshToken refreshToken;
@@ -83,7 +82,6 @@ public class QMember extends EntityPathBase<Member> {
         this.isVerified = _super.isVerified;
         this.lastUpdatedDateTime = _super.lastUpdatedDateTime;
         this.password = _super.password;
-        this.phoneNumber = _super.phoneNumber;
         this.refreshToken = _super.refreshToken;
     }
 

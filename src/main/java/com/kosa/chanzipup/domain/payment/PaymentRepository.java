@@ -9,4 +9,6 @@ import org.springframework.data.repository.query.Param;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @EntityGraph(attributePaths = {"membershipType", "company"})
     Optional<Payment> findByMerchantUid(@Param("merchantUid") String merchantUid);
+
+    Optional<Payment> findByImpUid(String impUid);
 }

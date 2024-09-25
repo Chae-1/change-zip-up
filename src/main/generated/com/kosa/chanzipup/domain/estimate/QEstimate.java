@@ -24,13 +24,13 @@ public class QEstimate extends EntityPathBase<Estimate> {
 
     public final com.kosa.chanzipup.domain.account.company.QCompany company;
 
+    public final ListPath<EstimatePrice, QEstimatePrice> estimatePrices = this.<EstimatePrice, QEstimatePrice>createList("estimatePrices", EstimatePrice.class, QEstimatePrice.class, PathInits.DIRECT2);
+
     public final QEstimateRequest estimateRequest;
 
-    public final StringPath estimateStatus = createString("estimateStatus");
+    public final EnumPath<EstimateStatus> estimateStatus = createEnum("estimateStatus", EstimateStatus.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final NumberPath<Long> totalPrice = createNumber("totalPrice", Long.class);
 
     public QEstimate(String variable) {
         this(Estimate.class, forVariable(variable), INITS);
@@ -50,7 +50,7 @@ public class QEstimate extends EntityPathBase<Estimate> {
 
     public QEstimate(Class<? extends Estimate> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.company = inits.isInitialized("company") ? new com.kosa.chanzipup.domain.account.company.QCompany(forProperty("company")) : null;
+        this.company = inits.isInitialized("company") ? new com.kosa.chanzipup.domain.account.company.QCompany(forProperty("company"), inits.get("company")) : null;
         this.estimateRequest = inits.isInitialized("estimateRequest") ? new QEstimateRequest(forProperty("estimateRequest"), inits.get("estimateRequest")) : null;
     }
 

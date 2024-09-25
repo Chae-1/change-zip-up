@@ -61,12 +61,6 @@ public class CompanyService {
         return accountRepository.existsByEmail(email);
     }
 
-    public Long findCompanyIdByEmail(String email) {
-        Company company = (Company) companyRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
-        return company.getId();
-    }
-
     public CompanyMyPage getCompanyMyPage(String email) {
         Company company = companyRepository.findByEmailWithAll(email)
                 .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
@@ -80,10 +74,12 @@ public class CompanyService {
     public boolean updateCompany(String email, CompanyUpdateRequest request) {
         Company company = companyRepository.findByEmailWithAll(email)
                 .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
-        // 1. 업데이트 할, ConstructionType
+        // 1. 업데이트할, ConstructionType
+        company.removeAllConstructionTypes();
         List<ConstructionType> findConstructionTypes = constructionTypeRepository
-                .findByIdIn(getUpdateServices(request, company));
+                .findByIdIn(request.getUpdateServices());
 
+        // 2. AGI
         company.addConstructionTypes(findConstructionTypes);
         return true;
     }
