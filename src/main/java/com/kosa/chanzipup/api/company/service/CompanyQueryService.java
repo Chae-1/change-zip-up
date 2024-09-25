@@ -138,7 +138,8 @@ public class CompanyQueryService {
                     // 1, 2
                     return constructions.stream()
                             .map(ConstructionType::getId)
-                            .toList().containsAll(constIds);
+                            .toList()
+                            .containsAll(constIds);
                 })
                 .toList();
     }
@@ -152,11 +153,7 @@ public class CompanyQueryService {
 
         List<Membership> memberships = getActiveMembershipsWithCompany(membershipName);
 
-//        filteredCompanies.stream()
-//                .filter()
-//
-//        return Page.of(membershipCompany.get(membershipName), pageSize, pageNumber);
-//    }
+        return null;
 
     }
 
