@@ -89,13 +89,11 @@ public class ReviewService {
 
         Map<Long, List<ReviewConstructionType>> reviewConstructionTypes = getConstructionTypes(reviews);
 
-        List<ReviewResponse> reviewResponses = reviews
+        return reviews
                 .stream()
                 .map((review) -> new ReviewResponse(review, review.getCompany(), review.getMember(),
                         reviewImageMap.get(review.getId()), reviewConstructionTypes.get(review.getId()), review.getBuildingType()))
                 .toList();
-
-        return reviewResponses;
     }
 
     public Page<List<ReviewResponse>> getAllReviewsWithPage(int pageSize, int pageNumber) {
@@ -167,5 +165,19 @@ public class ReviewService {
         reviewRepository.deleteById(reviewId);
 
         return imageUrls;
+    }
+
+    public List<ReviewResponse> getAllMemberWriteReviews(String email) {
+        List<Review> reviews = reviewRepository.findAllByMemberEmailWithAll(email);
+
+        Map<Long, List<ReviewImages>> reviewImageMap = getReviewImageMap(reviews);
+
+        Map<Long, List<ReviewConstructionType>> reviewConstructionTypes = getConstructionTypes(reviews);
+
+        return reviews
+                .stream()
+                .map((review) -> new ReviewResponse(review, review.getCompany(), review.getMember(),
+                        reviewImageMap.get(review.getId()), reviewConstructionTypes.get(review.getId()), review.getBuildingType()))
+                .toList();
     }
 }

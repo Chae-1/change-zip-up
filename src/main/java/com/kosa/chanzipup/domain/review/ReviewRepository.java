@@ -24,4 +24,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             +" left join fetch r.reviewImages images"
             +" where r.id = :reviewId and m.email = :userEmail")
     Optional<Review> findByIdAndUserEmail(@Param("reviewId") Long reviewId, @Param("userEmail") String userEmail);
+
+    @Query("select r from Review r where r.member.email = :email")
+    @EntityGraph(attributePaths = {"member", "company", "buildingType"})
+    List<Review> findAllByMemberEmailWithAll(@Param("email") String email);
 }
