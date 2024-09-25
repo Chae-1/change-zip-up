@@ -3,6 +3,7 @@ package com.kosa.chanzipup.domain.account.company;
 import com.kosa.chanzipup.domain.account.Account;
 import com.kosa.chanzipup.domain.account.AccountRole;
 
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.estimate.Estimate;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -107,5 +108,10 @@ public class Company extends Account {
 
     public void updateRating(double companyRating) {
         this.rating = companyRating;
+    }
+
+    public void addConstructionTypes(List<ConstructionType> constructionTypes) {
+        constructionTypes
+                .forEach(type -> addConstructionType(new CompanyConstructionType(type, this)));
     }
 }

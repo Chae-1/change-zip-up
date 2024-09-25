@@ -1,12 +1,15 @@
 package com.kosa.chanzipup.api.member.service;
 
 import com.kosa.chanzipup.api.member.controller.request.MemberRegisterRequest;
+import com.kosa.chanzipup.api.member.controller.request.MemberUpdateRequest;
 import com.kosa.chanzipup.api.member.controller.response.MemberRegisterResponse;
+import com.kosa.chanzipup.api.member.controller.response.MyPageResponse;
 import com.kosa.chanzipup.application.VerificationCode;
 import com.kosa.chanzipup.domain.account.AccountRole;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,5 +48,23 @@ public class MemberService {
     public boolean isEmailDuplicated(String email) {
         return memberRepository.findByEmail(email)
                 .isPresent();
+    }
+
+    public MyPageResponse getMemberDetail(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+
+        return new MyPageResponse(member);
+    }
+
+    @Transactional
+    public boolean updateMember(String email, MemberUpdateRequest request) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+
+        member.updatePassword(encoder.encode(request.getPassword()));
+        member.updatePhoneNumber(request.getPhoneNumber());
+
+        return true;
     }
 }

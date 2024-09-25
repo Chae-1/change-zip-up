@@ -18,8 +18,6 @@ public class Member extends Account {
 
     private String name;
 
-    private String phoneNumber;
-
     @Builder
     private Member(AccountRole accountRole, String email, String password, boolean isVerified,
                    String phoneNumber, MemberType memberType, String nickName, String name) {
@@ -83,5 +81,14 @@ public class Member extends Account {
     @Override
     public String getName() {
         return name;
+    }
+
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
+
+
+    public void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

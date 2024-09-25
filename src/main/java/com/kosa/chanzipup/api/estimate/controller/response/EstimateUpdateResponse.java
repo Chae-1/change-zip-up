@@ -23,6 +23,7 @@ public class EstimateUpdateResponse {
         this.totalPrice = estimate.getTotalPrices();
     }
 
+    @Getter
     static class EstimatePriceResponse {
         private String typeName;
         private int price;

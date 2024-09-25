@@ -2,18 +2,22 @@ package com.kosa.chanzipup.api.company.controller;
 
 import com.kosa.chanzipup.api.company.controller.request.CompanyRegisterRequest;
 import com.kosa.chanzipup.api.company.controller.request.CompanySearchCondition;
+import com.kosa.chanzipup.api.company.controller.request.CompanyUpdateRequest;
 import com.kosa.chanzipup.api.company.controller.response.CompanyDetailResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyListResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterResponse;
 import com.kosa.chanzipup.api.company.service.CompanyQueryService;
 import com.kosa.chanzipup.api.company.service.CompanyService;
+import com.kosa.chanzipup.api.review.controller.response.CompanyMyPage;
 import com.kosa.chanzipup.application.Page;
+import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.membership.MembershipName;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -72,5 +76,19 @@ public class CompanyController {
     public ResponseEntity<CompanyDetailResponse> getCompanyById(@PathVariable Long id) {
         CompanyDetailResponse companyResponse = companyQueryService.getCompanyDetailResponse(id);
         return ResponseEntity.ok(companyResponse);
+    }
+
+
+    @GetMapping("/mypage")
+    public ResponseEntity<CompanyMyPage> getMyPage(@AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        String email = userDetails.getUsername();
+        return ResponseEntity.ok(companyService.getCompanyMyPage(email));
+    }
+
+    @PatchMapping("/myage")
+    public ResponseEntity<Boolean> afterUpdateCompany(@AuthenticationPrincipal UnifiedUserDetails userDetails,
+                                                            @RequestBody CompanyUpdateRequest request) {
+        String email = userDetails.getUsername();
+        return ResponseEntity.ok(companyService.updateCompany(email, request));
     }
 }
