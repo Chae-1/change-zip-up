@@ -3,10 +3,13 @@ package com.kosa.chanzipup.api.member.controller;
 import com.kosa.chanzipup.api.member.controller.request.EmailDuplicationCheckResponse;
 import com.kosa.chanzipup.api.member.controller.request.MemberRegisterRequest;
 import com.kosa.chanzipup.api.member.controller.response.MemberRegisterResponse;
+import com.kosa.chanzipup.api.member.controller.response.MyPageResponse;
 import com.kosa.chanzipup.api.member.service.MemberService;
+import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,4 +39,11 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
     // Optional로 반환이 불가능 -> 이메일 중복 확인하는 EmailDuplicationCheckResponse DTO를 생성하여 이를 반환
+
+    @GetMapping("/mypage")
+    public ResponseEntity<MyPageResponse> myPage(@AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        return ResponseEntity.ok(memberService.getMemberDetail(userDetails.getUsername()));
+    }
+
+    // /api/member/mypage
 }
