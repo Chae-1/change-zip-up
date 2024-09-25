@@ -69,11 +69,13 @@ public class ReviewService {
     }
 
     private void updateCompanyRating(Company company) {
-        double companyRating = reviewRepository.findByCompanyId(company.getId())
+        double companyRating = Math.round(
+                reviewRepository.findByCompanyId(company.getId())
                 .stream()
                 .mapToDouble(Review::getRating)
                 .average()
-                .getAsDouble();
+                .getAsDouble()
+        );
 
         company.updateRating(companyRating);
     }

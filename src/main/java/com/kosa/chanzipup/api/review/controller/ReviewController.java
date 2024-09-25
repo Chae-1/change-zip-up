@@ -56,7 +56,7 @@ public class ReviewController {
     public ResponseEntity<String> uploadReviewImages(@PathVariable("reviewId") Long reviewId, MultipartFile file) {
         String name = file.getName();
         String uploadEndPoint = imageService.store("reviews", file);
-        String uploadFullPath = reviewImagesService.addReviewImage(reviewId, pathMatchService.match(uploadEndPoint));
+        String uploadFullPath = reviewImagesService.addReviewImage(reviewId, uploadEndPoint);
         log.info("name = {}, uploadFullPath = {}", name, uploadFullPath);
         return ResponseEntity.ok(uploadFullPath);
     }
@@ -80,7 +80,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getAllReviewsWithPage(pageable.getPageNumber(), pageable.getPageSize()));
     }
 
-
+    // params
     @GetMapping("/mypage")
     public ResponseEntity<Page<List<ReviewResponse>>> getAllReviewsWithMyPage(@PageableDefault(page = 0, size = 5) Pageable pageable,
                                                                               @AuthenticationPrincipal UnifiedUserDetails userDetails) {

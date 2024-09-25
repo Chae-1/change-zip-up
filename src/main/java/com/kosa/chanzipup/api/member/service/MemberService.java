@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.api.member.service;
 
 import com.kosa.chanzipup.api.member.controller.request.MemberRegisterRequest;
+import com.kosa.chanzipup.api.member.controller.request.MemberUpdateRequest;
 import com.kosa.chanzipup.api.member.controller.response.MemberRegisterResponse;
 import com.kosa.chanzipup.api.member.controller.response.MyPageResponse;
 import com.kosa.chanzipup.application.VerificationCode;
@@ -54,5 +55,16 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
 
         return new MyPageResponse(member);
+    }
+
+    @Transactional
+    public boolean updateMember(String email, MemberUpdateRequest request) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+
+        member.updatePassword(encoder.encode(request.getPassword()));
+        member.updatePhoneNumber(request.getPhoneNumber());
+
+        return true;
     }
 }

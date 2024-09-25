@@ -1,10 +1,9 @@
 package com.kosa.chanzipup.api.company.service;
 
 import com.kosa.chanzipup.api.company.controller.request.CompanyRegisterRequest;
-import com.kosa.chanzipup.api.company.controller.request.CompanySearchCondition;
-import com.kosa.chanzipup.api.company.controller.response.CompanyDetailResponse;
-import com.kosa.chanzipup.api.company.controller.response.CompanyListResponse;
+import com.kosa.chanzipup.api.company.controller.request.CompanyUpdateRequest;
 import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterResponse;
+import com.kosa.chanzipup.api.review.controller.response.CompanyMyPage;
 import com.kosa.chanzipup.application.PathMatchService;
 import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.domain.account.company.CompanyConstructionType;
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -48,13 +48,9 @@ public class CompanyService {
                 request.getAddress(), request.getCompanyDesc(), pathMatchService.match(uploadEndPoint));
 
         // 선택된 시공 타입 저장
-        List<Long> selectedTypeIds = request.getConstructionService();
-        selectedTypeIds.forEach(typeId -> {
-            ConstructionType constructionType = constructionTypeRepository.findById(typeId)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid type ID: " + typeId));
-            CompanyConstructionType companyConstructionType = new CompanyConstructionType(constructionType, company);
-            company.addConstructionType(companyConstructionType);  // Company 객체에 추가
-        });
+        List<ConstructionType> constructionTypes = constructionTypeRepository
+                .findByIdIn(request.getConstructionService());
+        company.addConstructionTypes(constructionTypes);
 
         companyRepository.save(company);
         return CompanyRegisterResponse.of(request.getEmail(), request.getCompanyName());
@@ -65,38 +61,41 @@ public class CompanyService {
         return accountRepository.existsByEmail(email);
     }
 
-    // 업체 리스트 조회
-
-    // 업체 상세 조회
-//    public CompanyDetailResponse getCompanyById(Long companyId) {
-//        Company company = companyRepository.findById(companyId)
-//                .orElseThrow(() -> new IllegalArgumentException("Company not found"));
-//
-//        List<String> services = new ArrayList<>();
-//        for (CompanyConstructionType constructionType : company.getConstructionTypes()) {
-//            services.add(constructionType.getConstructionType().getName());
-//        }
-//
-//        return new CompanyDetailResponse(
-//                company.getId(),
-//                company.getCompanyName(),
-//                company.getCompanyNumber(),
-//                company.getOwner(),
-//                company.getAddress(),
-//                company.getCompanyLogoUrl(),
-//                company.getPhoneNumber(),
-//                company.getCompanyDesc(),
-//                company.getPublishDate(),
-//                company.getRating(),
-//                services,
-//                null,
-//                null
-//        );
-//    }
-
     public Long findCompanyIdByEmail(String email) {
         Company company = (Company) companyRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
         return company.getId();
+    }
+
+    public CompanyMyPage getCompanyMyPage(String email) {
+        Company company = companyRepository.findByEmailWithAll(email)
+                .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
+        List<ConstructionType> constructionTypes = constructionTypeRepository.findAll();
+
+        return new CompanyMyPage(company, constructionTypes);
+
+    }
+
+    @Transactional
+    public boolean updateCompany(String email, CompanyUpdateRequest request) {
+        Company company = companyRepository.findByEmailWithAll(email)
+                .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
+        // 1. 업데이트 할, ConstructionType
+        List<ConstructionType> findConstructionTypes = constructionTypeRepository
+                .findByIdIn(getUpdateServices(request, company));
+
+        company.addConstructionTypes(findConstructionTypes);
+        return true;
+    }
+
+    private List<Long> getUpdateServices(CompanyUpdateRequest request, Company company) {
+        List<Long> requestUpdateServices = request.getUpdateServices(); // 1, 2
+        List<Long> currentCompanyServices = company.getConstructionTypes() // 1
+                .stream()
+                .map(type -> type.getConstructionType().getId())
+                .toList();
+
+        requestUpdateServices.removeAll(currentCompanyServices);
+        return requestUpdateServices;
     }
 }
