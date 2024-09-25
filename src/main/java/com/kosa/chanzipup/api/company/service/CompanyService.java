@@ -61,12 +61,6 @@ public class CompanyService {
         return accountRepository.existsByEmail(email);
     }
 
-    public Long findCompanyIdByEmail(String email) {
-        Company company = (Company) companyRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
-        return company.getId();
-    }
-
     public CompanyMyPage getCompanyMyPage(String email) {
         Company company = companyRepository.findByEmailWithAll(email)
                 .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));

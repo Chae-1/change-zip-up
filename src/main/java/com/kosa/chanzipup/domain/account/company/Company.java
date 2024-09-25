@@ -54,6 +54,7 @@ public class Company extends Account {
     public static Company ofNewCompany(String email, String companyName, String password,
                                        String phoneNumber, String owner, String companyNumber,
                                        LocalDate publishDate, String address, String companyDesc, String companyLogoUrl) {
+
         return Company.builder()
                 .email(email)
                 .password(password)
@@ -73,6 +74,7 @@ public class Company extends Account {
     public static Company ofNewCompanyForTest(String email, String companyName, String password,
                                        String phoneNumber, String owner, String companyNumber,
                                        LocalDate publishDate, String address, String companyDesc) {
+
         return Company.builder()
                 .email(email)
                 .password(password)
