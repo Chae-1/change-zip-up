@@ -154,6 +154,7 @@ public class CompanyQueryService {
 //
 //        return Page.of(membershipCompany.get(membershipName), pageSize, pageNumber);
 //    }
+
     }
 
     private List<Company> getCompanyListWithConstructionTypes(CompanySearchCondition searchCondition) {
