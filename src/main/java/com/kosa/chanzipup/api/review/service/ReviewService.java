@@ -73,6 +73,7 @@ public class ReviewService {
                         .mapToDouble(Review::getRating)
                         .average()
                         .orElse(0.0); // 만약 평점이 없을 경우 0.0을 반환하도록 처리
+
         // 소수점 첫째 자리까지 반올림
         companyRating = Math.round(companyRating * 10) / 10.0;
         company.updateRating(companyRating);
