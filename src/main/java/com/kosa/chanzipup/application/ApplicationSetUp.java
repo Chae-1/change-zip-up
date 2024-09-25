@@ -46,7 +46,7 @@ public class ApplicationSetUp {
     }
 
 
-    //@PostConstruct
+//    @PostConstruct
     public void init() {
 
         Member member1 = Member.ofLocalForTest(AccountRole.USER, "test1@test.com", encoder.encode("qweqwe123!"),

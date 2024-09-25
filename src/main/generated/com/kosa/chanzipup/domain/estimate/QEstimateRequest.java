@@ -32,6 +32,8 @@ public class QEstimateRequest extends EntityPathBase<EstimateRequest> {
 
     public final StringPath detailedAddress = createString("detailedAddress");
 
+    public final ListPath<Estimate, QEstimate> estimates = this.<Estimate, QEstimate>createList("estimates", Estimate.class, QEstimate.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> floor = createNumber("floor", Integer.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -42,9 +44,11 @@ public class QEstimateRequest extends EntityPathBase<EstimateRequest> {
 
     public final com.kosa.chanzipup.domain.account.member.QMember member;
 
-    public final DatePath<java.time.LocalDate> regDate = createDate("regDate", java.time.LocalDate.class);
+    public final DateTimePath<java.time.LocalDateTime> regDate = createDateTime("regDate", java.time.LocalDateTime.class);
 
     public final StringPath schedule = createString("schedule");
+
+    public final EnumPath<EstimateRequestStatus> status = createEnum("status", EstimateRequestStatus.class);
 
     public QEstimateRequest(String variable) {
         this(EstimateRequest.class, forVariable(variable), INITS);

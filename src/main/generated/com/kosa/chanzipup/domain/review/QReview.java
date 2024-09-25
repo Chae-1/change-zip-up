@@ -22,25 +22,33 @@ public class QReview extends EntityPathBase<Review> {
 
     public static final QReview review = new QReview("review");
 
+    public final com.kosa.chanzipup.domain.buildingtype.QBuildingType buildingType;
+
     public final com.kosa.chanzipup.domain.account.company.QCompany company;
 
     public final StringPath content = createString("content");
 
-    public final com.kosa.chanzipup.domain.estimate.QEstimateRequest estimate;
+    public final NumberPath<Integer> floor = createNumber("floor", Integer.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final com.kosa.chanzipup.domain.account.member.QMember member;
 
-    public final NumberPath<Integer>  = createNumber("", Integer.class);
-
-    public final NumberPath<Double> rating = createNumber("rating", Double.class);
+    public final NumberPath<Integer> rating = createNumber("rating", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> regDate = createDateTime("regDate", java.time.LocalDateTime.class);
 
-    public final DateTimePath<java.time.LocalDateTime> workEndDateTime = createDateTime("workEndDateTime", java.time.LocalDateTime.class);
+    public final ListPath<ReviewConstructionType, QReviewConstructionType> reviewConstructionTypes = this.<ReviewConstructionType, QReviewConstructionType>createList("reviewConstructionTypes", ReviewConstructionType.class, QReviewConstructionType.class, PathInits.DIRECT2);
 
-    public final DateTimePath<java.time.LocalDateTime> workStartDateTime = createDateTime("workStartDateTime", java.time.LocalDateTime.class);
+    public final ListPath<ReviewImages, QReviewImages> reviewImages = this.<ReviewImages, QReviewImages>createList("reviewImages", ReviewImages.class, QReviewImages.class, PathInits.DIRECT2);
+
+    public final StringPath title = createString("title");
+
+    public final NumberPath<Long> totalPrice = createNumber("totalPrice", Long.class);
+
+    public final DatePath<java.time.LocalDate> workEndDate = createDate("workEndDate", java.time.LocalDate.class);
+
+    public final DatePath<java.time.LocalDate> workStartDate = createDate("workStartDate", java.time.LocalDate.class);
 
     public QReview(String variable) {
         this(Review.class, forVariable(variable), INITS);
@@ -60,9 +68,9 @@ public class QReview extends EntityPathBase<Review> {
 
     public QReview(Class<? extends Review> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.company = inits.isInitialized("company") ? new com.kosa.chanzipup.domain.account.company.QCompany(forProperty("company")) : null;
-        this.estimate = inits.isInitialized("estimate") ? new com.kosa.chanzipup.domain.estimate.QEstimateRequest(forProperty("estimate"), inits.get("estimate")) : null;
-        this.member = inits.isInitialized("member") ? new com.kosa.chanzipup.domain.account.member.QMember(forProperty("member")) : null;
+        this.buildingType = inits.isInitialized("buildingType") ? new com.kosa.chanzipup.domain.buildingtype.QBuildingType(forProperty("buildingType")) : null;
+        this.company = inits.isInitialized("company") ? new com.kosa.chanzipup.domain.account.company.QCompany(forProperty("company"), inits.get("company")) : null;
+        this.member = inits.isInitialized("member") ? new com.kosa.chanzipup.domain.account.member.QMember(forProperty("member"), inits.get("member")) : null;
     }
 
 }
