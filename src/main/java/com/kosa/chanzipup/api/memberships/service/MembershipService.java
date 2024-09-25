@@ -8,6 +8,8 @@ import com.kosa.chanzipup.domain.membership.Membership;
 import com.kosa.chanzipup.domain.membership.MembershipType;
 import com.kosa.chanzipup.domain.membership.MembershipTypeRepository;
 import com.kosa.chanzipup.domain.membership.MembershipRepository;
+import com.kosa.chanzipup.domain.payment.Payment;
+import com.kosa.chanzipup.domain.payment.PaymentRepository;
 import com.kosa.chanzipup.domain.payment.PaymentResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ public class MembershipService {
     private final CompanyRepository companyRepository;
     private final MembershipTypeRepository membershipTypeRepository;
     private final MembershipRepository membershipRepository;
+    private final PaymentRepository paymentRepository;
 
 
     @Transactional
@@ -36,11 +39,13 @@ public class MembershipService {
                 .orElseThrow(() -> new CompanyException("존재하지 않는 회사 정보입니다."));
         MembershipType membershipType = membershipTypeRepository.findById(paymentResult.getMembershipTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 멤버십 정보입니다."));
+        Payment payment = paymentRepository.findByImpUid(paymentResult.getImpUid())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 결제 정보입니다."));
 
         // todo : 기존에 가입한 멤버십이 있다면?
 
         // 2. 가입 한 멤버십은 MEMBERSHIP_EXPIRE_DAY 만큼 유지된다.
-        Membership membership = createMembership(company, membershipType, paymentResult.getImpUid());
+        Membership membership = createMembership(company, membershipType, payment);
         membershipRepository.save(membership);
 
         return MembershipResponse.of(membershipType.getName().name(), membershipType.getPrice(),
@@ -49,10 +54,10 @@ public class MembershipService {
 
 
     // 2. 가입 한 멤버십은 MEMBERSHIP_EXPIRE_DAY 만큼 유지된다.
-    private Membership createMembership(Company company, MembershipType membershipType, String impUid) {
+    private Membership createMembership(Company company, MembershipType membershipType, Payment payment) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiredDateTime = now.plusDays(MEMBERSHIP_EXPIRE_DAY);
 
-        return Membership.ofNewMembership(company, membershipType, now, expiredDateTime, impUid);
+        return Membership.ofNewMembership(company, membershipType, now, expiredDateTime, payment);
     }
 }

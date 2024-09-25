@@ -2,6 +2,7 @@ package com.kosa.chanzipup.domain.membership;
 
 import com.kosa.chanzipup.domain.BaseEntity;
 import com.kosa.chanzipup.domain.account.company.Company;
+import com.kosa.chanzipup.domain.payment.Payment;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,24 +27,27 @@ public class Membership extends BaseEntity {
     @JoinColumn(name = "membership_internal_id")
     private MembershipType membershipType;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
 
-    private String impUid;
-
     private Membership(LocalDateTime startDateTime, LocalDateTime endDateTime,
-                       MembershipType membershipType, Company company, String impUid) {
+                       MembershipType membershipType, Company company, Payment payment) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.membershipType = membershipType;
         this.company = company;
+        this.payment = payment;
     }
 
     public static Membership ofNewMembership(Company company, MembershipType membershipType,
                                              LocalDateTime startDateTime,
-                                             LocalDateTime endDateTime, String impUid) {
-        return new Membership(startDateTime, endDateTime, membershipType, company, impUid);
+                                             LocalDateTime endDateTime, Payment payment) {
+        return new Membership(startDateTime, endDateTime, membershipType, company, payment);
     }
 
     public boolean isValid() {
