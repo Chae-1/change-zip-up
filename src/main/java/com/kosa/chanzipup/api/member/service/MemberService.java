@@ -58,13 +58,13 @@ public class MemberService {
     }
 
     @Transactional
-    public MyPageResponse updateMember(String email, MemberUpdateRequest request) {
+    public boolean updateMember(String email, MemberUpdateRequest request) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
 
         member.updatePassword(encoder.encode(request.getPassword()));
         member.updatePhoneNumber(request.getPhoneNumber());
 
-        return new MyPageResponse(member);
+        return true;
     }
 }

@@ -2,6 +2,7 @@ package com.kosa.chanzipup.api.company.controller;
 
 import com.kosa.chanzipup.api.company.controller.request.CompanyRegisterRequest;
 import com.kosa.chanzipup.api.company.controller.request.CompanySearchCondition;
+import com.kosa.chanzipup.api.company.controller.request.CompanyUpdateRequest;
 import com.kosa.chanzipup.api.company.controller.response.CompanyDetailResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyListResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyRegisterResponse;
@@ -82,5 +83,12 @@ public class CompanyController {
     public ResponseEntity<CompanyMyPage> getMyPage(@AuthenticationPrincipal UnifiedUserDetails userDetails) {
         String email = userDetails.getUsername();
         return ResponseEntity.ok(companyService.getCompanyMyPage(email));
+    }
+
+    @PatchMapping("/myage")
+    public ResponseEntity<Boolean> afterUpdateCompany(@AuthenticationPrincipal UnifiedUserDetails userDetails,
+                                                            @RequestBody CompanyUpdateRequest request) {
+        String email = userDetails.getUsername();
+        return ResponseEntity.ok(companyService.updateCompany(email, request));
     }
 }
