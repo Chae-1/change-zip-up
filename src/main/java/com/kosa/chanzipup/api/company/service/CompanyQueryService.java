@@ -138,12 +138,14 @@ public class CompanyQueryService {
                     // 1, 2
                     return constructions.stream()
                             .map(ConstructionType::getId)
-                            .toList().containsAll(constIds);
+                            .toList()
+                            .containsAll(constIds);
                 })
                 .toList();
     }
 
-    public Page<List<CompanyListResponse>> getSpecifiedMembershipCompaniesWithPage(int pageNumber, int pageSize, MembershipName membershipName,
+    public Page<List<CompanyListResponse>> getSpecifiedMembershipCompaniesWithPage(int pageNumber, int pageSize,
+                                                                                   MembershipName membershipName,
                                                                                    CompanySearchCondition searchCondition) {
         List<Company> companyList = getCompanyListWithConstructionTypes(searchCondition);
 
@@ -151,14 +153,8 @@ public class CompanyQueryService {
 
         List<Membership> memberships = getActiveMembershipsWithCompany(membershipName);
 
-        Map<Long, List<Membership>> membershipMap = memberships
-                .stream()
-                .collect(groupingBy(membership -> membership.getCompany().getId(), toList()));
+        return null;
 
-        Map<MembershipName, List<CompanyListResponse>> membershipCompany = createMembershipCompany(filteredCompanies,
-                membershipMap);
-
-        return Page.of(membershipCompany.get(membershipName), pageSize, pageNumber);
     }
 
     private List<Company> getCompanyListWithConstructionTypes(CompanySearchCondition searchCondition) {

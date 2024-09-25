@@ -22,7 +22,7 @@ public class AdminMembershipQueryRepository {
 
     public List<Membership> getAllMembershipCompany() {
         return factory.selectFrom(membership)
-                .leftJoin(membership.payment, payment)
+                .leftJoin(membership.payment, payment).fetchJoin()
                 .leftJoin(membership.membershipType, membershipType).fetchJoin()
                 .leftJoin(membership.company, company).fetchJoin()
                 .orderBy(membership.startDateTime.desc())

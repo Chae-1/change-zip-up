@@ -50,6 +50,7 @@ public class CompanyService {
         // 선택된 시공 타입 저장
         List<ConstructionType> constructionTypes = constructionTypeRepository
                 .findByIdIn(request.getConstructionService());
+
         company.addConstructionTypes(constructionTypes);
 
         companyRepository.save(company);
@@ -64,10 +65,9 @@ public class CompanyService {
     public CompanyMyPage getCompanyMyPage(String email) {
         Company company = companyRepository.findByEmailWithAll(email)
                 .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
+
         List<ConstructionType> constructionTypes = constructionTypeRepository.findAll();
-
         return new CompanyMyPage(company, constructionTypes);
-
     }
 
     @Transactional
@@ -78,20 +78,7 @@ public class CompanyService {
         company.removeAllConstructionTypes();
         List<ConstructionType> findConstructionTypes = constructionTypeRepository
                 .findByIdIn(request.getUpdateServices());
-
-        // 2. AGI
         company.addConstructionTypes(findConstructionTypes);
         return true;
-    }
-
-    private List<Long> getUpdateServices(CompanyUpdateRequest request, Company company) {
-        List<Long> requestUpdateServices = request.getUpdateServices(); // 1, 2
-        List<Long> currentCompanyServices = company.getConstructionTypes() // 1
-                .stream()
-                .map(type -> type.getConstructionType().getId())
-                .toList();
-
-        requestUpdateServices.removeAll(currentCompanyServices);
-        return requestUpdateServices;
     }
 }
