@@ -55,7 +55,7 @@ public class SecurityConfig {
         // 기본 설정
         http
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/refreshToken", "/form/login").permitAll()
                         .requestMatchers("/api/payment/**", "/api/memberships/**").hasRole("COMPANY") // ROLE_COMPANY Role, Authority
                         .requestMatchers("/api/**", "/", "/oauth2/**").permitAll()

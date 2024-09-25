@@ -77,7 +77,7 @@ public class ReviewController {
 
     @GetMapping("/page")
     public ResponseEntity<Page<List<ReviewResponse>>> getAllReviewsWithPage(@PageableDefault Pageable pageable) {
-        return ResponseEntity.ok(reviewService.getAllReviewsWithPage(pageable.getPageNumber(), pageable.getPageSize()));
+        return ResponseEntity.ok(reviewService.getAllReviewsWithPage(pageable.getPageSize(), pageable.getPageNumber()));
     }
 
     // params
