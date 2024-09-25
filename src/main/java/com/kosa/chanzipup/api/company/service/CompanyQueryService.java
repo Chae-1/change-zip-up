@@ -3,29 +3,24 @@ package com.kosa.chanzipup.api.company.service;
 import com.kosa.chanzipup.api.company.controller.request.CompanySearchCondition;
 import com.kosa.chanzipup.api.company.controller.response.CompanyDetailResponse;
 import com.kosa.chanzipup.api.company.controller.response.CompanyListResponse;
+import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyConstructionType;
-import com.kosa.chanzipup.domain.buildingtype.QBuildingType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.membership.*;
 import com.kosa.chanzipup.domain.portfolio.Portfolio;
-import com.kosa.chanzipup.domain.portfolio.QPortfolio;
-import com.kosa.chanzipup.domain.portfolio.QPortfolioImage;
-import com.kosa.chanzipup.domain.review.QReview;
-import com.kosa.chanzipup.domain.review.QReviewImages;
 import com.kosa.chanzipup.domain.review.Review;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.kosa.chanzipup.domain.account.company.QCompany.company;
 import static com.kosa.chanzipup.domain.account.company.QCompanyConstructionType.companyConstructionType;
@@ -47,6 +42,7 @@ public class CompanyQueryService {
 
     private final JPAQueryFactory factory;
 
+    // 현행되고 있는 컴퍼니 조회 방식.
     public Map<MembershipName, List<CompanyListResponse>> getAllCompanies(CompanySearchCondition searchCondition) {
         log.info("지역 : {}", searchCondition.getCity());
         log.info("구 : {}", searchCondition.getDistrict());
@@ -57,14 +53,79 @@ public class CompanyQueryService {
                 .leftJoin(company.constructionTypes, companyConstructionType).fetchJoin()
                 .leftJoin(companyConstructionType.constructionType, constructionType).fetchJoin()
                 .where(addressLike(searchCondition.getCity(), searchCondition.getDistrict()))
+                .orderBy(company.createdDateTime.asc())
                 .fetch();
 
         List<Long> constIds = searchCondition.getServices();
 
-        List<Company> filteredCompanies = companyList.stream()
+        List<Company> filteredCompanies = getFilteredCompanies(companyList, constIds);
+
+        // companyId 별 membership
+        // 1:1인데
+        Map<Long, List<Membership>> membershipMap = factory.selectFrom(membership)
+                .leftJoin(membership.company, company).fetchJoin()
+                .leftJoin(membership.membershipType, membershipType).fetchJoin()
+                .orderBy(membership.startDateTime.desc())
+                .fetch()
+                .stream()
+                .collect(groupingBy(membership -> membership.getCompany().getId(), toList()));
+
+        Map<MembershipName, List<CompanyListResponse>> membershipCompany = createMembershipCompany(filteredCompanies,
+                membershipMap);
+
+        return membershipCompany;
+    }
+
+    public Map<MembershipName, Page<List<CompanyListResponse>>> getAllCompaniesWithDefaultPage(
+            CompanySearchCondition searchCondition) {
+        log.info("지역 : {}", searchCondition.getCity());
+        log.info("구 : {}", searchCondition.getDistrict());
+        log.info("서비스 리스트 : {}", searchCondition.getServices());
+
+        List<Company> companyList = getCompanyListWithConstructionTypes(searchCondition);
+
+        List<Company> filteredCompanies = getFilteredCompanies(companyList, searchCondition.getServices());
+
+        List<Membership> fetch = getActiveMembershipsWithCompany(null);
+
+        Map<Long, List<Membership>> membershipMap = fetch
+                .stream()
+                .collect(groupingBy(membership -> membership.getCompany().getId(), toList()));
+
+        Map<MembershipName, List<CompanyListResponse>> membershipCompany = createMembershipCompany(filteredCompanies,
+                membershipMap);
+
+        Map<MembershipName, Page<List<CompanyListResponse>>> pageMap = membershipCompany.keySet()
+                .stream()
+                .collect(toMap(membership -> membership,
+                        membership -> Page.ofDefault(membershipCompany.get(membership))));
+
+        return pageMap;
+    }
+
+    private List<Membership> getActiveMembershipsWithCompany(MembershipName membershipName) {
+        return factory.selectFrom(membership)
+                .leftJoin(membership.company, company).fetchJoin()
+                .leftJoin(membership.membershipType, membershipType).fetchJoin()
+                .where(membershipNameEq(membershipName), membership.endDateTime.after(LocalDateTime.now()))
+                .orderBy(membership.startDateTime.desc())
+                .fetch();
+    }
+
+    private BooleanExpression membershipNameEq(MembershipName membershipName) {
+        if (membershipName == null)
+            return null;
+
+        return membershipType.name.eq(membershipName);
+    }
+
+    private List<Company> getFilteredCompanies(List<Company> companyList, List<Long> constIds) {
+
+        return companyList.stream()
                 .filter(company -> {
-                    if (constIds == null)
+                    if (constIds == null) {
                         return true;
+                    }
 
                     List<ConstructionType> constructions = company.getConstructionTypes()
                             .stream()
@@ -77,51 +138,64 @@ public class CompanyQueryService {
                             .containsAll(constIds);
                 })
                 .toList();
+    }
 
-        // companyId 별 membership
-        // 1:1인데
-        Map<Long, List<Membership>> membershipMap = factory.selectFrom(membership)
-                .leftJoin(membership.company, company).fetchJoin()
-                .leftJoin(membership.membershipType, membershipType).fetchJoin()
-                .orderBy(membership.startDateTime.desc())
-                .fetch()
+    public Page<List<CompanyListResponse>> getSpecifiedMembershipCompaniesWithPage(int pageNumber, int pageSize, MembershipName membershipName,
+                                                                                   CompanySearchCondition searchCondition) {
+        List<Company> companyList = getCompanyListWithConstructionTypes(searchCondition);
+
+        List<Company> filteredCompanies = getFilteredCompanies(companyList, searchCondition.getServices());
+
+        List<Membership> memberships = getActiveMembershipsWithCompany(membershipName);
+
+        Map<Long, List<Membership>> membershipMap = memberships
                 .stream()
                 .collect(groupingBy(membership -> membership.getCompany().getId(), toList()));
 
-        Map<MembershipName, List<CompanyListResponse>> membershipCompany = createMembership();
+        Map<MembershipName, List<CompanyListResponse>> membershipCompany = createMembershipCompany(filteredCompanies,
+                membershipMap);
+
+        return Page.of(membershipCompany.get(membershipName), pageSize, pageNumber);
+    }
+
+    private List<Company> getCompanyListWithConstructionTypes(CompanySearchCondition searchCondition) {
+        return factory.select(company)
+                .from(company)
+                .leftJoin(company.constructionTypes, companyConstructionType).fetchJoin()
+                .leftJoin(companyConstructionType.constructionType, constructionType).fetchJoin()
+                .where(addressLike(searchCondition.getCity(), searchCondition.getDistrict()))
+                .fetch();
+    }
+
+
+    private Map<MembershipName, List<CompanyListResponse>> createMembershipCompany(List<Company> filteredCompanies,
+                                                                                   Map<Long, List<Membership>> membershipMap) {
+        Map<MembershipName, List<CompanyListResponse>> membershipCompany = new HashMap<>();
+        for (MembershipName name : MembershipName.values()) {
+            membershipCompany.put(name, new ArrayList<>());
+        }
+
         filteredCompanies.stream()
                 .forEach(company -> {
                     List<Membership> memberships = membershipMap.get(company.getId());
                     if (memberships == null) {
-                        membershipCompany.getOrDefault(MembershipName.NO, new ArrayList<>()).add(new CompanyListResponse(company));
+                        membershipCompany.getOrDefault(MembershipName.NO, new ArrayList<>())
+                                .add(new CompanyListResponse(company));
                         return;
                     }
 
-                    Membership membership = findMembership(memberships);
+                    Membership membership = memberships.get(0);
                     if (membership.isValid()) {
-                        membershipCompany.getOrDefault(membership.getMembershipType().getName(), new ArrayList<>()).add(new CompanyListResponse(company));
+                        membershipCompany.getOrDefault(membership.getMembershipType().getName(), new ArrayList<>())
+                                .add(new CompanyListResponse(company));
                     } else {
-                        membershipCompany.getOrDefault(MembershipName.NO, new ArrayList<>()).add(new CompanyListResponse(company));
+                        membershipCompany.getOrDefault(MembershipName.NO, new ArrayList<>())
+                                .add(new CompanyListResponse(company));
                     }
                 });
 
         return membershipCompany;
     }
-
-    private Map<MembershipName, List<CompanyListResponse>> createMembership() {
-        Map<MembershipName, List<CompanyListResponse>> membershipNameListHashMap = new HashMap<>();
-        for (MembershipName name : MembershipName.values()) {
-            membershipNameListHashMap.put(name, new ArrayList<>());
-        }
-
-        return membershipNameListHashMap;
-    }
-
-
-    private Membership findMembership(List<Membership> memberships) {
-        return memberships.get(0);
-    }
-
 
     public CompanyDetailResponse getCompanyDetailResponse(Long companyId) {
 
@@ -169,20 +243,6 @@ public class CompanyQueryService {
             return company.address.like("%" + city + "%");
         }
 
-
         return company.address.like("%" + String.format("%s %s", city, strict) + "%");
     }
-
-    private BooleanExpression constructionTypeIn(List<Long> constructionIds) {
-
-        if (constructionIds == null || constructionIds.isEmpty()) {
-            return null;
-        }
-
-        return constructionType.id.in(constructionIds);
-    }
-
-//    public Map<MembershipName, List<CompanyListResponse>> getAllRecommendCompanies(CompanySearchCondition searchCondition) {
-//        return null;
-//    }
 }
