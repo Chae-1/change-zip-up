@@ -7,12 +7,15 @@ import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioListRespons
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioRegisterResponse;
 import com.kosa.chanzipup.api.portfolio.service.PortfolioImageService;
 import com.kosa.chanzipup.api.portfolio.service.PortfolioService;
+import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +59,12 @@ public class PortfolioController {
         List<PortfolioListResponse> portfolios = portfolioService.getAllPortfolios();
         return ResponseEntity.ok(portfolios);
     }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<List<PortfolioListResponse>>> listPortfoliosWithPage(Pageable pageable) {
+        return ResponseEntity.ok(portfolioService.getAllPortfoliosWithPage(pageable.getPageNumber(), pageable.getPageSize()));
+    }
+
 
     // 시공사례 상세 조회
     @GetMapping("/{id}")

@@ -44,7 +44,7 @@ public class Page<T extends Collection> {
     }
 
     public int getOffset() {
-        return pageNumber * pageNumber;
+        return pageNumber * pageSize;
     }
 
     public Collection getSlice() {
