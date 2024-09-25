@@ -2,6 +2,7 @@ package com.kosa.chanzipup.api.member.controller;
 
 import com.kosa.chanzipup.api.member.controller.request.EmailDuplicationCheckResponse;
 import com.kosa.chanzipup.api.member.controller.request.MemberRegisterRequest;
+import com.kosa.chanzipup.api.member.controller.request.MemberUpdateRequest;
 import com.kosa.chanzipup.api.member.controller.response.MemberRegisterResponse;
 import com.kosa.chanzipup.api.member.controller.response.MyPageResponse;
 import com.kosa.chanzipup.api.member.service.MemberService;
@@ -45,5 +46,9 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getMemberDetail(userDetails.getUsername()));
     }
 
-    // /api/member/mypage
+    @PatchMapping("/mypage")
+    public ResponseEntity<MyPageResponse> afterUpdateMyPage(@AuthenticationPrincipal UnifiedUserDetails userDetails,
+                                                            @RequestBody MemberUpdateRequest request) {
+        return ResponseEntity.ok(memberService.updateMember(userDetails.getUsername(), request));
+    }
 }
