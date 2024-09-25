@@ -82,9 +82,9 @@ public class ReviewController {
 
 
     @GetMapping("/mypage")
-    public ResponseEntity<List<ReviewResponse>> getAllReviewsWithMyPage(@PageableDefault Pageable pageable,
-                                                                        @AuthenticationPrincipal UnifiedUserDetails userDetails) {
-       return ResponseEntity.ok(reviewService.getAllMemberWriteReviews(userDetails.getUsername()));
+    public ResponseEntity<Page<List<ReviewResponse>>> getAllReviewsWithMyPage(@PageableDefault(page = 0, size = 5) Pageable pageable,
+                                                                              @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+       return ResponseEntity.ok(Page.of(reviewService.getAllMemberWriteReviews(userDetails.getUsername()), pageable.getPageSize(), pageable.getPageNumber()));
     }
 
     @GetMapping("/{reviewId}")
