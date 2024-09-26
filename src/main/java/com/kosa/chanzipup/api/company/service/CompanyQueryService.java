@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,7 +40,7 @@ public class CompanyQueryService {
 
     // 현행되고 있는 컴퍼니 조회 방식.
     public Map<MembershipName, Page<List<CompanyListResponse>>> getAllCompanies(
-            Pageable pageable,
+            int page, int size,
             CompanySearchCondition searchCondition
     ) {
         // 1. 지역을 기반으로 회사를 조회한다.
@@ -55,15 +53,14 @@ public class CompanyQueryService {
 
         // 2-1. 회사 Id를 key, Construction List를 value로 하는 Map을 통해서
         // ! -> 실제 컴퍼니 타입이 조회되지 않을 수도 있음
+        // 그래서 추가적으로 실제하는 회사들을 기반으로 새로운 Map을 생성해야함.
         Map<Long, List<CompanyConstructionType>> companyConstructionTypeMap = companyConstructionMap(
                 companyIds);
 
         // 2-2. 검색 조건을 통해 전달된 typeId를 모두 포함하는 회원 ID를 확인한다.
-
         List<Long> services = searchCondition.getServices();
-        // null 일 경우,
-
         List<Long> filteredCompany = getCompanyIdsContainAllConstructionType(services,
+                companyIds,
                 companyConstructionTypeMap);
 
         Map<MembershipName, List<CompanyListResponse>> membershipCompany = mappingMembershipName(
@@ -74,8 +71,8 @@ public class CompanyQueryService {
                 .stream()
                 .collect(toMap(
                         entry -> entry.getKey(),
-                        entry -> Page.of(entry.getValue(), pageable.getPageSize(), pageable.getPageNumber()
-                        )));
+                        entry -> Page.of(entry.getValue(), size, page)
+                ));
 
     }
 
@@ -98,36 +95,48 @@ public class CompanyQueryService {
             Map<Long, List<CompanyConstructionType>> companyConstructionTypeMap,
             List<Long> filteredCompany) {
 
-        return findCompaniesWithMemberships
+        Map<MembershipName, List<CompanyListResponse>> map = new HashMap<>();
+        map.put(MembershipName.NO, new ArrayList<>());
+        map.put(MembershipName.BASIC, new ArrayList<>());
+        map.put(MembershipName.PREMIUM, new ArrayList<>());
+
+        findCompaniesWithMemberships
                 .stream()
                 .filter(company -> filteredCompany.contains(company.getId()))
-                .collect(groupingBy(company -> {
+                .forEach(company -> {
                     Membership activeMembership = company.getActiveMembership();
+                    List<CompanyConstructionType> companyConstructionTypes = companyConstructionTypeMap.get(
+                            company.getId());
                     if (activeMembership == null) {
-                        return MembershipName.NO;
+                        map.get(MembershipName.NO).add(new CompanyListResponse(company, companyConstructionTypes));
+                        return ;
                     }
-                    return activeMembership.getMembershipName();
-                }, mapping(company -> new CompanyListResponse(company, companyConstructionTypeMap.get(company.getId())),
-                        toList())));
+                    map.get(activeMembership.getMembershipName()).add(new CompanyListResponse(company, companyConstructionTypes));
+                });
+
+        return map;
     }
 
     private List<Long> getCompanyIdsContainAllConstructionType(List<Long> searchConstructionIds,
-                                                               Map<Long, List<CompanyConstructionType>> companyConstructionTypeMap) {
-        return companyConstructionTypeMap
-                .keySet()
-                .stream()
+                                                               List<Long> companyIds, Map<Long, List<CompanyConstructionType>> companyConstructionTypeMap) {
+
+        return companyIds.stream()
                 .filter(companyId -> {
-                    // null 이면 검색 조건이 없는 것
                     if (searchConstructionIds == null) {
                         return true;
                     }
+
                     List<Long> companyTypeIds = companyConstructionTypeMap.get(companyId)
                             .stream()
                             .map(type -> type.getConstructionType().getId())
                             .collect(toList());
-                    return searchConstructionIds.containsAll(companyTypeIds);
+
+                    return companyTypeIds.containsAll(searchConstructionIds);
                 })
                 .toList();
+
+
+
     }
 
     private List<Long> getCompanyIds(List<Company> findCompaniesWithMemberships) {
@@ -154,11 +163,11 @@ public class CompanyQueryService {
     }
 
 
-    public Page<List<CompanyListResponse>> getSpecifiedMembershipCompaniesWithPage(Pageable pageable,
+    public Page<List<CompanyListResponse>> getSpecifiedMembershipCompaniesWithPage(int page, int size,
                                                                                    MembershipName membershipName,
                                                                                    CompanySearchCondition searchCondition) {
 
-        Map<MembershipName, Page<List<CompanyListResponse>>> membershipNameListMap = getAllCompanies(pageable,
+        Map<MembershipName, Page<List<CompanyListResponse>>> membershipNameListMap = getAllCompanies(page, size,
                 searchCondition);
         return membershipNameListMap.get(membershipName);
 
@@ -184,5 +193,4 @@ public class CompanyQueryService {
         );
 
     }
-
 }

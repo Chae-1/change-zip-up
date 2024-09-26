@@ -41,6 +41,7 @@ public class CompanyService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
+
         String uploadEndPoint = imageService.store("company", request.getLogoFile());
 
         Company company = Company.ofNewCompany(request.getEmail(), request.getCompanyName(), encoder.encode(request.getPassword()),

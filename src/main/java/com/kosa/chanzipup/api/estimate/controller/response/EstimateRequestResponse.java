@@ -44,7 +44,7 @@ public class EstimateRequestResponse {
         this.schedule = estimateRequest.getSchedule();
         this.nickName = estimateRequest.getMember().getNickName();
         this.buildingTypeName = estimateRequest.getBuildingType().getName();
-        this.regDate = estimateRequest.getRegDate(); ;
+        this.regDate = estimateRequest.getRegDate();
         this.constructionTypes = estimateRequest.getConstructionTypes()
                 .stream()
                 .map(type -> type.getTypeName())
