@@ -60,4 +60,8 @@ public class MembershipService {
 
         return Membership.ofNewMembership(company, membershipType, now, expiredDateTime, payment);
     }
+
+    public void getAllMembershipHistories(String email) {
+//        membership
+    }
 }

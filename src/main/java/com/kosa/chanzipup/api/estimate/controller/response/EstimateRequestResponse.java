@@ -59,7 +59,7 @@ public class EstimateRequestResponse {
     }
 
     public EstimateRequestResponse(EstimateRequest estimateRequest, List<Estimate> requestEstimates) {
-        this(estimateRequest, isSend(requestEstimates));
+        this(estimateRequest, requestEstimates != null && !requestEstimates.isEmpty());
         if (isSend) {
             Estimate estimate = requestEstimates.get(0);
             status = estimate.getEstimateStatus();
@@ -67,9 +67,5 @@ public class EstimateRequestResponse {
         } else {
             status = null;
         }
-    }
-
-    private static boolean isSend(List<Estimate> requestEstimates) {
-        return requestEstimates != null && !requestEstimates.isEmpty();
     }
 }

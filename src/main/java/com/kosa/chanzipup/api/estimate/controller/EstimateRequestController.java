@@ -116,15 +116,12 @@ public class EstimateRequestController {
         return ResponseEntity.ok(queryService.getAllEstimateRequestByUser(userDetails.getUsername(), status));
     }
 
-    @GetMapping("/users/estimates/{estimateId}")
+    @GetMapping("/users/complete/{requestId}")
     @PreAuthorize("ROLE_USER")
     public ResponseEntity<EstimateDetailResponse> findAllUserCompleteRequests(
-            @PathVariable("estimateId") Long estimateId,
+            @PathVariable("requestId") Long requestId,
             @AuthenticationPrincipal UnifiedUserDetails userDetails) {
-        EstimateDetailResponse allCompleteEstimateRequest = queryService.getCompleteEstimateOnRequest(userDetails.getUsername(),
-                estimateId);
-
-        return ResponseEntity.ok(allCompleteEstimateRequest);
+        return ResponseEntity.ok(queryService.getCompleteEstimateOnRequest(requestId));
     }
 
 

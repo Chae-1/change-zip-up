@@ -23,6 +23,7 @@ import static com.kosa.chanzipup.domain.estimate.EstimateStatus.ACCEPTED;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.COMPLETE;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.REJECTED;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.SENT;
+import static com.kosa.chanzipup.domain.estimate.QEstimate.*;
 import static com.kosa.chanzipup.domain.estimate.QEstimate.estimate;
 import static com.kosa.chanzipup.domain.estimate.QEstimateConstructionType.estimateConstructionType;
 import static com.kosa.chanzipup.domain.estimate.QEstimatePrice.estimatePrice;
@@ -140,6 +141,7 @@ public class EstimateQueryService {
                         estimateRequest.status.eq(status))
                 .fetch();
 
+
         return requests.stream()
                 .map(estimateRequest -> new EstimateRequestResponse(estimateRequest, false))
                 .toList();
@@ -213,6 +215,26 @@ public class EstimateQueryService {
         return null;
     }
 
+    public EstimateDetailResponse getCompleteEstimateDetailOf(Long requestId) {
+        EstimateRequest request = factory.selectFrom(estimateRequest)
+                .leftJoin(estimateRequest.estimates, estimate).fetchJoin()
+                .where(estimateRequest.id.eq(requestId), estimate.estimateStatus.eq(COMPLETE))
+                .fetchOne();
+
+
+        Optional<Estimate> acceptedEstimate = request.getEstimates()
+                .stream()
+                .filter(estimate -> estimate.getEstimateStatus() == COMPLETE)
+                .findAny();
+
+        if (acceptedEstimate.isPresent()) {
+            Estimate findEstimate = acceptedEstimate.get();
+            return getEstimateDetailOf(requestId, findEstimate.getId(), ACCEPTED, ONGOING);
+        }
+
+        return null;
+    }
+
 
     public List<EstimateResponse> getAllSentEstimate(String companyEmail) {
         // 1. 회사가 전달한 모든 estimate 정보
@@ -232,21 +254,25 @@ public class EstimateQueryService {
                 .toList();
     }
 
-    public EstimateDetailResponse getCompleteEstimateOnRequest(String email, Long estimateId) {
-        Estimate findEstimate = factory.selectFrom(QEstimate.estimate)
-                .leftJoin(QEstimate.estimate.company, company).fetchJoin()
-                .leftJoin(QEstimate.estimate.estimatePrices, estimatePrice).fetchJoin()
-                .leftJoin(estimateRequest, estimateRequest).fetchJoin()
-                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin()
-                .where(QEstimate.estimate.id.eq(estimateId))
+    public EstimateDetailResponse getCompleteEstimateOnRequest(Long requestId) {
+        Estimate findEstimate = factory.select(estimate)
+                .from(estimate)
+                .leftJoin(estimate.company, company).fetchJoin() // 1
+                .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin() // 1
+                .leftJoin(estimate.estimatePrices, estimatePrice).fetchJoin() // n
+                .leftJoin(estimatePrice.constructionType, estimateConstructionType).fetchJoin() // n - 1
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin() // n -  1
+                .where(estimateRequest.id.eq(requestId),
+                        estimate.estimateStatus.eq(COMPLETE),
+                        estimateRequest.status.eq(EstimateRequestStatus.COMPLETE))
                 .fetchOne();
-        Long companyId = findEstimate.getCompany().getId();
 
+        // findEstimate에서 조회된 companyId가 필요하다.
         Long countOfCompleteEstimate = factory.select(estimate.count())
                 .from(estimate)
                 .leftJoin(estimate.company, company)
-                .where(estimate.company.id.eq(companyId),
-                        estimate.estimateStatus.eq(COMPLETE))
+                .where(company.id.eq(findEstimate.getCompany().getId()),
+                        estimate.estimateStatus.eq(EstimateStatus.COMPLETE))
                 .fetchOne();
 
         return new EstimateDetailResponse(findEstimate, countOfCompleteEstimate);
