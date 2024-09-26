@@ -39,12 +39,18 @@ public class ApplicationSetUp {
     private final MembershipRepository membershipRepository;
 
 
-//    @PostConstruct
+    //@PostConstruct
     public void addCompany() {
-        Company company = Company.ofNewCompanyForTest("test5@test.com", "집다부셔", encoder.encode("qweqwe123!"),
+        Company company = Company.ofNewCompanyForTest("test10@test.com", "집다부셔", encoder.encode("qweqwe123!"),
                 "010-2344-3333", "집다부셔버려", "1234", LocalDate.of(2020, 04, 30),
                 "서울역 4번 출구", "다부셔버려");
 
+
+        Company company2 = Company.ofNewCompanyForTest("test11@test.com", "집다부셔", encoder.encode("qweqwe123!"),
+                "010-2344-3333", "집다부셔버려", "1234", LocalDate.of(2020, 04, 30),
+                "서울역 4번 출구", "다부셔버려");
+
+        companyRepository.saveAll(List.of(company, company2));
     }
 
 
