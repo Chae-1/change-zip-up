@@ -2,6 +2,8 @@ package com.kosa.chanzipup.api.company.controller.response;
 
 import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.account.company.Company;
+import com.kosa.chanzipup.domain.account.company.CompanyConstructionType;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.portfolio.Portfolio;
 import com.kosa.chanzipup.domain.portfolio.PortfolioImage;
 import com.kosa.chanzipup.domain.review.Review;
@@ -47,7 +49,7 @@ public class CompanyDetailResponse {
                                  List<Portfolio> portfolios,
                                  Company findCompany) {
         this.companyId = findCompany.getId();
-        this.companyName = findCompany.getName();
+        this.companyName = findCompany.getCompanyName();
         this.owner = findCompany.getOwner();
 
         this.companyLogoUrl = findCompany.getCompanyLogoUrl();
