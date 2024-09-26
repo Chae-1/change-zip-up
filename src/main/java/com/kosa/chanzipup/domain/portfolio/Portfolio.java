@@ -56,6 +56,12 @@ public class Portfolio extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "portfolio")
     private List<PortfolioImage> portfolioImages = new ArrayList<>();
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
     @Builder
     private Portfolio(String title, String content, int floor, int projectBudget,
                       String projectLocation, LocalDate startDate, LocalDate endDate,
@@ -96,4 +102,5 @@ public class Portfolio extends BaseEntity {
     public void update(PortfolioUpdateRequest portfolioRequest) {
         this.content = portfolioRequest.getContent();
     }
+
 }
