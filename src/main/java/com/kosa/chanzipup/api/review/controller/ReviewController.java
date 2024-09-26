@@ -1,18 +1,18 @@
 package com.kosa.chanzipup.api.review.controller;
 
 import com.kosa.chanzipup.api.review.controller.query.ReviewQueryService;
-import com.kosa.chanzipup.api.review.controller.request.EstimateReviewRequest;
 import com.kosa.chanzipup.api.review.controller.request.ReviewRegisterRequest;
 import com.kosa.chanzipup.api.review.controller.response.ReviewDetail;
 import com.kosa.chanzipup.api.review.controller.response.ReviewRegisterResponse;
 import com.kosa.chanzipup.api.review.controller.response.ReviewResponse;
+import com.kosa.chanzipup.api.review.controller.response.create.ReviewCreationPage;
 import com.kosa.chanzipup.api.review.service.ReviewImagesService;
 import com.kosa.chanzipup.api.review.service.ReviewService;
 import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.application.PathMatchService;
 import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
-import com.kosa.chanzipup.domain.review.ReviewContent;
+import com.kosa.chanzipup.domain.review.ReviewUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -48,8 +48,8 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.registerReview(request, userDetails.getName()));
     }
 
-    @GetMapping("/create")
-    public ResponseEntity<?> getRegisterPage(@RequestParam("requestId") Long requestId) {
+    @GetMapping
+    public ResponseEntity<ReviewCreationPage> getRegisterPage(@RequestParam("requestId") Long requestId) {
         return ResponseEntity.ok(reviewQueryService.reviewCreationPage(requestId));
     }
 
@@ -64,8 +64,8 @@ public class ReviewController {
 
     @PatchMapping("/{reviewId}")
     public ResponseEntity<Boolean> updateReviewContent(@PathVariable("reviewId") Long reviewId,
-                                                       @RequestBody ReviewContent reviewContent) {
-        reviewService.updateReviewContent(reviewId, reviewContent.getContent());
+                                                       @RequestBody ReviewUpdateRequest reviewUpdateRequest) {
+        reviewService.updateReviewContent(reviewId, reviewUpdateRequest.getContent());
         // review 등록 성공 여부를 전달.
         return ResponseEntity.ok(true);
     }
