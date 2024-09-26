@@ -49,7 +49,7 @@ public class CompanyController {
     @GetMapping("/list")
     public ResponseEntity<Map<MembershipName, Page<List<CompanyListResponse>>>> getAllCompany(
             @ModelAttribute PageInfo pageInfo,
-            @ModelAttribute CompanySearchCondition searchCondition
+            @ModelAttribute CompanySear chCondition searchCondition
     ) {
         Map<MembershipName, Page<List<CompanyListResponse>>> map = companyQueryService.getAllCompanies(pageInfo.getPage(),
                 pageInfo.getSize(),
