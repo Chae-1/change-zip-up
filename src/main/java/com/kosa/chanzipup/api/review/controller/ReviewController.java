@@ -53,6 +53,11 @@ public class ReviewController {
         return ResponseEntity.ok(reviewQueryService.reviewCreationPage(requestId));
     }
 
+    @GetMapping("/create2")
+    public ResponseEntity<?> getRegisterPage2(@RequestParam("requestId") Long requestId) {
+        return ResponseEntity.ok(reviewQueryService.reviewCreationPage2(requestId));
+    }
+
     @PostMapping("/{reviewId}/images")
     public ResponseEntity<String> uploadReviewImages(@PathVariable("reviewId") Long reviewId, MultipartFile file) {
         String name = file.getName();
