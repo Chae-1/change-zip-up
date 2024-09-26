@@ -10,12 +10,11 @@ import com.kosa.chanzipup.api.company.service.CompanyQueryService;
 import com.kosa.chanzipup.api.company.service.CompanyService;
 import com.kosa.chanzipup.api.review.controller.response.CompanyMyPage;
 import com.kosa.chanzipup.application.Page;
+import com.kosa.chanzipup.application.PageInfo;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.membership.MembershipName;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -48,26 +47,22 @@ public class CompanyController {
 
     // 업체 리스트 조회
     @GetMapping("/list")
-    public ResponseEntity<Map<MembershipName, List<CompanyListResponse>>> getAllCompany(@ModelAttribute CompanySearchCondition searchCondition) {
-        Map<MembershipName, List<CompanyListResponse>> map = companyQueryService.getAllCompanies(searchCondition);
+    public ResponseEntity<Map<MembershipName, Page<List<CompanyListResponse>>>> getAllCompany(
+            @ModelAttribute PageInfo pageInfo,
+            @ModelAttribute CompanySearchCondition searchCondition
+    ) {
+        Map<MembershipName, Page<List<CompanyListResponse>>> map = companyQueryService.getAllCompanies(pageInfo.getPage(),
+                pageInfo.getSize(),
+                searchCondition);
         return ResponseEntity.ok(map);
     }
 
-    @GetMapping("/list2")
-    public ResponseEntity<Map<MembershipName, Page<List<CompanyListResponse>>>> getAllCompanyWithPage(@ModelAttribute CompanySearchCondition searchCondition) {
-        Map<MembershipName, Page<List<CompanyListResponse>>> allCompaniesWithDefaultPage = companyQueryService.getAllCompaniesWithDefaultPage(
-                searchCondition);
-        return ResponseEntity.ok(allCompaniesWithDefaultPage);
-    }
-
-
     @GetMapping("/categorylist")
-    public ResponseEntity<Page<List<CompanyListResponse>>> getCompanyListWithPage(Pageable pageable,
+    public ResponseEntity<Page<List<CompanyListResponse>>> getCompanyListWithPage(@ModelAttribute PageInfo pageInfo,
                                                                                   @ModelAttribute CompanySearchCondition searchCondition,
-                                                                                  @RequestParam("status") MembershipName membershipName) {
+                                                                                  @RequestParam("name") MembershipName name) {
 
-        return ResponseEntity.ok(companyQueryService.getSpecifiedMembershipCompaniesWithPage(pageable.getPageNumber(),
-                pageable.getPageSize(), membershipName, searchCondition));
+        return ResponseEntity.ok(companyQueryService.getSpecifiedMembershipCompaniesWithPage(pageInfo.getPage(), pageInfo.getSize(), name, searchCondition));
     }
 
 

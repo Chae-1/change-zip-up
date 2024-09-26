@@ -4,6 +4,9 @@ import static com.kosa.chanzipup.domain.account.company.QCompany.company;
 import static com.kosa.chanzipup.domain.account.member.QMember.member;
 import static com.kosa.chanzipup.domain.buildingtype.QBuildingType.buildingType;
 import static com.kosa.chanzipup.domain.constructiontype.QConstructionType.constructionType;
+import static com.kosa.chanzipup.domain.estimate.QEstimate.estimate;
+import static com.kosa.chanzipup.domain.estimate.QEstimateConstructionType.estimateConstructionType;
+import static com.kosa.chanzipup.domain.estimate.QEstimateRequest.estimateRequest;
 import static com.kosa.chanzipup.domain.review.QReview.review;
 import static com.kosa.chanzipup.domain.review.QReviewConstructionType.reviewConstructionType;
 import static com.kosa.chanzipup.domain.review.QReviewImages.reviewImages;
@@ -18,25 +21,22 @@ import com.kosa.chanzipup.api.review.controller.response.ReviewDetail;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.account.Account;
 import com.kosa.chanzipup.domain.account.AccountRepository;
-import com.kosa.chanzipup.domain.account.member.Member;
-import com.kosa.chanzipup.domain.account.member.MemberRepository;
-import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.buildingtype.BuildingTypeRepository;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
-import com.kosa.chanzipup.domain.constructiontype.QConstructionType;
-import com.kosa.chanzipup.domain.review.QReviewConstructionType;
+import com.kosa.chanzipup.domain.estimate.Estimate;
+import com.kosa.chanzipup.domain.estimate.EstimateRepository;
+import com.kosa.chanzipup.domain.estimate.EstimateRequest;
+import com.kosa.chanzipup.domain.estimate.EstimateRequestRepository;
+import com.kosa.chanzipup.domain.estimate.EstimateStatus;
+import com.kosa.chanzipup.domain.estimate.QEstimate;
+import com.kosa.chanzipup.domain.estimate.QEstimateConstructionType;
+import com.kosa.chanzipup.domain.estimate.QEstimateRequest;
 import com.kosa.chanzipup.domain.review.QReviewImages;
 import com.kosa.chanzipup.domain.review.Review;
-import com.kosa.chanzipup.domain.review.ReviewConstructionType;
-import com.kosa.chanzipup.domain.review.ReviewImages;
 import com.kosa.chanzipup.domain.review.ReviewRepository;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +52,8 @@ public class ReviewQueryService {
     private final ConstructionTypeRepository constructionTypeRepository;
     private final ReviewRepository reviewRepository;
     private final AccountRepository accountRepository;
+    private final EstimateRepository estimateRepository;
+    private final EstimateRequestRepository estimateRequestRepository;
 
     // 리뷰 정보와,
     public ReviewDetail getUserDetail(Long reviewId, UnifiedUserDetails userDetails) {
@@ -109,7 +111,8 @@ public class ReviewQueryService {
         return Expressions.asBoolean(false);
     }
 
-    public ReviewCreationPage reviewCreationPage() {
+    public ReviewCreationPage reviewCreationPage(Long requestId) {
+
         List<BuildingTypeResponse> buildingTypeResponses = buildingTypeRepository.findAll()
                 .stream()
                 .map(BuildingTypeResponse::new)
@@ -123,5 +126,23 @@ public class ReviewQueryService {
         return new ReviewCreationPage(buildingTypeResponses, constructionTypes);
     }
 
+    public ReviewCreationPage reviewCreationPage2(Long requestId) {
+
+        EstimateRequest reviewRequest = factory.selectFrom(estimateRequest)
+                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin()
+                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin()
+                .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
+                .where(estimateRequest.id.eq(requestId))
+                .fetchOne();
+
+        Estimate reviewEstimate = factory.selectFrom(estimate)
+                .leftJoin(estimate.estimateRequest, estimateRequest)
+                .leftJoin(estimate.company, company).fetchJoin()
+                .where(estimateRequest.id.eq(requestId), estimate.estimateStatus.eq(EstimateStatus.COMPLETE))
+                .fetchOne();
+
+
+        return new ReviewCreationPage(reviewRequest, reviewEstimate);
+    }
 
 }

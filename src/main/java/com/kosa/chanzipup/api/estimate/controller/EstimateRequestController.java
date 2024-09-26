@@ -29,8 +29,9 @@ public class EstimateRequestController {
     private final EstimateService estimateService;
 
     @PostMapping
-    public ResponseEntity<EstimateRequestCreateResponse> createEstimateRequest(@RequestBody EstimateRequestDTO estimateRequestDTO,
-                                                   @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+    public ResponseEntity<EstimateRequestCreateResponse> createEstimateRequest(
+            @RequestBody EstimateRequestDTO estimateRequestDTO,
+            @AuthenticationPrincipal UnifiedUserDetails userDetails) {
 
         // JWT에서 이메일 추출
         String email = userDetails.getUsername();
@@ -113,6 +114,14 @@ public class EstimateRequestController {
             @AuthenticationPrincipal UnifiedUserDetails userDetails,
             @RequestParam("status") EstimateRequestStatus status) {
         return ResponseEntity.ok(queryService.getAllEstimateRequestByUser(userDetails.getUsername(), status));
+    }
+
+    @GetMapping("/users/complete/{requestId}")
+    @PreAuthorize("ROLE_USER")
+    public ResponseEntity<EstimateDetailResponse> findAllUserCompleteRequests(
+            @PathVariable("requestId") Long requestId,
+            @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        return ResponseEntity.ok(queryService.getCompleteEstimateOnRequest(requestId));
     }
 
 

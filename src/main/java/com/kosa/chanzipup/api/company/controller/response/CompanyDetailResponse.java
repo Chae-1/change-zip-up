@@ -2,6 +2,8 @@ package com.kosa.chanzipup.api.company.controller.response;
 
 import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.account.company.Company;
+import com.kosa.chanzipup.domain.account.company.CompanyConstructionType;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.portfolio.Portfolio;
 import com.kosa.chanzipup.domain.portfolio.PortfolioImage;
 import com.kosa.chanzipup.domain.review.Review;
@@ -47,13 +49,18 @@ public class CompanyDetailResponse {
                                  List<Portfolio> portfolios,
                                  Company findCompany) {
         this.companyId = findCompany.getId();
-        this.companyName = findCompany.getName();
+        this.companyName = findCompany.getCompanyName();
         this.owner = findCompany.getOwner();
+
         this.companyLogoUrl = findCompany.getCompanyLogoUrl();
         this.phoneNumber = findCompany.getPhoneNumber();
         this.companyDesc = findCompany.getCompanyDesc();
         this.address = findCompany.getAddress();
         this.rating = findCompany.getRating();
+        this.publishDate = findCompany.getPublishDate();
+        this.companyNumber = findCompany.getCompanyNumber();
+
+
         this.reviews = Page.ofDefault(
                 reviewList.stream()
                 .map(SimpleReviewResponse::new)
@@ -62,6 +69,11 @@ public class CompanyDetailResponse {
                 .stream()
                 .map(SimplePortfolioResponse::new)
                 .toList());
+
+        this.services = findCompany.getConstructionTypes()
+                .stream()
+                .map(type -> type.getConstructionType().getName())
+                .toList();
     }
 
 

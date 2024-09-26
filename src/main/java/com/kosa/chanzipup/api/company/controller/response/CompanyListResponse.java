@@ -34,4 +34,16 @@ public class CompanyListResponse {
                 .map(CompanyConstructionType::getName)
                 .toList();
     }
+
+    public CompanyListResponse(Company company, List<CompanyConstructionType> companyConstructionTypes) {
+        this.id = company.getId();
+        this.companyName = company.getCompanyName();
+        this.companyDesc = company.getCompanyDesc();
+        this.companyLogoUrl = company.getCompanyLogoUrl();
+        this.rating = company.getRating();
+        this.services = companyConstructionTypes
+                .stream()
+                .map(type -> type.getConstructionType().getName())
+                .toList();
+    }
 }

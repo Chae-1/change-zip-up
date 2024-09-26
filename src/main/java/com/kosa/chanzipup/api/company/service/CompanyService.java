@@ -41,6 +41,7 @@ public class CompanyService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
+
         String uploadEndPoint = imageService.store("company", request.getLogoFile());
 
         Company company = Company.ofNewCompany(request.getEmail(), request.getCompanyName(), encoder.encode(request.getPassword()),
@@ -50,6 +51,7 @@ public class CompanyService {
         // 선택된 시공 타입 저장
         List<ConstructionType> constructionTypes = constructionTypeRepository
                 .findByIdIn(request.getConstructionService());
+
         company.addConstructionTypes(constructionTypes);
 
         companyRepository.save(company);
@@ -64,34 +66,39 @@ public class CompanyService {
     public CompanyMyPage getCompanyMyPage(String email) {
         Company company = companyRepository.findByEmailWithAll(email)
                 .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
+
         List<ConstructionType> constructionTypes = constructionTypeRepository.findAll();
-
         return new CompanyMyPage(company, constructionTypes);
-
     }
 
     @Transactional
     public boolean updateCompany(String email, CompanyUpdateRequest request) {
         Company company = companyRepository.findByEmailWithAll(email)
                 .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
-        // 1. 업데이트할, ConstructionType
-        company.removeAllConstructionTypes();
-        List<ConstructionType> findConstructionTypes = constructionTypeRepository
-                .findByIdIn(request.getUpdateServices());
 
-        // 2. AGI
-        company.addConstructionTypes(findConstructionTypes);
+        // 1. 업데이트할 모든 정보가 유효한 값이면 업데이트를 진행한다.
+        List<Long> updateServices = request.getUpdateServices();
+        if (updateServices != null && !updateServices.isEmpty()) {
+            company.removeAllConstructionTypes();
+            List<ConstructionType> findConstructionTypes = constructionTypeRepository
+                    .findByIdIn(request.getUpdateServices());
+            company.addConstructionTypes(findConstructionTypes);
+        }
+
+        String password = request.getPassword();
+        if (password != null && !password.isBlank()) {
+            company.updatePassword(encoder.encode(password));
+        }
+        String companyDesc = request.getCompanyDesc();
+        if (companyDesc != null || !companyDesc.isBlank()) {
+            company.updateCompanyDesc(companyDesc);
+        }
+
+        String phoneNumber = request.getPhoneNumber();
+        if (phoneNumber != null && !phoneNumber.isBlank()) {
+            company.updatePhoneNumber(phoneNumber);
+        }
+
         return true;
-    }
-
-    private List<Long> getUpdateServices(CompanyUpdateRequest request, Company company) {
-        List<Long> requestUpdateServices = request.getUpdateServices(); // 1, 2
-        List<Long> currentCompanyServices = company.getConstructionTypes() // 1
-                .stream()
-                .map(type -> type.getConstructionType().getId())
-                .toList();
-
-        requestUpdateServices.removeAll(currentCompanyServices);
-        return requestUpdateServices;
     }
 }

@@ -44,7 +44,7 @@ public class EstimateRequestResponse {
         this.schedule = estimateRequest.getSchedule();
         this.nickName = estimateRequest.getMember().getNickName();
         this.buildingTypeName = estimateRequest.getBuildingType().getName();
-        this.regDate = estimateRequest.getRegDate(); ;
+        this.regDate = estimateRequest.getRegDate();
         this.constructionTypes = estimateRequest.getConstructionTypes()
                 .stream()
                 .map(type -> type.getTypeName())
@@ -59,7 +59,7 @@ public class EstimateRequestResponse {
     }
 
     public EstimateRequestResponse(EstimateRequest estimateRequest, List<Estimate> requestEstimates) {
-        this(estimateRequest, isSend(requestEstimates));
+        this(estimateRequest, requestEstimates != null && !requestEstimates.isEmpty());
         if (isSend) {
             Estimate estimate = requestEstimates.get(0);
             status = estimate.getEstimateStatus();
@@ -67,9 +67,5 @@ public class EstimateRequestResponse {
         } else {
             status = null;
         }
-    }
-
-    private static boolean isSend(List<Estimate> requestEstimates) {
-        return requestEstimates != null && !requestEstimates.isEmpty();
     }
 }
