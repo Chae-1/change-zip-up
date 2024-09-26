@@ -45,10 +45,6 @@ public class MembershipController {
         return ApiResponse.ok(membershipService.registerMembership(processResult));
     }
 
-    @GetMapping("/{membershipId}")
-    public void getMembership(@PathVariable MembershipId membershipId) {
-        log.info("membershipId = {}", membershipId.getMembershipId());
-    }
 
     @GetMapping
     @PreAuthorize("ROLE_COMPANY")
