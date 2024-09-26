@@ -53,7 +53,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewQueryService.reviewCreationPage(requestId));
     }
 
-    @GetMapping("/create2")
+    @GetMapping("/create")
     public ResponseEntity<?> getRegisterPage2(@RequestParam("requestId") Long requestId) {
         return ResponseEntity.ok(reviewQueryService.reviewCreationPage2(requestId));
     }
@@ -75,11 +75,11 @@ public class ReviewController {
         return ResponseEntity.ok(true);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ReviewResponse>> getAllReviews() {
-        List<ReviewResponse> reviews = reviewService.getAllReviews();
-        return ResponseEntity.ok(reviews);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<ReviewResponse>> getAllReviews() {
+//        List<ReviewResponse> reviews = reviewService.getAllReviews();
+//        return ResponseEntity.ok(reviews);
+//    }
 
     @GetMapping("/page")
     public ResponseEntity<Page<List<ReviewResponse>>> getAllReviewsWithPage(@PageableDefault Pageable pageable) {
