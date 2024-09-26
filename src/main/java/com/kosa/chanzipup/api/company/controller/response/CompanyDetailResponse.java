@@ -69,6 +69,11 @@ public class CompanyDetailResponse {
                 .stream()
                 .map(SimplePortfolioResponse::new)
                 .toList());
+
+        this.services = findCompany.getConstructionTypes()
+                .stream()
+                .map(type -> type.getConstructionType().getName())
+                .toList();
     }
 
 

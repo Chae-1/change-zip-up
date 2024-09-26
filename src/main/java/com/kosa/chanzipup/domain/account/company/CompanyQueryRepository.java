@@ -59,7 +59,7 @@ public class CompanyQueryRepository {
                 .leftJoin(portfolio.portfolioImages, portfolioImage).fetchJoin()
                 .leftJoin(portfolio.buildingType, buildingType).fetchJoin()
                 .where(portfolio.account.id.eq(companyId))
-                .leftJoin(portfolio)
+                .orderBy(portfolio.createdDateTime.asc())
                 .fetch();
     }
 
@@ -70,6 +70,7 @@ public class CompanyQueryRepository {
                 .leftJoin(review.member, member).fetchJoin()
                 .leftJoin(review.company, company)
                 .where(company.id.eq(companyId))
+                .orderBy(review.regDate.asc())
                 .fetch();
     }
 
