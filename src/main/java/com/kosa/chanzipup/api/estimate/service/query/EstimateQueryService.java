@@ -20,6 +20,7 @@ import static com.kosa.chanzipup.domain.buildingtype.QBuildingType.buildingType;
 import static com.kosa.chanzipup.domain.constructiontype.QConstructionType.constructionType;
 import static com.kosa.chanzipup.domain.estimate.EstimateRequestStatus.ONGOING;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.ACCEPTED;
+import static com.kosa.chanzipup.domain.estimate.EstimateStatus.COMPLETE;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.REJECTED;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.SENT;
 import static com.kosa.chanzipup.domain.estimate.QEstimate.estimate;
@@ -229,5 +230,25 @@ public class EstimateQueryService {
         return companyEstimates.stream()
                 .map(EstimateResponse::new)
                 .toList();
+    }
+
+    public EstimateDetailResponse getCompleteEstimateOnRequest(String email, Long estimateId) {
+        Estimate findEstimate = factory.selectFrom(QEstimate.estimate)
+                .leftJoin(QEstimate.estimate.company, company).fetchJoin()
+                .leftJoin(QEstimate.estimate.estimatePrices, estimatePrice).fetchJoin()
+                .leftJoin(estimateRequest, estimateRequest).fetchJoin()
+                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin()
+                .where(QEstimate.estimate.id.eq(estimateId))
+                .fetchOne();
+        Long companyId = findEstimate.getCompany().getId();
+
+        Long countOfCompleteEstimate = factory.select(estimate.count())
+                .from(estimate)
+                .leftJoin(estimate.company, company)
+                .where(estimate.company.id.eq(companyId),
+                        estimate.estimateStatus.eq(COMPLETE))
+                .fetchOne();
+
+        return new EstimateDetailResponse(findEstimate, countOfCompleteEstimate);
     }
 }

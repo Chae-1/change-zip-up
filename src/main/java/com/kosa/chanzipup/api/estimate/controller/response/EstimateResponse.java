@@ -6,6 +6,7 @@ import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.estimate.Estimate;
 import com.kosa.chanzipup.domain.estimate.EstimateRequest;
 import com.kosa.chanzipup.domain.estimate.EstimateStatus;
+import java.time.LocalDate;
 import java.util.Map;
 import lombok.Getter;
 
@@ -63,6 +64,7 @@ public class EstimateResponse {
         private String budget;
         private int floor;
         private String buildingType;
+        private LocalDate regDate;
 
         public SimpleEstimateRequestResponse(EstimateRequest request) {
             this.estimateRequestId = request.getId();
@@ -73,6 +75,7 @@ public class EstimateResponse {
             this.budget = request.getBudget();
             this.floor = request.getFloor();
             this.buildingType = request.getBuildingType().getName();
+            this.regDate = request.getRegDate().toLocalDate();
         }
     }
 

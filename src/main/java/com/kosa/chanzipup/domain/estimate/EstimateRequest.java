@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.domain.estimate;
 
+import com.kosa.chanzipup.domain.BaseEntity;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
@@ -22,7 +23,7 @@ import java.util.List;
 @Getter
 @Table(name = "estimate_request")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EstimateRequest {
+public class EstimateRequest extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

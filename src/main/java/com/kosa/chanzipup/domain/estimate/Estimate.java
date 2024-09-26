@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.domain.estimate;
 
+import com.kosa.chanzipup.domain.BaseEntity;
 import com.kosa.chanzipup.domain.account.company.Company;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +15,7 @@ import java.util.Map;
 @Table(name = "estimate")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
-public class Estimate {
+public class Estimate extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
