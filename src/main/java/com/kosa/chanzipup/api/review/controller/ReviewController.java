@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.api.review.controller;
 
 import com.kosa.chanzipup.api.review.controller.query.ReviewQueryService;
+import com.kosa.chanzipup.api.review.controller.request.EstimateReviewRequest;
 import com.kosa.chanzipup.api.review.controller.request.ReviewRegisterRequest;
 import com.kosa.chanzipup.api.review.controller.response.ReviewDetail;
 import com.kosa.chanzipup.api.review.controller.response.ReviewRegisterResponse;
@@ -48,8 +49,8 @@ public class ReviewController {
     }
 
     @GetMapping("/create")
-    public ResponseEntity<?> getRegisterPage() {
-        return ResponseEntity.ok(reviewQueryService.reviewCreationPage());
+    public ResponseEntity<?> getRegisterPage(@RequestParam("requestId") Long requestId) {
+        return ResponseEntity.ok(reviewQueryService.reviewCreationPage(requestId));
     }
 
     @PostMapping("/{reviewId}/images")

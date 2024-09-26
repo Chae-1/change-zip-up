@@ -11,6 +11,7 @@ import com.kosa.chanzipup.domain.membership.MembershipRepository;
 import com.kosa.chanzipup.domain.payment.Payment;
 import com.kosa.chanzipup.domain.payment.PaymentRepository;
 import com.kosa.chanzipup.domain.payment.PaymentResult;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,6 @@ public class MembershipService {
     private final MembershipTypeRepository membershipTypeRepository;
     private final MembershipRepository membershipRepository;
     private final PaymentRepository paymentRepository;
-
 
     @Transactional
     public MembershipResponse registerMembership(PaymentResult paymentResult) {
@@ -62,6 +62,7 @@ public class MembershipService {
     }
 
     public void getAllMembershipHistories(String email) {
-//        membership
+        List<Membership> companyMemberships = membershipRepository.findAllByUserEmail(email);
+
     }
 }
