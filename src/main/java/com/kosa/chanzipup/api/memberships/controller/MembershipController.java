@@ -1,17 +1,22 @@
 package com.kosa.chanzipup.api.memberships.controller;
 
 import com.kosa.chanzipup.api.ApiResponse;
+import com.kosa.chanzipup.api.memberships.controller.response.MembershipHistories;
 import com.kosa.chanzipup.api.memberships.controller.response.MembershipResponse;
 import com.kosa.chanzipup.api.memberships.service.MembershipService;
 import com.kosa.chanzipup.api.payment.controller.request.PaymentConfirmation;
 import com.kosa.chanzipup.api.payment.service.PaymentService;
+import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.membership.MembershipId;
 import com.kosa.chanzipup.domain.membership.MembershipRegisterException;
 import com.kosa.chanzipup.domain.payment.PaymentResult;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -43,5 +48,13 @@ public class MembershipController {
     @GetMapping("/{membershipId}")
     public void getMembership(@PathVariable MembershipId membershipId) {
         log.info("membershipId = {}", membershipId.getMembershipId());
+    }
+
+    @GetMapping
+    @PreAuthorize("ROLE_COMPANY")
+    public ResponseEntity<List<MembershipHistories>> getAllMembershipHistories(@AuthenticationPrincipal
+                                                                               UnifiedUserDetails userDetails) {
+        membershipService.getAllMembershipHistories(userDetails.getUsername());
+        return null;
     }
 }
