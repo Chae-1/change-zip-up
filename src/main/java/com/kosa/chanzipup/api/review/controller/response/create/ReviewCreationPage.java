@@ -12,6 +12,10 @@ import lombok.Getter;
 public class ReviewCreationPage {
     private String companyName;
 
+    private int floor;
+
+    private int totalPrice;
+
     private List<BuildingTypeResponse> buildingTypeResponses;
 
     private List<ConstructionTypeResponse> constructionTypeResponses;
@@ -25,6 +29,9 @@ public class ReviewCreationPage {
     public ReviewCreationPage(EstimateRequest reviewRequest, Estimate reviewEstimate) {
         Company company = reviewEstimate.getCompany();
         this.companyName = company.getCompanyName();
+
+        this.floor = reviewRequest.getFloor();
+        this.totalPrice = reviewEstimate.getTotalPrices();
 
         this.buildingTypeResponses = new ArrayList<>();
         buildingTypeResponses.add(new BuildingTypeResponse(reviewRequest.getBuildingType()));
