@@ -139,4 +139,16 @@ public class Company extends Account {
     public void removeAllConstructionTypes() {
         constructionTypes.clear();
     }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateCompanyDesc(String companyDesc) {
+        this.companyDesc = companyDesc;
+    }
+
+    public void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 }

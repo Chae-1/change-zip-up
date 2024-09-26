@@ -75,11 +75,30 @@ public class CompanyService {
     public boolean updateCompany(String email, CompanyUpdateRequest request) {
         Company company = companyRepository.findByEmailWithAll(email)
                 .orElseThrow(() -> new IllegalArgumentException("No company found with email: " + email));
-        // 1. 업데이트할, ConstructionType
-        company.removeAllConstructionTypes();
-        List<ConstructionType> findConstructionTypes = constructionTypeRepository
-                .findByIdIn(request.getUpdateServices());
-        company.addConstructionTypes(findConstructionTypes);
+
+        // 1. 업데이트할 모든 정보가 유효한 값이면 업데이트를 진행한다.
+        List<Long> updateServices = request.getUpdateServices();
+        if (updateServices != null && !updateServices.isEmpty()) {
+            company.removeAllConstructionTypes();
+            List<ConstructionType> findConstructionTypes = constructionTypeRepository
+                    .findByIdIn(request.getUpdateServices());
+            company.addConstructionTypes(findConstructionTypes);
+        }
+
+        String password = request.getPassword();
+        if (password != null && !password.isBlank()) {
+            company.updatePassword(encoder.encode(password));
+        }
+        String companyDesc = request.getCompanyDesc();
+        if (companyDesc != null || !companyDesc.isBlank()) {
+            company.updateCompanyDesc(companyDesc);
+        }
+
+        String phoneNumber = request.getPhoneNumber();
+        if (phoneNumber != null && !phoneNumber.isBlank()) {
+            company.updatePhoneNumber(phoneNumber);
+        }
+
         return true;
     }
 }

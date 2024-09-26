@@ -7,4 +7,7 @@ import java.util.List;
 @Getter
 public class CompanyUpdateRequest {
     private List<Long> updateServices;
+    private String phoneNumber;
+    private String password;
+    private String companyDesc;
 }
