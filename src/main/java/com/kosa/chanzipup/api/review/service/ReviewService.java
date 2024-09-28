@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 import com.kosa.chanzipup.api.review.controller.request.ReviewRegisterRequest;
 import com.kosa.chanzipup.api.review.controller.response.*;
 import com.kosa.chanzipup.application.Page;
+import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
@@ -39,6 +40,7 @@ public class ReviewService {
     private final ConstructionTypeRepository constructionTypeRepository;
     private final CompanyRepository companyRepository;
     private final ReviewImagesRepository reviewImagesRepository;
+    private final ImageService imageService;
 
     @Transactional
     public ReviewRegisterResponse registerReview(ReviewRegisterRequest request, String email) {
@@ -156,11 +158,13 @@ public class ReviewService {
                 .map(ReviewImages::getImageUrl)
                 .toList();
 
-
         // 연관 객체 삭제
         reviewImagesRepository.deleteByReviewId(review.getId());
         reviewConstructionTypeRepository.deleteByReviewId(review.getId());
         reviewRepository.deleteById(reviewId);
+
+        // 실제 이미지 삭제
+        imageService.deleteAllImages(imageUrls);
 
         return imageUrls;
     }

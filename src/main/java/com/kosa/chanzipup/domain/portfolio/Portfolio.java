@@ -3,6 +3,7 @@ package com.kosa.chanzipup.domain.portfolio;
 import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioUpdateRequest;
 import com.kosa.chanzipup.domain.BaseEntity;
 import com.kosa.chanzipup.domain.account.Account;
+import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -22,7 +23,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Portfolio extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "title")
@@ -44,7 +45,7 @@ public class Portfolio extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
-    private Account account;
+    private Company company;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "building_type_id")
@@ -65,7 +66,7 @@ public class Portfolio extends BaseEntity {
     @Builder
     private Portfolio(String title, String content, int floor, int projectBudget,
                       String projectLocation, LocalDate startDate, LocalDate endDate,
-                      Account account, BuildingType buildingType) {
+                      Company company, BuildingType buildingType) {
         this.title = title;
         this.content = content;
         this.floor = floor;
@@ -73,14 +74,14 @@ public class Portfolio extends BaseEntity {
         this.projectLocation = projectLocation;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.account = account;
+        this.company = company;
         this.buildingType = buildingType;
     }
 
     public static Portfolio ofNewPortfolio(String title, String content,
                                            int floor, int projectBudget,
                                            String projectLocation, LocalDate startDate,
-                                           LocalDate endDate, Account account,
+                                           LocalDate endDate, Company company,
                                            BuildingType buildingType) {
         return Portfolio.builder()
                 .title(title)
@@ -90,7 +91,7 @@ public class Portfolio extends BaseEntity {
                 .projectLocation(projectLocation)
                 .startDate(startDate)
                 .endDate(endDate)
-                .account(account)
+                .company(company)
                 .buildingType(buildingType)
                 .build();
     }

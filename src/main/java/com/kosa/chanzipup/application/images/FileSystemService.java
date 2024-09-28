@@ -87,8 +87,44 @@ public class FileSystemService implements ImageService {
                 .map(url -> url.replace(domainAddress, location))
                 .toList();
 
-
+        for (String imageSaveUrl : imageSaveUrls) {
+            log.info("{} ", imageSaveUrl);
+//            deleteImage(imageSaveUrl);
+        }
     }
+
+//    private void deleteImage(String imageSaveUrl) {
+//        Path detailPath = rootLocation.resolve(detailPathLocation);
+//        init(detailPath); // 경로 초기화, 필요할 경우
+//        try {
+//            // 삭제할 파일 경로 생성
+//            Path fileToDelete = detailPath.resolve(Paths.get(fileName)).normalize().toAbsolutePath();
+//
+//            // 보안 검사: 파일이 디렉토리 외부에 있는지 확인
+//            if (!fileToDelete.getParent().equals(detailPath.toAbsolutePath())) {
+//                throw new RuntimeException("Cannot delete file outside current directory.");
+//            }
+//
+//            // 파일 존재 여부 확인
+//            if (!Files.exists(fileToDelete)) {
+//                throw new RuntimeException("File not found: " + fileName);
+//            }
+//
+//            // 파일 삭제 시도
+//            Files.delete(fileToDelete);
+//
+//            // 로그에 삭제 성공 메시지 기록
+//            log.info("Deleted file: {}", fileToDelete.toString());
+//
+//            // 삭제된 파일 경로 반환 (필요 시)
+//            String deletedFilePath = fileToDelete.toString()
+//                    .replace(location, "")
+//                    .replace("\\", "/");
+//            return String.format("File successfully deleted: /images%s", deletedFilePath);
+//        } catch (IOException e) {
+//            throw new RuntimeException("Failed to delete file: " + fileName, e);
+//        }
+//    }
 
     private void init(Path path) {
         try {

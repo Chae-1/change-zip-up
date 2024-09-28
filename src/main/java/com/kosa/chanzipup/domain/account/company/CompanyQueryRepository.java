@@ -58,7 +58,7 @@ public class CompanyQueryRepository {
         return factory.selectFrom(portfolio)
                 .leftJoin(portfolio.portfolioImages, portfolioImage).fetchJoin()
                 .leftJoin(portfolio.buildingType, buildingType).fetchJoin()
-                .where(portfolio.account.id.eq(companyId))
+                .where(portfolio.company.id.eq(companyId))
                 .orderBy(portfolio.createdDateTime.asc())
                 .fetch();
     }

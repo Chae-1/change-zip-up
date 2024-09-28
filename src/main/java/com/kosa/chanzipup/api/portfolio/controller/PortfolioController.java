@@ -3,6 +3,7 @@ package com.kosa.chanzipup.api.portfolio.controller;
 import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioRegisterRequest;
 import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioUpdateRequest;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioDetailResponse;
+import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioEditResponse;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioListResponse;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioRegisterResponse;
 import com.kosa.chanzipup.api.portfolio.service.PortfolioImageService;
@@ -91,4 +92,17 @@ public class PortfolioController {
         return ResponseEntity.ok(updateContent);
     }
 
+    @DeleteMapping("/{portfolioId}")
+    public ResponseEntity<List<String>> deletePortfolio(@PathVariable("portfolioId") Long portfolioId,
+                                                  @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        List<String> updateContent = portfolioService.deletePortfolio(portfolioId, userDetails.getUsername());
+
+        return ResponseEntity.ok(updateContent);
+    }
+
+    @GetMapping("/{portfolioId}/edit")
+    public ResponseEntity<PortfolioEditResponse> getPortfolioForUpdate(@AuthenticationPrincipal UnifiedUserDetails userDetails,
+                                                                       @PathVariable Long portfolioId) {
+        return ResponseEntity.ok(portfolioService.getPortfolioDetailForUpdate(userDetails.getUsername(), portfolioId));
+    }
 }

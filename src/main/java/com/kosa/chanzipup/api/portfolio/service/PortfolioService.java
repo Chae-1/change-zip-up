@@ -3,11 +3,11 @@ package com.kosa.chanzipup.api.portfolio.service;
 import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioRegisterRequest;
 import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioUpdateRequest;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioDetailResponse;
+import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioEditResponse;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioListResponse;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioRegisterResponse;
 
 import com.kosa.chanzipup.application.Page;
-import com.kosa.chanzipup.domain.account.Account;
 
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
@@ -15,16 +15,14 @@ import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.buildingtype.BuildingTypeRepository;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
-import com.kosa.chanzipup.domain.portfolio.Portfolio;
-import com.kosa.chanzipup.domain.portfolio.PortfolioRepository;
-import com.kosa.chanzipup.domain.portfolio.PortfolioConstructionType;
-import com.kosa.chanzipup.domain.portfolio.PortfolioConstructionTypeRepository;
+import com.kosa.chanzipup.domain.portfolio.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +41,8 @@ public class PortfolioService {
     private final PortfolioConstructionTypeRepository portfolioConstructionTypeRepository;
     private final BuildingTypeRepository buildingTypeRepository;
     private final CompanyRepository companyRepository;
+    private final PortfolioQueryRepository queryRepository;
+    private final PortFolioImageRepository portFolioImageRepository;
 
 
     @Value("${file.upload-dir}")
@@ -122,17 +122,17 @@ public class PortfolioService {
         String buildingTypeName = (portfolio.getBuildingType() != null) ? portfolio.getBuildingType().getName() : "Unknown Building Type";
 
         // Account에서 회사 정보 가져오기 (Account가 Company인 경우)
-        Account account = portfolio.getAccount();
-        Long companyId = account.getId();
-        String companyPhone = account.getPhoneNumber();
+        Company company = portfolio.getCompany();
+        Long companyId = company.getId();
+        String companyPhone = company.getPhoneNumber();
 
         // Company가 존재하는지 확인하여 가져오기
         Optional<Company> optionalCompany = companyRepository.findById(companyId);
         if (optionalCompany.isPresent()) {
-            Company company = optionalCompany.get();
-            String companyName = company.getCompanyName();
-            String companyAddress = company.getAddress();
-            String companyLogo = company.getCompanyLogoUrl();
+            Company findCompany = optionalCompany.get();
+            String companyName = findCompany.getCompanyName();
+            String companyAddress = findCompany.getAddress();
+            String companyLogo = findCompany.getCompanyLogoUrl();
 
             return new PortfolioDetailResponse(
                     portfolio.getId(),
@@ -167,7 +167,7 @@ public class PortfolioService {
                     buildingTypeName,
                     services,
                     companyId,
-                    account.getName(),
+                    company.getName(),
                     "No Address",
                     companyPhone,
                     "",
@@ -190,5 +190,33 @@ public class PortfolioService {
 
     public Page<List<PortfolioListResponse>> getAllPortfoliosWithPage(int pageNumber, int pageSize) {
         return Page.of(getAllPortfolios(), pageSize, pageNumber);
+    }
+
+    public PortfolioEditResponse getPortfolioDetailForUpdate(String email, Long portfolioId) {
+        Portfolio portfolio = queryRepository.findPortfolioWithAll(portfolioId, email)
+                .orElseThrow(() -> new IllegalArgumentException("수정 할 수 없습니다."));
+        List<PortfolioConstructionType> portfolioTypes = portfolioConstructionTypeRepository
+                .findByPortfolioId(portfolio.getId());
+        List<ConstructionType> constructionTypes = constructionTypeRepository.findAll();
+
+        return new PortfolioEditResponse(portfolio, portfolioTypes, constructionTypes);
+    }
+
+    @Transactional
+    public List<String> deletePortfolio(Long portfolioId, String email) {
+        Portfolio portfolio = portfolioRepository.findByIdAndCompanyEmail(portfolioId, email)
+                .orElseThrow(() -> new IllegalArgumentException("portfolio 수정 불가"));
+
+        List<PortfolioImage> portfolioImages = portFolioImageRepository
+                .findAllByPortFolioId(portfolio.getId());
+
+        List<String> deletePortfolioUrls = portfolioImages.stream()
+                .map(PortfolioImage::getImageUrl)
+                .toList();
+
+        portFolioImageRepository.deleteAllByPortfolioId(portfolio.getId());
+        portfolioConstructionTypeRepository.deleteAllByPortfolioId(portfolio.getId());
+
+        return deletePortfolioUrls;
     }
 }

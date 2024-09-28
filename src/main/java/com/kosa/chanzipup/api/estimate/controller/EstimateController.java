@@ -44,15 +44,6 @@ public class EstimateController {
         return ApiResponse.ok(latestEstimateRequest.getId());
     }
 
-    @GetMapping("/list")
-    public ApiResponse<List<EstimateResult>> getEstimateList(@AuthenticationPrincipal UnifiedUserDetails userDetails) {
-        // 견적 요청을 받은 업체.
-        String companyEmail = userDetails.getUsername();
-
-        // 해당 업체에게 온 요청만 조회한다.
-        List<EstimateResult> estimateList = estimateService.getWaitingEstimatesByCompanyEmail(companyEmail);
-        return ApiResponse.ok(estimateList);
-    }
 
     @PostMapping("/{estimateRequestId}/cancel")
     public ApiResponse<Void> cancelEstimate(@PathVariable Long estimateRequestId,
@@ -98,7 +89,6 @@ public class EstimateController {
     public ResponseEntity<Boolean> updateEstimate(@PathVariable("estimateId") Long estimateId,
                                                   @RequestBody EstimatePriceRequest request,
                                                   @AuthenticationPrincipal UnifiedUserDetails userDetails) {
-
         return ResponseEntity.ok(estimateService.updateEstimate(estimateId, userDetails.getUsername(), request));
     }
 }

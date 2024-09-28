@@ -145,15 +145,6 @@ public class CompanyQueryService {
                 .map(Company::getId).toList();
     }
 
-    private List<Membership> getActiveMembershipsWithCompany(MembershipName membershipName) {
-        return factory.selectFrom(membership)
-                .leftJoin(membership.company, company).fetchJoin()
-                .leftJoin(membership.membershipType, membershipType).fetchJoin()
-                .where(membershipNameEq(membershipName), membership.endDateTime.after(LocalDateTime.now()))
-                .orderBy(membership.startDateTime.desc())
-                .fetch();
-    }
-
     private BooleanExpression membershipNameEq(MembershipName membershipName) {
         if (membershipName == null) {
             return null;
@@ -166,7 +157,6 @@ public class CompanyQueryService {
     public Page<List<CompanyListResponse>> getSpecifiedMembershipCompaniesWithPage(int page, int size,
                                                                                    MembershipName membershipName,
                                                                                    CompanySearchCondition searchCondition) {
-
         Map<MembershipName, Page<List<CompanyListResponse>>> membershipNameListMap = getAllCompanies(page, size,
                 searchCondition);
         return membershipNameListMap.get(membershipName);

@@ -23,7 +23,6 @@ public class ReviewImagesService {
 
     private final PathMatchService pathMatchService;
 
-
     @Transactional
     public String addReviewImage(Long reviewId, String uploadEndPoint) {
         Review review = reviewRepository.findById(reviewId)

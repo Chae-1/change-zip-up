@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.api.memberships.service;
 
+import com.kosa.chanzipup.api.memberships.controller.response.MembershipHistories;
 import com.kosa.chanzipup.api.memberships.controller.response.MembershipResponse;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyException;
@@ -61,8 +62,12 @@ public class MembershipService {
         return Membership.ofNewMembership(company, membershipType, now, expiredDateTime, payment);
     }
 
-    public void getAllMembershipHistories(String email) {
+    public List<MembershipHistories> getAllMembershipHistories(String email) {
         List<Membership> companyMemberships = membershipRepository.findAllByUserEmail(email);
 
+        return companyMemberships
+                .stream()
+                .map(MembershipHistories::new)
+                .toList();
     }
 }
