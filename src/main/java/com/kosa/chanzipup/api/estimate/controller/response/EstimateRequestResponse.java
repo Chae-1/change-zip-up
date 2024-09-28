@@ -14,6 +14,8 @@ public class EstimateRequestResponse {
 
     private Long requestId;
 
+    private String address;
+
     private String fullAddress;
 
     private Integer floor;
@@ -38,6 +40,7 @@ public class EstimateRequestResponse {
 
     public EstimateRequestResponse(EstimateRequest estimateRequest, boolean isSend) {
         this.requestId = estimateRequest.getId();
+        this.address = estimateRequest.getAddress();
         this.fullAddress = estimateRequest.getFullAddress();
         this.floor = estimateRequest.getFloor();
         this.budget = estimateRequest.getBudget();
