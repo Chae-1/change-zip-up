@@ -54,7 +54,7 @@ public class ApplicationSetUp {
     }
 
 
-    //@PostConstruct
+//    @PostConstruct
     public void init() {
 
         ConstructionType type1 = new ConstructionType("창호/샷시");

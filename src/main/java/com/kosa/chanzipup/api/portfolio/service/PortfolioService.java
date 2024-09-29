@@ -3,11 +3,11 @@ package com.kosa.chanzipup.api.portfolio.service;
 import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioRegisterRequest;
 import com.kosa.chanzipup.api.portfolio.controller.request.PortfolioUpdateRequest;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioDetailResponse;
+import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioEditResponse;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioListResponse;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioRegisterResponse;
 
 import com.kosa.chanzipup.application.Page;
-import com.kosa.chanzipup.domain.account.Account;
 
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class PortfolioService {
     private final PortfolioConstructionTypeRepository portfolioConstructionTypeRepository;
     private final BuildingTypeRepository buildingTypeRepository;
     private final CompanyRepository companyRepository;
+    private final PortfolioQueryRepository queryRepository;
     private final PortFolioImageRepository portFolioImageRepository;
 
 
@@ -120,17 +122,17 @@ public class PortfolioService {
         String buildingTypeName = (portfolio.getBuildingType() != null) ? portfolio.getBuildingType().getName() : "Unknown Building Type";
 
         // Account에서 회사 정보 가져오기 (Account가 Company인 경우)
-        Account account = portfolio.getAccount();
-        Long companyId = account.getId();
-        String companyPhone = account.getPhoneNumber();
+        Company company = portfolio.getCompany();
+        Long companyId = company.getId();
+        String companyPhone = company.getPhoneNumber();
 
         // Company가 존재하는지 확인하여 가져오기
         Optional<Company> optionalCompany = companyRepository.findById(companyId);
         if (optionalCompany.isPresent()) {
-            Company company = optionalCompany.get();
-            String companyName = company.getCompanyName();
-            String companyAddress = company.getAddress();
-            String companyLogo = company.getCompanyLogoUrl();
+            Company findCompany = optionalCompany.get();
+            String companyName = findCompany.getCompanyName();
+            String companyAddress = findCompany.getAddress();
+            String companyLogo = findCompany.getCompanyLogoUrl();
 
             return new PortfolioDetailResponse(
                     portfolio.getId(),
@@ -165,7 +167,7 @@ public class PortfolioService {
                     buildingTypeName,
                     services,
                     companyId,
-                    account.getName(),
+                    company.getName(),
                     "No Address",
                     companyPhone,
                     "",
@@ -190,22 +192,31 @@ public class PortfolioService {
         return Page.of(getAllPortfolios(), pageSize, pageNumber);
     }
 
-    @Transactional
-    public List<String> deletePortfolio(Long portfolioId, String userEmail) {
-        Portfolio portfolio = portfolioRepository.findByIdAndUserEmail(portfolioId, userEmail)
-                .orElseThrow(() -> new IllegalArgumentException("삭제 할 수 없습니다."));
+    public PortfolioEditResponse getPortfolioDetailForUpdate(String email, Long portfolioId) {
+        Portfolio portfolio = queryRepository.findPortfolioWithAll(portfolioId, email)
+                .orElseThrow(() -> new IllegalArgumentException("수정 할 수 없습니다."));
+        List<PortfolioConstructionType> portfolioTypes = portfolioConstructionTypeRepository
+                .findByPortfolioId(portfolio.getId());
+        List<ConstructionType> constructionTypes = constructionTypeRepository.findAll();
 
-        List<String> imageUrls = portfolio.getPortfolioImages()
-                .stream()
+        return new PortfolioEditResponse(portfolio, portfolioTypes, constructionTypes);
+    }
+
+    @Transactional
+    public List<String> deletePortfolio(Long portfolioId, String email) {
+        Portfolio portfolio = portfolioRepository.findByIdAndCompanyEmail(portfolioId, email)
+                .orElseThrow(() -> new IllegalArgumentException("portfolio 수정 불가"));
+
+        List<PortfolioImage> portfolioImages = portFolioImageRepository
+                .findAllByPortFolioId(portfolio.getId());
+
+        List<String> deletePortfolioUrls = portfolioImages.stream()
                 .map(PortfolioImage::getImageUrl)
                 .toList();
 
+        portFolioImageRepository.deleteAllByPortfolioId(portfolio.getId());
+        portfolioConstructionTypeRepository.deleteAllByPortfolioId(portfolio.getId());
 
-        // 연관 객체 삭제
-        portfolioConstructionTypeRepository.deleteByPortfolioId(portfolio.getId());
-        portfolioRepository.deleteById(portfolioId);
-        portFolioImageRepository.deleteByPortfolioId(portfolio.getId());
-
-        return imageUrls;
+        return deletePortfolioUrls;
     }
 }
