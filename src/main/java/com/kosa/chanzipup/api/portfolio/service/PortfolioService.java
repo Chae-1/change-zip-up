@@ -15,10 +15,7 @@ import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.buildingtype.BuildingTypeRepository;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
-import com.kosa.chanzipup.domain.portfolio.Portfolio;
-import com.kosa.chanzipup.domain.portfolio.PortfolioRepository;
-import com.kosa.chanzipup.domain.portfolio.PortfolioConstructionType;
-import com.kosa.chanzipup.domain.portfolio.PortfolioConstructionTypeRepository;
+import com.kosa.chanzipup.domain.portfolio.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -43,6 +40,7 @@ public class PortfolioService {
     private final PortfolioConstructionTypeRepository portfolioConstructionTypeRepository;
     private final BuildingTypeRepository buildingTypeRepository;
     private final CompanyRepository companyRepository;
+    private final PortFolioImageRepository portFolioImageRepository;
 
 
     @Value("${file.upload-dir}")
@@ -190,5 +188,24 @@ public class PortfolioService {
 
     public Page<List<PortfolioListResponse>> getAllPortfoliosWithPage(int pageNumber, int pageSize) {
         return Page.of(getAllPortfolios(), pageSize, pageNumber);
+    }
+
+    @Transactional
+    public List<String> deletePortfolio(Long portfolioId, String userEmail) {
+        Portfolio portfolio = portfolioRepository.findByIdAndUserEmail(portfolioId, userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("삭제 할 수 없습니다."));
+
+        List<String> imageUrls = portfolio.getPortfolioImages()
+                .stream()
+                .map(PortfolioImage::getImageUrl)
+                .toList();
+
+
+        // 연관 객체 삭제
+        portfolioConstructionTypeRepository.deleteByPortfolioId(portfolio.getId());
+        portfolioRepository.deleteById(portfolioId);
+        portFolioImageRepository.deleteByPortfolioId(portfolio.getId());
+
+        return imageUrls;
     }
 }

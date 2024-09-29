@@ -91,4 +91,12 @@ public class PortfolioController {
         return ResponseEntity.ok(updateContent);
     }
 
+    @DeleteMapping("/{portfolioId}")
+    public ResponseEntity<Boolean> deletePortfolio(@PathVariable("portfolioId") Long portfolioId,
+                                                @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        List<String> deleteImageUrls = portfolioService.deletePortfolio(portfolioId, userDetails.getUsername());
+        imageService.deleteAllImages(deleteImageUrls);
+
+        return ResponseEntity.ok(true);
+    }
 }
