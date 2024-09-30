@@ -159,9 +159,9 @@ public class ReviewService {
                 .toList();
 
         // 연관 객체 삭제
-        reviewImagesRepository.deleteByReviewId(review.getId());
         reviewConstructionTypeRepository.deleteByReviewId(review.getId());
         reviewRepository.deleteById(reviewId);
+        reviewImagesRepository.deleteByReviewId(review.getId());
 
         // 실제 이미지 삭제
         imageService.deleteAllImages(imageUrls);
