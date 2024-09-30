@@ -50,7 +50,6 @@ public class MembershipController {
     @PreAuthorize("ROLE_COMPANY")
     public ResponseEntity<List<MembershipHistories>> getAllMembershipHistories(@AuthenticationPrincipal
                                                                                UnifiedUserDetails userDetails) {
-        membershipService.getAllMembershipHistories(userDetails.getUsername());
-        return null;
+        return ResponseEntity.ok(membershipService.getAllMembershipHistories(userDetails.getUsername()));
     }
 }
