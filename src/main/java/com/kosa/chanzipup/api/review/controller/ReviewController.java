@@ -97,7 +97,6 @@ public class ReviewController {
                                                 @AuthenticationPrincipal UnifiedUserDetails userDetails) {
         List<String> deleteImageUrls = reviewService.deleteReview(reviewId, userDetails.getUsername());
         imageService.deleteAllImages(deleteImageUrls);
-
         return ResponseEntity.ok(true);
     }
 }

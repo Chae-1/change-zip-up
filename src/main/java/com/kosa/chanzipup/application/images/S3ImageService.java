@@ -13,6 +13,7 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Slf4j
 public class S3ImageService implements ImageService {
@@ -33,16 +34,16 @@ public class S3ImageService implements ImageService {
     @Override
     public String store(String detailPath, MultipartFile file) {
         try {
-            String fileUri = String.format("%s/%s", detailPath, file.getName());
+            String fileName = file.getOriginalFilename();
+            String fileUri = String.format("%s/%s", detailPath, fileName);
 
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(fileUri)
                     .build();
 
-
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-            return fileUri;
+            return String.format("/images/%s",fileUri);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
@@ -82,17 +83,21 @@ public class S3ImageService implements ImageService {
     }
 
     public void deleteImage(String imageUri) {
-        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(bucketName)
-                .key(imageUri)
-                .build();
+        try {
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(imageUri)
+                    .build();
 
-        s3Client.deleteObject(deleteObjectRequest);
+            s3Client.deleteObject(deleteObjectRequest);
+        } catch (S3Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public String doResourceMatching(String url) {
         return url.replace(domainAddress, "")
-                .replace(bucketName, "");
+                .replace("/images/", "");
     }
 }
