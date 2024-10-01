@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.api.admin.controller.response.notice;
+package com.kosa.chanzipup.api.admin.controller.response.faq;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 
 @Getter
-public class NoticeListResponseDto {
+public class FAQListResponseDto {
 
     private Long id;
     private String title;
@@ -15,7 +15,7 @@ public class NoticeListResponseDto {
     private LocalDate updateDate;
 
     @Builder
-    public NoticeListResponseDto(Long id, String title, String content, String authorName, LocalDate updateDate) {
+    public FAQListResponseDto(Long id, String title, String content, String authorName, LocalDate updateDate) {
         this.id = id;
         this.title = title;
         this.content = content;

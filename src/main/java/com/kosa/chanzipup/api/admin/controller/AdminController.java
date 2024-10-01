@@ -1,15 +1,20 @@
 package com.kosa.chanzipup.api.admin.controller;
 
 import com.kosa.chanzipup.api.admin.controller.request.AccountSearchCondition;
+import com.kosa.chanzipup.api.admin.controller.request.faq.FAQCreateRequestDto;
+import com.kosa.chanzipup.api.admin.controller.request.faq.FAQUpdateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeCreateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeUpdateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.response.company.AdminCompanyResponse;
+import com.kosa.chanzipup.api.admin.controller.response.faq.FAQDetailResponseDto;
+import com.kosa.chanzipup.api.admin.controller.response.faq.FAQListResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.member.AdminMemberResponse;
 import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCompanyResponse;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeDetailResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeListResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioListResponse;
 import com.kosa.chanzipup.api.admin.service.AccountService;
+import com.kosa.chanzipup.api.admin.service.faq.FAQService;
 import com.kosa.chanzipup.api.admin.service.membership.AdminMembershipService;
 import com.kosa.chanzipup.api.admin.service.notice.NoticeService;
 import com.kosa.chanzipup.api.admin.service.portfolio.PortfolioServiceForAdmin;
@@ -36,6 +41,8 @@ public class AdminController {
     private final AdminMembershipService adminMembershipService;
 
     private final NoticeService noticeService;
+
+    private final FAQService faqService;
 
     private final PortfolioServiceForAdmin portfolioServiceForAdmin;
 
@@ -78,7 +85,7 @@ public class AdminController {
     }
 
     @PatchMapping("/notice/{id}")
-    public ResponseEntity<Void> patchNotice(
+    public ResponseEntity<Void> updateNotice(
             @PathVariable Long id,
             @AuthenticationPrincipal UnifiedUserDetails userDetails,
             @RequestBody NoticeUpdateRequestDto noticeUpdateRequestDto) {
@@ -90,6 +97,42 @@ public class AdminController {
     @DeleteMapping("/notice/{id}")
     public ResponseEntity<Void> deleteNotice(@PathVariable Long id) {
         noticeService.deleteNotice(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/faq/create")
+    public ResponseEntity<Void> createFAQ(@AuthenticationPrincipal UnifiedUserDetails userDetails
+            , @RequestBody FAQCreateRequestDto faqCreateRequestDto) {
+        String email = userDetails.getUsername();
+        faqService.createFAQ(faqCreateRequestDto, email);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/faq/list")
+    public ResponseEntity<List<FAQListResponseDto>> listFAQ() {
+        List<FAQListResponseDto> faqs = faqService.getFAQList();
+        return ResponseEntity.ok(faqs);
+    }
+
+    @GetMapping("/faq/{id}")
+    public ResponseEntity<FAQDetailResponseDto> getFAQById(@PathVariable Long id) {
+        FAQDetailResponseDto faqDetailResponseDto = faqService.getFAQById(id);
+        return ResponseEntity.ok(faqDetailResponseDto);
+    }
+
+    @PatchMapping("/faq/{id}")
+    public ResponseEntity<Void> updateFAQ(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UnifiedUserDetails userDetails,
+            @RequestBody FAQUpdateRequestDto faqUpdateRequestDto) {
+        String email = userDetails.getUsername();
+        faqService.patchFAQ(id, faqUpdateRequestDto, email);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/faq/{id}")
+    public ResponseEntity<Void> deleteFAQ(@PathVariable Long id) {
+        faqService.deleteFAQ(id);
         return ResponseEntity.ok().build();
     }
 
