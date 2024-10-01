@@ -216,8 +216,9 @@ public class PortfolioService {
                 .map(PortfolioImage::getImageUrl)
                 .toList();
 
-        portFolioImageRepository.deleteAllByPortfolioId(portfolio.getId());
         portfolioConstructionTypeRepository.deleteAllByPortfolioId(portfolio.getId());
+        portfolioRepository.deleteById(portfolioId);
+        portFolioImageRepository.deleteAllByPortfolioId(portfolio.getId());
 
         return deletePortfolioUrls;
     }
