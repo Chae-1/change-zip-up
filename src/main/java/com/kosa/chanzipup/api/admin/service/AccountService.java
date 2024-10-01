@@ -79,7 +79,9 @@ public class AccountService {
                         company.getAddress(),
                         company.getOwner(),
                         company.getRating(),
-                        company.getActiveMembership() != null ? company.getActiveMembership().getMembershipName().name() : null
+                        company.getActiveMembership() != null ? company.getActiveMembership().getMembershipName().name() : null,
+                        company.getCreatedDateTime().toLocalDate()
+
                 ))
                 .collect(Collectors.toList());
     }
@@ -99,7 +101,9 @@ public class AccountService {
                         company.getAddress(),
                         company.getOwner(),
                         company.getRating(),
-                        company.getActiveMembership() != null ? company.getActiveMembership().getMembershipName().name() : null
+                        company.getActiveMembership() != null ? company.getActiveMembership().getMembershipName().name() : null,
+                        company.getCreatedDateTime().toLocalDate()
+
                 ));
     }
 }
