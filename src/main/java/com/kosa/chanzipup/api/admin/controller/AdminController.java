@@ -1,17 +1,16 @@
 package com.kosa.chanzipup.api.admin.controller;
 
 import com.kosa.chanzipup.api.admin.controller.request.AccountSearchCondition;
-import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeRequestDto;
+import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeCreateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCompanyResponse;
+import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeListResponseDto;
 import com.kosa.chanzipup.api.admin.service.AccountService;
 import com.kosa.chanzipup.api.admin.service.membership.AdminMembershipService;
 import com.kosa.chanzipup.api.admin.service.notice.NoticeService;
-import com.kosa.chanzipup.api.estimate.controller.request.EstimatePriceRequest;
 import com.kosa.chanzipup.application.Page;
 import java.util.List;
 
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -51,9 +50,15 @@ public class AdminController {
 
     @PostMapping("/notice/create")
     public ResponseEntity<Void> createNotice(@AuthenticationPrincipal UnifiedUserDetails userDetails
-            , @RequestBody NoticeRequestDto noticeRequestDto) {
+            , @RequestBody NoticeCreateRequestDto noticeCreateRequestDto) {
         String email = userDetails.getUsername();
-        noticeService.createNotice(noticeRequestDto, email);
+        noticeService.createNotice(noticeCreateRequestDto, email);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/notice/list")
+    public ResponseEntity<List<NoticeListResponseDto>> listNotice() {
+        List<NoticeListResponseDto> notices = noticeService.getNoticeList();
+        return ResponseEntity.ok(notices);
     }
 }

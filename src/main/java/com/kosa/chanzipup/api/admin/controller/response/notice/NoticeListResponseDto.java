@@ -7,27 +7,29 @@ import lombok.Getter;
 import java.time.LocalDate;
 
 @Getter
-public class NoticeResponseDto {
+public class NoticeListResponseDto {
 
     private Long id;
     private String title;
     private String content;
-    private LocalDate createDate;
+    private String authorName;
+    private LocalDate updateDate;
 
     @Builder
-    public NoticeResponseDto(Long id, String title, String content, LocalDate createDate) {
+    public NoticeListResponseDto(Long id, String title, String content, String authorName, LocalDate updateDate) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.createDate = createDate;
+        this.authorName = authorName;
+        this.updateDate = updateDate;
     }
 
-    public static NoticeResponseDto fromEntity(Notice notice) {
-        return NoticeResponseDto.builder()
+    public static NoticeListResponseDto fromEntity(Notice notice) {
+        return NoticeListResponseDto.builder()
                 .id(notice.getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
-                .createDate(LocalDate.from(notice.getCreateDate()))
+                .updateDate(LocalDate.from(notice.getCreateDate()))
                 .build();
     }
 }
