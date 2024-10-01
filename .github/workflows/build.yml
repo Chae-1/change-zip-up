@@ -13,7 +13,6 @@ on:
 
 jobs:
   build:
-    needs: create-config-file
     runs-on: ubuntu-latest
     permissions:
       contents: read
