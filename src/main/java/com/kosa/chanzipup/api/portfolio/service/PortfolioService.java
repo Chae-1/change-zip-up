@@ -195,8 +195,10 @@ public class PortfolioService {
     public PortfolioEditResponse getPortfolioDetailForUpdate(String email, Long portfolioId) {
         Portfolio portfolio = queryRepository.findPortfolioWithAll(portfolioId, email)
                 .orElseThrow(() -> new IllegalArgumentException("수정 할 수 없습니다."));
+
         List<PortfolioConstructionType> portfolioTypes = portfolioConstructionTypeRepository
                 .findByPortfolioId(portfolio.getId());
+
         List<ConstructionType> constructionTypes = constructionTypeRepository.findAll();
 
         return new PortfolioEditResponse(portfolio, portfolioTypes, constructionTypes);

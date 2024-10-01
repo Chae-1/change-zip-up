@@ -11,4 +11,7 @@ public interface ImageService {
     Resource loadAsResource(String subPath, String fileName);
 
     void deleteAllImages(List<String> deleteImageUrls);
+
+    String doResourceMatching(String url);
+
 }

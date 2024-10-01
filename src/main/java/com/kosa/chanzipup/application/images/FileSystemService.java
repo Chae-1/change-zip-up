@@ -16,7 +16,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-@Service
 @Slf4j
 public class FileSystemService implements ImageService {
     private final Path rootLocation;
@@ -84,13 +83,17 @@ public class FileSystemService implements ImageService {
     @Override
     public void deleteAllImages(List<String> deleteImageUrls) {
         List<String> imageSaveUrls = deleteImageUrls.stream()
-                .map(url -> url.replace(domainAddress, location))
+                .map(this::doResourceMatching)
                 .toList();
 
         for (String imageSaveUrl : imageSaveUrls) {
             log.info("{} ", imageSaveUrl);
 //            deleteImage(imageSaveUrl);
         }
+    }
+
+    public String doResourceMatching(String url) {
+        return url.replace(domainAddress, location);
     }
 
 //    private void deleteImage(String imageSaveUrl) {

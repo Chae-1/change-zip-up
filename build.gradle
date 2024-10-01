@@ -38,6 +38,7 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
 
+
 	// iamport
 	implementation group: 'com.github.iamport', name: 'iamport-rest-client-java', version: '0.2.23'
 
@@ -60,6 +61,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 
+	implementation 'software.amazon.awssdk:s3:2.28.11'
 
 	// test
 	testCompileOnly 'org.projectlombok:lombok'
