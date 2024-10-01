@@ -3,6 +3,7 @@ package com.kosa.chanzipup.api.admin.controller;
 import com.kosa.chanzipup.api.admin.controller.request.AccountSearchCondition;
 import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeCreateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCompanyResponse;
+import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeDetailResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeListResponseDto;
 import com.kosa.chanzipup.api.admin.service.AccountService;
 import com.kosa.chanzipup.api.admin.service.membership.AdminMembershipService;
@@ -60,5 +61,11 @@ public class AdminController {
     public ResponseEntity<List<NoticeListResponseDto>> listNotice() {
         List<NoticeListResponseDto> notices = noticeService.getNoticeList();
         return ResponseEntity.ok(notices);
+    }
+
+    @GetMapping("/notice/{id}")
+    public ResponseEntity<NoticeDetailResponseDto> getNoticeById(@PathVariable Long id) {
+        NoticeDetailResponseDto noticeDetailResponseDto = noticeService.getNoticeById(id);
+        return ResponseEntity.ok(noticeDetailResponseDto);
     }
 }

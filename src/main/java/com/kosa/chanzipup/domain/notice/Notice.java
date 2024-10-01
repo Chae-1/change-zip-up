@@ -22,7 +22,7 @@ public class Notice {
 
     private String title;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     private String email;

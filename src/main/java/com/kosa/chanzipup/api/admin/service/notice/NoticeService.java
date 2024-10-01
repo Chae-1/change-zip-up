@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.api.admin.service.notice;
 
 import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeCreateRequestDto;
+import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeDetailResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeListResponseDto;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
@@ -43,7 +44,27 @@ public class NoticeService {
     public List<NoticeListResponseDto> getNoticeList() {
         List<Notice> notices = noticeRepository.findAll();
         return notices.stream()
-                .map(notice -> new NoticeListResponseDto(notice.getId(), notice.getTitle(), notice.getContent(), notice.getAuthorNickName(), LocalDate.from(notice.getUpdateDate())))
+                .map(notice -> new NoticeListResponseDto(
+                        notice.getId(),
+                        notice.getTitle(),
+                        notice.getContent(),
+                        notice.getAuthorNickName(),
+                        LocalDate.from(notice.getUpdateDate())
+                ))
                 .collect(Collectors.toList());
+    }
+
+    // 공지사항 ID로 공지사항을 조회합니다.
+    public NoticeDetailResponseDto getNoticeById(Long id) {
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 공지사항을 찾을 수 없습니다."));
+
+        return new NoticeDetailResponseDto(
+                notice.getId(),
+                notice.getTitle(),
+                notice.getAuthorNickName(),
+                LocalDate.from(notice.getUpdateDate()),
+                notice.getContent()
+        );
     }
 }
