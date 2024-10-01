@@ -34,6 +34,7 @@ jobs:
         echo "${{secrets.PROD_PROPERTIES}}" > ./application-prod.yml
         touch ./application-secrets-prod.yml
         echo "${{secrets.SECRET_PROPERTIES}}" > ./application-secrets-prod.yml
+      shell: bash
 
       # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
@@ -48,7 +49,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        if [ -f src/main/resources/application-secrets-prod.yml ]; then
+        if [ -f ./src/main/resources/application-secrets-prod.yml ]; then
             docker build -t hyeongil100/changzipup-repo:latest
         else
             echo "application-secrets-prod.yml 파일이 존재하지 않습니다. 빌드가 중단됩니다."
