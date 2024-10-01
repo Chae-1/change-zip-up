@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: CheckOut code for create config file
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Create application-prod.yml
         run: |
