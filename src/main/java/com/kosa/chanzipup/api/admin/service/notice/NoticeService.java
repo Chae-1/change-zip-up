@@ -1,6 +1,8 @@
 package com.kosa.chanzipup.api.admin.service.notice;
 
 import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeCreateRequestDto;
+import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeUpdateRequestDto;
+import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeDetailResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeListResponseDto;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
@@ -43,7 +45,59 @@ public class NoticeService {
     public List<NoticeListResponseDto> getNoticeList() {
         List<Notice> notices = noticeRepository.findAll();
         return notices.stream()
-                .map(notice -> new NoticeListResponseDto(notice.getId(), notice.getTitle(), notice.getContent(), notice.getAuthorNickName(), LocalDate.from(notice.getUpdateDate())))
+                .map(notice -> new NoticeListResponseDto(
+                        notice.getId(),
+                        notice.getTitle(),
+                        notice.getContent(),
+                        notice.getAuthorNickName(),
+                        LocalDate.from(notice.getUpdateDate())
+                ))
                 .collect(Collectors.toList());
+    }
+
+    // 공지사항 ID로 공지사항을 조회합니다.
+    public NoticeDetailResponseDto getNoticeById(Long id) {
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 공지사항을 찾을 수 없습니다."));
+
+        return new NoticeDetailResponseDto(
+                notice.getId(),
+                notice.getTitle(),
+                notice.getAuthorNickName(),
+                LocalDate.from(notice.getUpdateDate()),
+                notice.getContent()
+        );
+    }
+
+    @Transactional
+    public void patchNotice(Long id, NoticeUpdateRequestDto noticeUpdateRequestDto, String email) {
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 공지사항을 찾을 수 없습니다."));
+
+        // 작성자 확인 (옵션: 관리자 권한 확인 등 추가 가능)
+        if (!notice.getEmail().equals(email)) {
+            throw new IllegalArgumentException("수정 권한이 없습니다.");
+        }
+
+        // 필드가 null이 아닌 경우에만 업데이트
+        if (noticeUpdateRequestDto.getTitle() != null) {
+            notice.updateTitle(noticeUpdateRequestDto.getTitle());
+        }
+
+        if (noticeUpdateRequestDto.getContent() != null) {
+            notice.updateContent(noticeUpdateRequestDto.getContent());
+        }
+
+        // JPA의 변경 감지 덕분에 별도로 save를 호출할 필요 없음
+        log.info("공지사항 부분 수정 완료: ID = {}", id);
+    }
+
+    @Transactional
+    public void deleteNotice(Long id) {
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 공지사항을 찾을 수 없습니다."));
+
+        noticeRepository.delete(notice);
+        log.info("공지사항 삭제 완료: ID = {}", id);
     }
 }

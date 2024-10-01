@@ -22,7 +22,7 @@ public class Notice {
 
     private String title;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     private String email;
@@ -50,5 +50,15 @@ public class Notice {
     // 작성자의 닉네임을 가져오는 메소드
     public String getAuthorNickName() {
         return member != null ? member.getNickName() : null;
+    }
+
+    // 제목 수정 메서드
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    // 내용 수정 메서드
+    public void updateContent(String content) {
+        this.content = content;
     }
 }
