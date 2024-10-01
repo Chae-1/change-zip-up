@@ -2,9 +2,11 @@ package com.kosa.chanzipup.api.admin.controller;
 
 import com.kosa.chanzipup.api.admin.controller.request.AccountSearchCondition;
 import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeCreateRequestDto;
+import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeUpdateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.response.company.AdminCompanyResponse;
 import com.kosa.chanzipup.api.admin.controller.response.member.AdminMemberResponse;
 import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCompanyResponse;
+import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeDetailResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeListResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioListResponse;
 import com.kosa.chanzipup.api.admin.service.AccountService;
@@ -71,6 +73,28 @@ public class AdminController {
     public ResponseEntity<List<NoticeListResponseDto>> listNotice() {
         List<NoticeListResponseDto> notices = noticeService.getNoticeList();
         return ResponseEntity.ok(notices);
+    }
+
+    @GetMapping("/notice/{id}")
+    public ResponseEntity<NoticeDetailResponseDto> getNoticeById(@PathVariable Long id) {
+        NoticeDetailResponseDto noticeDetailResponseDto = noticeService.getNoticeById(id);
+        return ResponseEntity.ok(noticeDetailResponseDto);
+    }
+
+    @PatchMapping("/notice/{id}")
+    public ResponseEntity<Void> patchNotice(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UnifiedUserDetails userDetails,
+            @RequestBody NoticeUpdateRequestDto noticeUpdateRequestDto) {
+        String email = userDetails.getUsername();
+        noticeService.patchNotice(id, noticeUpdateRequestDto, email);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/notice/{id}")
+    public ResponseEntity<Void> deleteNotice(@PathVariable Long id) {
+        noticeService.deleteNotice(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/portfolios")
