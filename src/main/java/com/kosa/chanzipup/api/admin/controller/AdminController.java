@@ -83,7 +83,7 @@ public class AdminController {
             @AuthenticationPrincipal UnifiedUserDetails userDetails,
             @RequestBody NoticeUpdateRequestDto noticeUpdateRequestDto) {
         String email = userDetails.getUsername();
-        noticeService.updateNotice(id, noticeUpdateRequestDto, email);
+        noticeService.patchNotice(id, noticeUpdateRequestDto, email);
         return ResponseEntity.ok().build();
     }
 
