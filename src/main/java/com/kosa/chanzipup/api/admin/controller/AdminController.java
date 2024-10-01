@@ -2,6 +2,7 @@ package com.kosa.chanzipup.api.admin.controller;
 
 import com.kosa.chanzipup.api.admin.controller.request.AccountSearchCondition;
 import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeCreateRequestDto;
+import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeUpdateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.response.company.AdminCompanyResponse;
 import com.kosa.chanzipup.api.admin.controller.response.member.AdminMemberResponse;
 import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCompanyResponse;
@@ -74,6 +75,22 @@ public class AdminController {
     public ResponseEntity<NoticeDetailResponseDto> getNoticeById(@PathVariable Long id) {
         NoticeDetailResponseDto noticeDetailResponseDto = noticeService.getNoticeById(id);
         return ResponseEntity.ok(noticeDetailResponseDto);
+    }
+
+    @PatchMapping("/notice/{id}")
+    public ResponseEntity<Void> patchNotice(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UnifiedUserDetails userDetails,
+            @RequestBody NoticeUpdateRequestDto noticeUpdateRequestDto) {
+        String email = userDetails.getUsername();
+        noticeService.updateNotice(id, noticeUpdateRequestDto, email);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/notice/{id}")
+    public ResponseEntity<Void> deleteNotice(@PathVariable Long id) {
+        noticeService.deleteNotice(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/portfolios")

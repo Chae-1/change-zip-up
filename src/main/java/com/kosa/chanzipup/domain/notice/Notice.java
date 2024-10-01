@@ -51,4 +51,14 @@ public class Notice {
     public String getAuthorNickName() {
         return member != null ? member.getNickName() : null;
     }
+
+    // 제목 수정 메서드
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    // 내용 수정 메서드
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
