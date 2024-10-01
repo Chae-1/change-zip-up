@@ -11,10 +11,12 @@ import com.kosa.chanzipup.api.admin.service.AccountService;
 import com.kosa.chanzipup.api.admin.service.membership.AdminMembershipService;
 import com.kosa.chanzipup.api.admin.service.notice.NoticeService;
 import com.kosa.chanzipup.api.admin.service.portfolio.PortfolioServiceForAdmin;
+import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioDetailResponse;
 import com.kosa.chanzipup.application.Page;
 import java.util.List;
 import java.util.Optional;
 
+import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,8 @@ public class AdminController {
     private final NoticeService noticeService;
 
     private final PortfolioServiceForAdmin portfolioServiceForAdmin;
+
+    private final ImageService imageService;
 
     @GetMapping("/accounts")
     public void getAllAccounts(@PageableDefault Pageable pageable, AccountSearchCondition condition) {
@@ -75,6 +79,20 @@ public class AdminController {
         Page<List<PortfolioListResponse>> portfolios = portfolioServiceForAdmin.getAllPortfolios(pageable);
         return ResponseEntity.ok(portfolios);
     }
+
+    @GetMapping("/portfolios/{id}")
+    public ResponseEntity<PortfolioDetailResponse> getPortfolioById(@PathVariable Long id) {
+        PortfolioDetailResponse portfolio = portfolioServiceForAdmin.getPortfolioById(id);
+        return ResponseEntity.ok(portfolio);
+    }
+
+    @DeleteMapping("/portfolios/{id}")
+    public ResponseEntity<Boolean> deletePortfolio(@PathVariable("id") Long id) {
+        List<String> deleteUploadImages = portfolioServiceForAdmin.deletePortfolio(id);
+        imageService.deleteAllImages(deleteUploadImages);
+        return ResponseEntity.ok(true);
+    }
+
 
     @GetMapping("/members")
     public ResponseEntity<List<AdminMemberResponse>> getAllMembers() {

@@ -5,6 +5,7 @@ import com.kosa.chanzipup.domain.portfolio.PortfolioConstructionType;
 import com.kosa.chanzipup.domain.portfolio.PortfolioImage;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -12,6 +13,8 @@ public class PortfolioListResponse {
     private Long id;
 
     private String title;
+
+    private LocalDateTime createdAt;
 
     private String companyName;
 
@@ -28,6 +31,7 @@ public class PortfolioListResponse {
     public PortfolioListResponse(Portfolio portfolio, List<PortfolioConstructionType> types) {
         this.id = portfolio.getId();
         this.title = portfolio.getTitle();
+        this.createdAt = portfolio.getCreatedAt();
         this.companyName = portfolio.getCompany().getCompanyName();
         this.floor = portfolio.getFloor();
         this.projectLocation = portfolio.getProjectLocation();
