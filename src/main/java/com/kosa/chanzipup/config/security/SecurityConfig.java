@@ -8,6 +8,7 @@ import com.kosa.chanzipup.config.security.userdetail.oauth2.Oauth2MemberService;
 import com.kosa.chanzipup.config.security.userdetail.success.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,7 +49,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    Oauth2MemberService oauth2MemberService, LoginSuccessHandler loginSuccessHandler,
-                                                   AuthenticationManager manager) throws Exception {
+                                                   AuthenticationManager manager,
+                                                   @Value("${target.address}") String address
+                                                   ) throws Exception {
 
         FormLoginAuthenticationFilter formLoginAuthenticationFilter = setFormLoginAuthentication(loginSuccessHandler, manager);
 
@@ -62,7 +65,7 @@ public class SecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfiguration()))
+                .cors(cors -> cors.configurationSource(corsConfiguration(address)))
                 .addFilterAt(formLoginAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(jwtAuthenticationFilter, FormLoginAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
@@ -92,9 +95,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfiguration() {
+    public CorsConfigurationSource corsConfiguration(@Value("${target.address}") String address) {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin(address);
         configuration.setAllowedMethods(List.of("GET", "POST", "DELETE", "UPDATE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
         configuration.addExposedHeader("Authorization");

@@ -23,10 +23,3 @@ file:
   upload-dir: src/main/resources/static/images
   location: c:\images
 
-
-  # naver oauth2 설정
- # 반드시 외부파일로 분리
-
-  # kakao oauth2 설정
-  # 반드시 외부파일로 분리
-

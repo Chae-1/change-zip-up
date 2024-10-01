@@ -52,7 +52,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         String nickName = userDetails.nickName();
         String role = userDetails.getRole();
 
-        // todo:
         String accessToken = createAccessToken(email);
         String refreshToken = createAndSaveRefreshToken(email);
 
