@@ -19,4 +19,5 @@ public class AdminCompanyResponse {
     private String owner;
     private double rating;
     private String membership;
+    private LocalDate createAt;
 }
