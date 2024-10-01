@@ -9,7 +9,6 @@ import com.kosa.chanzipup.api.review.controller.response.create.ReviewCreationPa
 import com.kosa.chanzipup.api.review.service.ReviewImagesService;
 import com.kosa.chanzipup.api.review.service.ReviewService;
 import com.kosa.chanzipup.application.Page;
-import com.kosa.chanzipup.application.PathMatchService;
 import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.review.ReviewUpdateRequest;
@@ -38,7 +37,6 @@ public class ReviewController {
 
     private final ReviewImagesService reviewImagesService;
 
-    private final PathMatchService pathMatchService;
 
    @PostMapping
     public ResponseEntity<ReviewRegisterResponse> createReview(@AuthenticationPrincipal UnifiedUserDetails userDetails,
@@ -75,11 +73,6 @@ public class ReviewController {
         return ResponseEntity.ok(true);
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<ReviewResponse>> getAllReviews() {
-//        List<ReviewResponse> reviews = reviewService.getAllReviews();
-//        return ResponseEntity.ok(reviews);
-//    }
 
     @GetMapping("/page")
     public ResponseEntity<Page<List<ReviewResponse>>> getAllReviewsWithPage(@PageableDefault Pageable pageable) {
@@ -104,7 +97,6 @@ public class ReviewController {
                                                 @AuthenticationPrincipal UnifiedUserDetails userDetails) {
         List<String> deleteImageUrls = reviewService.deleteReview(reviewId, userDetails.getUsername());
         imageService.deleteAllImages(deleteImageUrls);
-
         return ResponseEntity.ok(true);
     }
 }

@@ -6,9 +6,11 @@ import com.kosa.chanzipup.api.admin.controller.response.company.AdminCompanyResp
 import com.kosa.chanzipup.api.admin.controller.response.member.AdminMemberResponse;
 import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCompanyResponse;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeListResponseDto;
+import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioListResponse;
 import com.kosa.chanzipup.api.admin.service.AccountService;
 import com.kosa.chanzipup.api.admin.service.membership.AdminMembershipService;
 import com.kosa.chanzipup.api.admin.service.notice.NoticeService;
+import com.kosa.chanzipup.api.admin.service.portfolio.PortfolioServiceForAdmin;
 import com.kosa.chanzipup.application.Page;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +34,8 @@ public class AdminController {
     private final AdminMembershipService adminMembershipService;
 
     private final NoticeService noticeService;
+
+    private final PortfolioServiceForAdmin portfolioServiceForAdmin;
 
     @GetMapping("/accounts")
     public void getAllAccounts(@PageableDefault Pageable pageable, AccountSearchCondition condition) {
@@ -63,6 +67,13 @@ public class AdminController {
     public ResponseEntity<List<NoticeListResponseDto>> listNotice() {
         List<NoticeListResponseDto> notices = noticeService.getNoticeList();
         return ResponseEntity.ok(notices);
+    }
+
+    @GetMapping("/portfolios")
+    public ResponseEntity<Page<List<PortfolioListResponse>>> getAllPortfolios(@PageableDefault Pageable pageable) {
+        log.info("pageable = {}", pageable);
+        Page<List<PortfolioListResponse>> portfolios = portfolioServiceForAdmin.getAllPortfolios(pageable);
+        return ResponseEntity.ok(portfolios);
     }
 
     @GetMapping("/members")
