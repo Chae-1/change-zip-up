@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
+import com.kosa.chanzipup.domain.membership.MembershipType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -161,12 +162,50 @@ public class AdminController {
         return ResponseEntity.ok(companies);
     }
 
-    // 특정 회사 상세 조회
     @GetMapping("/company/{id}")
     public ResponseEntity<AdminCompanyResponse> getCompanyDetail(@PathVariable Long id) {
         Optional<AdminCompanyResponse> company = accountService.getCompanyDetail(id);
         return company.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/membership/list")
+    public ResponseEntity<List<MembershipType>> getMemberships() {
+        List<MembershipType> membershipTypes = adminMembershipService.getAllMembershipTypes();
+        return ResponseEntity.ok(membershipTypes);
+    }
+
+    // 특정 멤버십 타입 조회
+    @GetMapping("/membership/{id}")
+    public ResponseEntity<MembershipType> getMembershipTypeById(@PathVariable Long id) {
+        Optional<MembershipType> membershipType = adminMembershipService.getMembershipTypeById(id);
+        return membershipType.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // 멤버십 타입 생성
+    @PostMapping("/membership")
+    public ResponseEntity<MembershipType> createMembershipType(@RequestBody MembershipType membershipType) {
+        MembershipType createdMembershipType = adminMembershipService.createMembershipType(membershipType);
+        return ResponseEntity.ok(createdMembershipType);
+    }
+
+    // 멤버십 타입 수정
+    @PatchMapping("/membership/{id}")
+    public ResponseEntity<MembershipType> updateMembershipType(
+            @PathVariable Long id,
+            @RequestBody MembershipType updatedMembershipType
+    ) {
+        Optional<MembershipType> membershipType = adminMembershipService.updateMembershipType(id, updatedMembershipType);
+        return membershipType.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // 멤버십 타입 삭제
+    @DeleteMapping("/membership/{id}")
+    public ResponseEntity<Void> deleteMembershipType(@PathVariable Long id) {
+        adminMembershipService.deleteMembershipType(id);
+        return ResponseEntity.ok().build();
     }
 
 }
