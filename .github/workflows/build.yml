@@ -121,6 +121,16 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew build
 
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_LOGIN_ID }}" --password-stdin
+
+    - name: Build Docker image
+      run: docker build -t hyeongil100/changzipup-repo:latest .
+
+    - name: Push Docker image to Docker Hub
+      run: docker push hyeongil100/changzipup-repo:latest
+
+
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
     #
