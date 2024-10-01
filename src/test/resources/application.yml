@@ -2,7 +2,7 @@ spring:
   config:
     import: "application-secrets-prod.yml"
   datasource:
-    url: jdbc:h2:mem:changzipuptest;
+    url: jdbc:h2:mem:changzipuptest
     driver-class-name: org.h2.Driver
     username: sa
     password:
