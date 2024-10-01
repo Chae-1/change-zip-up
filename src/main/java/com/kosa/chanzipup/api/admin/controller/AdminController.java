@@ -66,24 +66,10 @@ public class AdminController {
         return ResponseEntity.ok(notices);
     }
 
-//    @GetMapping("/portfolios")
-//    public ResponseEntity<Page<List<PortfolioListResponse>>> getAllPortfolios(@PageableDefault Pageable pageable) {
-//        log.info("pageable = {}", pageable);
-//        return ResponseEntity.ok(portfolioServiceForAdmin.getAllPortfolios(pageable));
-//    }
-
     @GetMapping("/portfolios")
     public ResponseEntity<Page<List<PortfolioListResponse>>> getAllPortfolios(@PageableDefault Pageable pageable) {
         log.info("pageable = {}", pageable);
         Page<List<PortfolioListResponse>> portfolios = portfolioServiceForAdmin.getAllPortfolios(pageable);
         return ResponseEntity.ok(portfolios);
     }
-
-
-
-//    @DeleteMapping
-//    public ResponseEntity<Void> deletePortfolio(@RequestParam("portfolioId") Long portfolioId) {
-//        portfolioService.deletePortfolio(portfolioId);
-//        return ResponseEntity.noContent().build();  // 성공적으로 삭제되었음을 나타냄
-//    }
 }
