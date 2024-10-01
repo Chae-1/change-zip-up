@@ -49,8 +49,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t . hyeongil100/changzipup-repo:latest
-
+          docker build -t hyeongil100/changzipup-repo:latest .
 
       - name: Push Docker image to Docker Hub
         run: docker push hyeongil100/changzipup-repo:latest
