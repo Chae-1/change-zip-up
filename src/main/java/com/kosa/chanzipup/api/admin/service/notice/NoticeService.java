@@ -42,6 +42,7 @@ public class NoticeService {
         noticeRepository.save(notice);
     }
 
+    // 전체 공지사항 조회
     public List<NoticeListResponseDto> getNoticeList() {
         List<Notice> notices = noticeRepository.findAll();
         return notices.stream()

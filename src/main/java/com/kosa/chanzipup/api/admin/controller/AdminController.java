@@ -1,9 +1,13 @@
 package com.kosa.chanzipup.api.admin.controller;
 
 import com.kosa.chanzipup.api.admin.controller.request.AccountSearchCondition;
+import com.kosa.chanzipup.api.admin.controller.request.faq.FAQCreateRequestDto;
+import com.kosa.chanzipup.api.admin.controller.request.faq.FAQUpdateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeCreateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeUpdateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.response.company.AdminCompanyResponse;
+import com.kosa.chanzipup.api.admin.controller.response.faq.FAQDetailResponseDto;
+import com.kosa.chanzipup.api.admin.controller.response.faq.FAQListResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.member.AdminMemberResponse;
 import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCompanyResponse;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeDetailResponseDto;
@@ -12,6 +16,7 @@ import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioListR
 import com.kosa.chanzipup.api.admin.controller.response.review.ReviewDetailResponse;
 import com.kosa.chanzipup.api.admin.controller.response.review.ReviewListResponse;
 import com.kosa.chanzipup.api.admin.service.AccountService;
+import com.kosa.chanzipup.api.admin.service.faq.FAQService;
 import com.kosa.chanzipup.api.admin.service.membership.AdminMembershipService;
 import com.kosa.chanzipup.api.admin.service.notice.NoticeService;
 import com.kosa.chanzipup.api.admin.service.portfolio.PortfolioServiceForAdmin;
@@ -23,6 +28,7 @@ import java.util.Optional;
 
 import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
+import com.kosa.chanzipup.domain.membership.MembershipType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +47,8 @@ public class AdminController {
     private final AdminMembershipService adminMembershipService;
 
     private final NoticeService noticeService;
+
+    private final FAQService faqService;
 
     private final PortfolioServiceForAdmin portfolioServiceForAdmin;
 
@@ -87,7 +95,7 @@ public class AdminController {
     }
 
     @PatchMapping("/notice/{id}")
-    public ResponseEntity<Void> patchNotice(
+    public ResponseEntity<Void> updateNotice(
             @PathVariable Long id,
             @AuthenticationPrincipal UnifiedUserDetails userDetails,
             @RequestBody NoticeUpdateRequestDto noticeUpdateRequestDto) {
@@ -99,6 +107,42 @@ public class AdminController {
     @DeleteMapping("/notice/{id}")
     public ResponseEntity<Void> deleteNotice(@PathVariable Long id) {
         noticeService.deleteNotice(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/faq/create")
+    public ResponseEntity<Void> createFAQ(@AuthenticationPrincipal UnifiedUserDetails userDetails
+            , @RequestBody FAQCreateRequestDto faqCreateRequestDto) {
+        String email = userDetails.getUsername();
+        faqService.createFAQ(faqCreateRequestDto, email);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/faq/list")
+    public ResponseEntity<List<FAQListResponseDto>> listFAQ() {
+        List<FAQListResponseDto> faqs = faqService.getFAQList();
+        return ResponseEntity.ok(faqs);
+    }
+
+    @GetMapping("/faq/{id}")
+    public ResponseEntity<FAQDetailResponseDto> getFAQById(@PathVariable Long id) {
+        FAQDetailResponseDto faqDetailResponseDto = faqService.getFAQById(id);
+        return ResponseEntity.ok(faqDetailResponseDto);
+    }
+
+    @PatchMapping("/faq/{id}")
+    public ResponseEntity<Void> updateFAQ(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UnifiedUserDetails userDetails,
+            @RequestBody FAQUpdateRequestDto faqUpdateRequestDto) {
+        String email = userDetails.getUsername();
+        faqService.patchFAQ(id, faqUpdateRequestDto, email);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/faq/{id}")
+    public ResponseEntity<Void> deleteFAQ(@PathVariable Long id) {
+        faqService.deleteFAQ(id);
         return ResponseEntity.ok().build();
     }
 
@@ -160,12 +204,50 @@ public class AdminController {
         return ResponseEntity.ok(companies);
     }
 
-    // 특정 회사 상세 조회
     @GetMapping("/company/{id}")
     public ResponseEntity<AdminCompanyResponse> getCompanyDetail(@PathVariable Long id) {
         Optional<AdminCompanyResponse> company = accountService.getCompanyDetail(id);
         return company.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/membership/list")
+    public ResponseEntity<List<MembershipType>> getMemberships() {
+        List<MembershipType> membershipTypes = adminMembershipService.getAllMembershipTypes();
+        return ResponseEntity.ok(membershipTypes);
+    }
+
+    // 특정 멤버십 타입 조회
+    @GetMapping("/membership/{id}")
+    public ResponseEntity<MembershipType> getMembershipTypeById(@PathVariable Long id) {
+        Optional<MembershipType> membershipType = adminMembershipService.getMembershipTypeById(id);
+        return membershipType.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // 멤버십 타입 생성
+    @PostMapping("/membership")
+    public ResponseEntity<MembershipType> createMembershipType(@RequestBody MembershipType membershipType) {
+        MembershipType createdMembershipType = adminMembershipService.createMembershipType(membershipType);
+        return ResponseEntity.ok(createdMembershipType);
+    }
+
+    // 멤버십 타입 수정
+    @PatchMapping("/membership/{id}")
+    public ResponseEntity<MembershipType> updateMembershipType(
+            @PathVariable Long id,
+            @RequestBody MembershipType updatedMembershipType
+    ) {
+        Optional<MembershipType> membershipType = adminMembershipService.updateMembershipType(id, updatedMembershipType);
+        return membershipType.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // 멤버십 타입 삭제
+    @DeleteMapping("/membership/{id}")
+    public ResponseEntity<Void> deleteMembershipType(@PathVariable Long id) {
+        adminMembershipService.deleteMembershipType(id);
+        return ResponseEntity.ok().build();
     }
 
 }
