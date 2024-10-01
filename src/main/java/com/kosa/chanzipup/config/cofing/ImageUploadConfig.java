@@ -2,7 +2,6 @@ package com.kosa.chanzipup.config.cofing;
 
 import com.kosa.chanzipup.application.images.FileSystemService;
 import com.kosa.chanzipup.application.images.ImageService;
-import com.kosa.chanzipup.application.images.S3ImageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,12 +1,9 @@
 package com.kosa.chanzipup.application;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Getter;
 
-
+//
 @Getter
 public class Page<T extends Collection> {
 
