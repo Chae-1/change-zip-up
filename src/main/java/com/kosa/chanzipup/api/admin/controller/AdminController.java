@@ -9,10 +9,13 @@ import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCom
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeDetailResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeListResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioListResponse;
+import com.kosa.chanzipup.api.admin.controller.response.review.ReviewDetailResponse;
+import com.kosa.chanzipup.api.admin.controller.response.review.ReviewListResponse;
 import com.kosa.chanzipup.api.admin.service.AccountService;
 import com.kosa.chanzipup.api.admin.service.membership.AdminMembershipService;
 import com.kosa.chanzipup.api.admin.service.notice.NoticeService;
 import com.kosa.chanzipup.api.admin.service.portfolio.PortfolioServiceForAdmin;
+import com.kosa.chanzipup.api.admin.service.review.ReviewServiceForAdmin;
 import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioDetailResponse;
 import com.kosa.chanzipup.application.Page;
 import java.util.List;
@@ -42,6 +45,8 @@ public class AdminController {
     private final PortfolioServiceForAdmin portfolioServiceForAdmin;
 
     private final ImageService imageService;
+
+    private final ReviewServiceForAdmin reviewServiceForAdmin;
 
     @GetMapping("/accounts")
     public void getAllAccounts(@PageableDefault Pageable pageable, AccountSearchCondition condition) {
@@ -117,6 +122,25 @@ public class AdminController {
         return ResponseEntity.ok(true);
     }
 
+    @GetMapping("/reviews")
+    public ResponseEntity<Page<List<ReviewListResponse>>> getAllReviews(@PageableDefault Pageable pageable) {
+        log.info("pageable = {}", pageable);
+        Page<List<ReviewListResponse>> reviews = reviewServiceForAdmin.getAllReviews(pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/reviews/{id}")
+    public ResponseEntity<ReviewDetailResponse> getReviewById(@PathVariable Long id) {
+        ReviewDetailResponse review = reviewServiceForAdmin.getUserDetail(id);
+        return ResponseEntity.ok(review);
+    }
+
+    @DeleteMapping("/reviews/{id}")
+    public ResponseEntity<Boolean> deleteReview(@PathVariable("id") Long id) {
+        List<String> deleteUploadImages = reviewServiceForAdmin.deleteReview(id);
+        imageService.deleteAllImages(deleteUploadImages);
+        return ResponseEntity.ok(true);
+    }
 
     @GetMapping("/members")
     public ResponseEntity<List<AdminMemberResponse>> getAllMembers() {
