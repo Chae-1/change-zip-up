@@ -126,7 +126,14 @@ jobs:
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_LOGIN_ID }}" --password-stdin
 
     - name: Build Docker image
-      run: docker build -t hyeongil100/changzipup-repo:latest .
+      run: |
+        # 파일이 존재하는지 확인 후 빌드
+        if [ -f src/main/resources/application-secrets-prod.yml ]; then
+            docker build -t hyeongil100/changzipup-repo:latest
+        else
+            echo "application-secrets-prod.yml 파일이 존재하지 않습니다. 빌드가 중단됩니다."
+            exit 1
+        fi
 
     - name: Push Docker image to Docker Hub
       run: docker push hyeongil100/changzipup-repo:latest
