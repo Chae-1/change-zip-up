@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -29,7 +30,6 @@ import java.net.URLEncoder;
 import java.time.LocalDateTime;
 
 @Component
-@RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private static final int REFRESH_EXPIRY_DAY = 7;
     private static final int REFRESH_EXPIRY_DURATION = REFRESH_EXPIRY_DAY * 24 * 60 * 60;
@@ -37,6 +37,15 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
     private final ObjectMapper mapper;
+    private final String targetAddress;
+
+    public LoginSuccessHandler(JwtProvider jwtProvider, RefreshTokenService refreshTokenService, ObjectMapper mapper,
+                               @Value("${target.address}") String targetAddress) {
+        this.jwtProvider = jwtProvider;
+        this.refreshTokenService = refreshTokenService;
+        this.mapper = mapper;
+        this.targetAddress = targetAddress;
+    }
 
     // login 처리가 완료되면 jwt Token을 발급한다.
     @Override
@@ -92,7 +101,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         String encodedName = URLEncoder.encode(nickName, "UTF-8");
 
         return UriComponentsBuilder
-                .fromUriString("http://localhost:3000/oauth/redirect")
+                .fromUriString(String.format("%s/oauth/redirect", targetAddress))
                 .queryParam("authorization", accessToken)
                 .queryParam("role", role)
                 .queryParam("nickName", encodedName)

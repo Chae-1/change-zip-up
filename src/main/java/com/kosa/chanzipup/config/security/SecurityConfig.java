@@ -45,7 +45,6 @@ public class SecurityConfig {
     private final LoginSuccessHandler LoginSuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    Oauth2MemberService oauth2MemberService, LoginSuccessHandler loginSuccessHandler,
