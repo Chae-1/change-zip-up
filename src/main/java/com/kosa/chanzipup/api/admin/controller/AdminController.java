@@ -2,14 +2,19 @@ package com.kosa.chanzipup.api.admin.controller;
 
 import com.kosa.chanzipup.api.admin.controller.request.AccountSearchCondition;
 import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeCreateRequestDto;
+import com.kosa.chanzipup.api.admin.controller.response.company.AdminCompanyResponse;
+import com.kosa.chanzipup.api.admin.controller.response.member.AdminMemberResponse;
 import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCompanyResponse;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeDetailResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeListResponseDto;
+import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioListResponse;
 import com.kosa.chanzipup.api.admin.service.AccountService;
 import com.kosa.chanzipup.api.admin.service.membership.AdminMembershipService;
 import com.kosa.chanzipup.api.admin.service.notice.NoticeService;
+import com.kosa.chanzipup.api.admin.service.portfolio.PortfolioServiceForAdmin;
 import com.kosa.chanzipup.application.Page;
 import java.util.List;
+import java.util.Optional;
 
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +35,8 @@ public class AdminController {
     private final AdminMembershipService adminMembershipService;
 
     private final NoticeService noticeService;
+
+    private final PortfolioServiceForAdmin portfolioServiceForAdmin;
 
     @GetMapping("/accounts")
     public void getAllAccounts(@PageableDefault Pageable pageable, AccountSearchCondition condition) {
@@ -68,4 +75,38 @@ public class AdminController {
         NoticeDetailResponseDto noticeDetailResponseDto = noticeService.getNoticeById(id);
         return ResponseEntity.ok(noticeDetailResponseDto);
     }
+
+    @GetMapping("/portfolios")
+    public ResponseEntity<Page<List<PortfolioListResponse>>> getAllPortfolios(@PageableDefault Pageable pageable) {
+        log.info("pageable = {}", pageable);
+        Page<List<PortfolioListResponse>> portfolios = portfolioServiceForAdmin.getAllPortfolios(pageable);
+        return ResponseEntity.ok(portfolios);
+    }
+
+    @GetMapping("/members")
+    public ResponseEntity<List<AdminMemberResponse>> getAllMembers() {
+        List<AdminMemberResponse> members = accountService.getAllMembers();
+        return ResponseEntity.ok(members);
+    }
+
+    @GetMapping("/member/{id}")
+    public ResponseEntity<AdminMemberResponse> getMember(@PathVariable Long id) {
+        Optional<AdminMemberResponse> member = accountService.getMemberDetail(id);
+        return member.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/companies")
+    public ResponseEntity<List<AdminCompanyResponse>> getAllCompanies() {
+        List<AdminCompanyResponse> companies = accountService.getAllCompanies();
+        return ResponseEntity.ok(companies);
+    }
+
+    // 특정 회사 상세 조회
+    @GetMapping("/company/{id}")
+    public ResponseEntity<AdminCompanyResponse> getCompanyDetail(@PathVariable Long id) {
+        Optional<AdminCompanyResponse> company = accountService.getCompanyDetail(id);
+        return company.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 }

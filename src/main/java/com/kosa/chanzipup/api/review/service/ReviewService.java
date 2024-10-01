@@ -163,9 +163,6 @@ public class ReviewService {
         reviewRepository.deleteById(reviewId);
         reviewImagesRepository.deleteByReviewId(review.getId());
 
-        // 실제 이미지 삭제
-        imageService.deleteAllImages(imageUrls);
-
         return imageUrls;
     }
 

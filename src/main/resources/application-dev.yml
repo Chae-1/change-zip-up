@@ -13,7 +13,18 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
- # naver oauth2 설정
+
+domain:
+  address: http://localhost:8080
+target:
+  address: http://localhost:3000
+
+file:
+  upload-dir: src/main/resources/static/images
+  location: c:\images
+
+
+  # naver oauth2 설정
  # 반드시 외부파일로 분리
 
   # kakao oauth2 설정

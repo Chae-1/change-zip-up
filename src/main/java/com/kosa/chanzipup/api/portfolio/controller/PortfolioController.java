@@ -93,11 +93,11 @@ public class PortfolioController {
     }
 
     @DeleteMapping("/{portfolioId}")
-    public ResponseEntity<List<String>> deletePortfolio(@PathVariable("portfolioId") Long portfolioId,
-                                                  @AuthenticationPrincipal UnifiedUserDetails userDetails) {
-        List<String> updateContent = portfolioService.deletePortfolio(portfolioId, userDetails.getUsername());
-
-        return ResponseEntity.ok(updateContent);
+    public ResponseEntity<Boolean> deletePortfolio(@PathVariable("portfolioId") Long portfolioId,
+                                                        @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        List<String> deleteUploadImages = portfolioService.deletePortfolio(portfolioId, userDetails.getUsername());
+        imageService.deleteAllImages(deleteUploadImages);
+        return ResponseEntity.ok(true);
     }
 
     @GetMapping("/{portfolioId}/edit")
