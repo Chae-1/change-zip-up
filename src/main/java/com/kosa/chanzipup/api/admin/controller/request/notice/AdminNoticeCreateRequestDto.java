@@ -3,7 +3,7 @@ package com.kosa.chanzipup.api.admin.controller.request.notice;
 import lombok.Getter;
 
 @Getter
-public class NoticeCreateRequestDto {
+public class AdminNoticeCreateRequestDto {
 
     private String title;
 

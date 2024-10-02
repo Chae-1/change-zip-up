@@ -1,4 +1,4 @@
-package com.kosa.chanzipup.api.admin.controller.response.notice;
+package com.kosa.chanzipup.api.notice.controller.response;
 
 import lombok.Builder;
 import lombok.Getter;

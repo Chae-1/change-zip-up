@@ -1,9 +1,9 @@
-package com.kosa.chanzipup.api.admin.service.notice;
+package com.kosa.chanzipup.api.notice.service;
 
-import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeCreateRequestDto;
-import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeUpdateRequestDto;
-import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeDetailResponseDto;
-import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeListResponseDto;
+import com.kosa.chanzipup.api.admin.controller.request.notice.AdminNoticeCreateRequestDto;
+import com.kosa.chanzipup.api.admin.controller.request.notice.AdminNoticeUpdateRequestDto;
+import com.kosa.chanzipup.api.admin.controller.response.notice.AdminNoticeDetailResponseDto;
+import com.kosa.chanzipup.api.admin.controller.response.notice.AdminNoticeListResponseDto;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
 import com.kosa.chanzipup.domain.notice.Notice;
@@ -28,13 +28,13 @@ public class NoticeService {
 
     // 공지 사항 생성
     @Transactional
-    public void createNotice(NoticeCreateRequestDto noticeCreateRequestDto, String email) {
+    public void createNotice(AdminNoticeCreateRequestDto adminNoticeCreateRequestDto, String email) {
         Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         Notice notice = Notice.builder()
-                .title(noticeCreateRequestDto.getTitle())
-                .content(noticeCreateRequestDto.getContent())
+                .title(adminNoticeCreateRequestDto.getTitle())
+                .content(adminNoticeCreateRequestDto.getContent())
                 .email(email)
                 .member(findMember)
                 .build();
@@ -43,10 +43,10 @@ public class NoticeService {
     }
 
     // 전체 공지사항 조회
-    public List<NoticeListResponseDto> getNoticeList() {
+    public List<AdminNoticeListResponseDto> getNoticeList() {
         List<Notice> notices = noticeRepository.findAll();
         return notices.stream()
-                .map(notice -> new NoticeListResponseDto(
+                .map(notice -> new AdminNoticeListResponseDto(
                         notice.getId(),
                         notice.getTitle(),
                         notice.getContent(),
@@ -57,11 +57,11 @@ public class NoticeService {
     }
 
     // 공지사항 ID로 공지사항을 조회합니다.
-    public NoticeDetailResponseDto getNoticeById(Long id) {
+    public AdminNoticeDetailResponseDto getNoticeById(Long id) {
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 공지사항을 찾을 수 없습니다."));
 
-        return new NoticeDetailResponseDto(
+        return new AdminNoticeDetailResponseDto(
                 notice.getId(),
                 notice.getTitle(),
                 notice.getAuthorNickName(),
@@ -71,7 +71,7 @@ public class NoticeService {
     }
 
     @Transactional
-    public void patchNotice(Long id, NoticeUpdateRequestDto noticeUpdateRequestDto, String email) {
+    public void patchNotice(Long id, AdminNoticeUpdateRequestDto adminNoticeUpdateRequestDto, String email) {
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 공지사항을 찾을 수 없습니다."));
 
@@ -81,12 +81,12 @@ public class NoticeService {
         }
 
         // 필드가 null이 아닌 경우에만 업데이트
-        if (noticeUpdateRequestDto.getTitle() != null) {
-            notice.updateTitle(noticeUpdateRequestDto.getTitle());
+        if (adminNoticeUpdateRequestDto.getTitle() != null) {
+            notice.updateTitle(adminNoticeUpdateRequestDto.getTitle());
         }
 
-        if (noticeUpdateRequestDto.getContent() != null) {
-            notice.updateContent(noticeUpdateRequestDto.getContent());
+        if (adminNoticeUpdateRequestDto.getContent() != null) {
+            notice.updateContent(adminNoticeUpdateRequestDto.getContent());
         }
 
         // JPA의 변경 감지 덕분에 별도로 save를 호출할 필요 없음
