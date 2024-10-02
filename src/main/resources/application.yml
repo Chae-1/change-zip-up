@@ -1,9 +1,8 @@
 spring:
   profiles:
-    active: prod
+    active: dev
   config:
     import: "classpath:application-secrets-prod.yml"
-
   servlet:
     multipart:
       enabled: true
