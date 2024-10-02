@@ -47,6 +47,7 @@ public class AdminController {
 
     private final PortfolioServiceForAdmin portfolioServiceForAdmin;
 
+    // 페이징
     @GetMapping("/accounts")
     public void getAllAccounts(@PageableDefault Pageable pageable, AccountSearchCondition condition) {
         log.info("pageable = {}", pageable);
@@ -74,8 +75,8 @@ public class AdminController {
     }
 
     @GetMapping("/notice/list")
-    public ResponseEntity<List<AdminNoticeListResponseDto>> listNotice() {
-        List<AdminNoticeListResponseDto> notices = adminNoticeService.getNoticeList();
+    public ResponseEntity<Page<List<AdminNoticeListResponseDto>>> listNotice(Pageable pageable) {
+        Page<List<AdminNoticeListResponseDto>> notices = adminNoticeService.getNoticeList(pageable.getPageNumber(), pageable.getPageSize());
         return ResponseEntity.ok(notices);
     }
 
@@ -109,10 +110,12 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
+    // /list?page=0&size=5
     @GetMapping("/faq/list")
-    public ResponseEntity<List<AdminFAQListResponseDto>> listFAQ() {
-        List<AdminFAQListResponseDto> faqs = adminFaqService.getFAQList();
-        return ResponseEntity.ok(faqs);
+    public ResponseEntity<Page<List<AdminFAQListResponseDto>>> listFAQ(Pageable pageable) {
+        Page<List<AdminFAQListResponseDto>> faqList = adminFaqService.getFAQList(pageable.getPageNumber(), pageable.getPageSize());
+
+        return ResponseEntity.ok(faqList);
     }
 
     @GetMapping("/faq/{id}")
@@ -144,6 +147,7 @@ public class AdminController {
         return ResponseEntity.ok(portfolios);
     }
 
+    // 페이징
     @GetMapping("/members")
     public ResponseEntity<List<AdminMemberResponse>> getAllMembers() {
         List<AdminMemberResponse> members = accountService.getAllMembers();
@@ -207,5 +211,4 @@ public class AdminController {
         adminMembershipService.deleteMembershipType(id);
         return ResponseEntity.ok().build();
     }
-
 }
