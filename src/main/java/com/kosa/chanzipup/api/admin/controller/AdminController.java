@@ -56,7 +56,6 @@ public class AdminController {
 
     private final ReviewServiceForAdmin reviewServiceForAdmin;
 
-    // 페이징
     @GetMapping("/accounts")
     public void getAllAccounts(@PageableDefault Pageable pageable, AccountSearchCondition condition) {
         log.info("pageable = {}", pageable);
@@ -189,10 +188,9 @@ public class AdminController {
         return ResponseEntity.ok(true);
     }
 
-    // 페이징
     @GetMapping("/members")
-    public ResponseEntity<List<AdminMemberResponse>> getAllMembers() {
-        List<AdminMemberResponse> members = accountService.getAllMembers();
+    public ResponseEntity<Page<List<AdminMemberResponse>>> getAllMembers(Pageable pageable) {
+        Page<List<AdminMemberResponse>> members = accountService.getAllMembers(pageable.getPageSize(), pageable.getPageNumber());
         return ResponseEntity.ok(members);
     }
 
@@ -203,8 +201,8 @@ public class AdminController {
     }
 
     @GetMapping("/companies")
-    public ResponseEntity<List<AdminCompanyResponse>> getAllCompanies() {
-        List<AdminCompanyResponse> companies = accountService.getAllCompanies();
+    public ResponseEntity<Page<List<AdminCompanyResponse>>> getAllCompanies(Pageable pageable) {
+        Page<List<AdminCompanyResponse>> companies = accountService.getAllCompanies(pageable.getPageNumber(), pageable.getPageSize());
         return ResponseEntity.ok(companies);
     }
 
