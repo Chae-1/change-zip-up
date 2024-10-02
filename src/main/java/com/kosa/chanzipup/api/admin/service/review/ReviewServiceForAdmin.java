@@ -10,7 +10,6 @@ import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,11 +38,8 @@ public class ReviewServiceForAdmin {
     private final ReviewImagesRepository reviewImagesRepository;
 
     // 시공 후기 목록 조회
-    public Page<List<ReviewListResponse>> getAllReviews(Pageable pageable) {
+    public Page<List<ReviewListResponse>> getAllReviews(int pageSize, int pageNumber) {
         List<Review> reviews = reviewRepository.findAllWithAll();
-
-        int pageSize = pageable.getPageSize();
-        int pageNumber = pageable.getPageNumber();
 
         List<ReviewListResponse> reviewListResponses = reviews
                 .stream()

@@ -65,13 +65,9 @@ public class AdminController {
 
 
     @GetMapping("/memberships")
-    public ResponseEntity<Page<List<MembershipCompanyResponse>>> getAllMembershipAccounts(
-            @PageableDefault Pageable pageable
-    ) {
+    public ResponseEntity<Page<List<MembershipCompanyResponse>>> getAllMembershipAccounts(@PageableDefault Pageable pageable) {
         log.info("pageable = {}", pageable);
-        return ResponseEntity.ok(
-                adminMembershipService.getAllMembershipCompanies(pageable)
-        );
+        return ResponseEntity.ok(adminMembershipService.getAllMembershipCompanies(pageable.getPageSize(), pageable.getPageNumber()));
     }
 
     @PostMapping("/notice/create")
@@ -118,7 +114,6 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
-    // /list?page=0&size=5
     @GetMapping("/faq/list")
     public ResponseEntity<Page<List<AdminFAQListResponseDto>>> listFAQ(Pageable pageable) {
         Page<List<AdminFAQListResponseDto>> faqList = adminFaqService.getFAQList(pageable.getPageNumber(), pageable.getPageSize());
@@ -151,7 +146,7 @@ public class AdminController {
     @GetMapping("/portfolios")
     public ResponseEntity<Page<List<PortfolioListResponse>>> getAllPortfolios(@PageableDefault Pageable pageable) {
         log.info("pageable = {}", pageable);
-        Page<List<PortfolioListResponse>> portfolios = portfolioServiceForAdmin.getAllPortfolios(pageable);
+        Page<List<PortfolioListResponse>> portfolios = portfolioServiceForAdmin.getAllPortfolios(pageable.getPageSize(), pageable.getPageNumber());
         return ResponseEntity.ok(portfolios);
     }
 
@@ -171,7 +166,7 @@ public class AdminController {
     @GetMapping("/reviews")
     public ResponseEntity<Page<List<ReviewListResponse>>> getAllReviews(@PageableDefault Pageable pageable) {
         log.info("pageable = {}", pageable);
-        Page<List<ReviewListResponse>> reviews = reviewServiceForAdmin.getAllReviews(pageable);
+        Page<List<ReviewListResponse>> reviews = reviewServiceForAdmin.getAllReviews(pageable.getPageSize(), pageable.getPageNumber());
         return ResponseEntity.ok(reviews);
     }
 
