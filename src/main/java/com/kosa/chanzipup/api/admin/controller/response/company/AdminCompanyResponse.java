@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 public class AdminCompanyResponse {
@@ -20,4 +22,5 @@ public class AdminCompanyResponse {
     private double rating;
     private String membership;
     private LocalDate createAt;
+    private List<String> services;
 }

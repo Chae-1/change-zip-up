@@ -4,6 +4,7 @@ import com.kosa.chanzipup.api.admin.controller.request.notice.AdminNoticeCreateR
 import com.kosa.chanzipup.api.admin.controller.request.notice.AdminNoticeUpdateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.response.notice.AdminNoticeDetailResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.notice.AdminNoticeListResponseDto;
+import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
 import com.kosa.chanzipup.domain.notice.Notice;
@@ -43,9 +44,9 @@ public class AdminNoticeService {
     }
 
     // 전체 공지사항 조회
-    public List<AdminNoticeListResponseDto> getNoticeList() {
+    public Page<List<AdminNoticeListResponseDto>> getNoticeList(int pageNumber, int pageSize) {
         List<Notice> notices = noticeRepository.findAll();
-        return notices.stream()
+        return Page.of(notices.stream()
                 .map(notice -> new AdminNoticeListResponseDto(
                         notice.getId(),
                         notice.getTitle(),
@@ -53,7 +54,7 @@ public class AdminNoticeService {
                         notice.getAuthorNickName(),
                         LocalDate.from(notice.getUpdateDate())
                 ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()), pageSize, pageNumber);
     }
 
     // 공지사항 ID로 공지사항을 조회합니다.
