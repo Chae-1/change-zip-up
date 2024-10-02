@@ -3,16 +3,19 @@ package com.kosa.chanzipup.api.admin.service;
 import com.kosa.chanzipup.api.admin.controller.request.AccountSearchCondition;
 import com.kosa.chanzipup.api.admin.controller.response.company.AdminCompanyResponse;
 import com.kosa.chanzipup.api.admin.controller.response.member.AdminMemberResponse;
+import com.kosa.chanzipup.domain.account.AccountRole;
 import com.kosa.chanzipup.domain.account.AdminAccountRepository;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
+import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.Role;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,7 +36,7 @@ public class AccountService {
 
     // 모든 멤버 조회
     public List<AdminMemberResponse> getAllMembers() {
-        List<Member> members = memberRepository.findAll();
+        List<Member> members = memberRepository.findByAccountRole(AccountRole.USER);
 
         return members.stream()
                 .map(member -> new AdminMemberResponse(
@@ -80,8 +83,10 @@ public class AccountService {
                         company.getOwner(),
                         company.getRating(),
                         company.getActiveMembership() != null ? company.getActiveMembership().getMembershipName().name() : null,
-                        company.getCreatedDateTime().toLocalDate()
-
+                        company.getCreatedDateTime().toLocalDate(),
+                        company.getConstructionTypes().stream()
+                                .map(companyConstructionType -> companyConstructionType.getConstructionType().getName()) // CompanyConstructionType에서 ConstructionType 추출
+                                .collect(Collectors.toList())
                 ))
                 .collect(Collectors.toList());
     }
@@ -102,8 +107,10 @@ public class AccountService {
                         company.getOwner(),
                         company.getRating(),
                         company.getActiveMembership() != null ? company.getActiveMembership().getMembershipName().name() : null,
-                        company.getCreatedDateTime().toLocalDate()
-
+                        company.getCreatedDateTime().toLocalDate(),
+                        company.getConstructionTypes().stream()
+                                .map(companyConstructionType -> companyConstructionType.getConstructionType().getName()) // CompanyConstructionType에서 ConstructionType 추출
+                                .collect(Collectors.toList())
                 ));
     }
 }

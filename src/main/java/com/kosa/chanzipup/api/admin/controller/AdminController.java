@@ -183,29 +183,4 @@ public class AdminController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // 멤버십 타입 생성
-    @PostMapping("/membership")
-    public ResponseEntity<MembershipType> createMembershipType(@RequestBody MembershipType membershipType) {
-        MembershipType createdMembershipType = adminMembershipService.createMembershipType(membershipType);
-        return ResponseEntity.ok(createdMembershipType);
-    }
-
-    // 멤버십 타입 수정
-    @PatchMapping("/membership/{id}")
-    public ResponseEntity<MembershipType> updateMembershipType(
-            @PathVariable Long id,
-            @RequestBody MembershipType updatedMembershipType
-    ) {
-        Optional<MembershipType> membershipType = adminMembershipService.updateMembershipType(id, updatedMembershipType);
-        return membershipType.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    // 멤버십 타입 삭제
-    @DeleteMapping("/membership/{id}")
-    public ResponseEntity<Void> deleteMembershipType(@PathVariable Long id) {
-        adminMembershipService.deleteMembershipType(id);
-        return ResponseEntity.ok().build();
-    }
-
 }
