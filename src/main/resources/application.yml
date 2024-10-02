@@ -3,7 +3,6 @@ spring:
     active: prod
   config:
     import: "classpath:application-secrets-prod.yml"
-
   servlet:
     multipart:
       enabled: true
