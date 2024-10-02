@@ -2,7 +2,7 @@ spring:
   config:
     import: "application-secrets-prod.yml"
   datasource:
-    url: jdbc:h2:tcp://localhost/~/changzipuptest
+    url: jdbc:h2:mem:changzipuptest
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -22,7 +22,5 @@ target:
 
 file:
   upload-dir: src/main/resources/static/images
-
-
 domain:
   address: http://localhost:8080
