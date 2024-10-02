@@ -4,6 +4,7 @@ import com.kosa.chanzipup.api.admin.controller.request.faq.FAQCreateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.request.faq.FAQUpdateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.response.faq.AdminFAQDetailResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.faq.AdminFAQListResponseDto;
+import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
 import com.kosa.chanzipup.domain.faq.FAQ;
@@ -43,9 +44,9 @@ public class AdminFAQService {
     }
 
     // 전체 FAQ 조회
-    public List<AdminFAQListResponseDto> getFAQList() {
+    public Page<List<AdminFAQListResponseDto>> getFAQList(int pageNumber, int pageSize) {
         List<FAQ> faqs = faqRepository.findAll();
-        return faqs.stream()
+        return Page.of(faqs.stream()
                 .map(faq -> new AdminFAQListResponseDto(
                         faq.getId(),
                         faq.getTitle(),
@@ -53,7 +54,7 @@ public class AdminFAQService {
                         faq.getAuthorNickName(),
                         LocalDate.from(faq.getUpdateDate())
                 ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()), pageSize, pageNumber);
     }
 
     @Transactional
