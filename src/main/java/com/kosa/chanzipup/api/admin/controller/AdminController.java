@@ -10,18 +10,23 @@ import com.kosa.chanzipup.api.admin.controller.response.faq.AdminFAQDetailRespon
 import com.kosa.chanzipup.api.admin.controller.response.faq.AdminFAQListResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.member.AdminMemberResponse;
 import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCompanyResponse;
+import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioDetailResponse;
 import com.kosa.chanzipup.api.admin.controller.response.notice.AdminNoticeDetailResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.notice.AdminNoticeListResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioListResponse;
+import com.kosa.chanzipup.api.admin.controller.response.review.ReviewDetailResponse;
+import com.kosa.chanzipup.api.admin.controller.response.review.ReviewListResponse;
 import com.kosa.chanzipup.api.admin.service.AccountService;
 import com.kosa.chanzipup.api.admin.service.faq.AdminFAQService;
 import com.kosa.chanzipup.api.admin.service.membership.AdminMembershipService;
 import com.kosa.chanzipup.api.admin.service.notice.AdminNoticeService;
 import com.kosa.chanzipup.api.admin.service.portfolio.PortfolioServiceForAdmin;
+import com.kosa.chanzipup.api.admin.service.review.ReviewServiceForAdmin;
 import com.kosa.chanzipup.application.Page;
 import java.util.List;
 import java.util.Optional;
 
+import com.kosa.chanzipup.application.images.ImageService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.membership.MembershipType;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +51,10 @@ public class AdminController {
     private final AdminFAQService adminFaqService;
 
     private final PortfolioServiceForAdmin portfolioServiceForAdmin;
+
+    private final ImageService imageService;
+
+    private final ReviewServiceForAdmin reviewServiceForAdmin;
 
     // 페이징
     @GetMapping("/accounts")
@@ -145,6 +154,39 @@ public class AdminController {
         log.info("pageable = {}", pageable);
         Page<List<PortfolioListResponse>> portfolios = portfolioServiceForAdmin.getAllPortfolios(pageable);
         return ResponseEntity.ok(portfolios);
+    }
+
+    @GetMapping("/portfolios/{id}")
+    public ResponseEntity<PortfolioDetailResponse> getPortfolioById(@PathVariable Long id) {
+        PortfolioDetailResponse portfolio = portfolioServiceForAdmin.getPortfolioById(id);
+        return ResponseEntity.ok(portfolio);
+    }
+
+    @DeleteMapping("/portfolios/{id}")
+    public ResponseEntity<Boolean> deletePortfolio(@PathVariable("id") Long id) {
+        List<String> deleteUploadImages = portfolioServiceForAdmin.deletePortfolio(id);
+        imageService.deleteAllImages(deleteUploadImages);
+        return ResponseEntity.ok(true);
+    }
+
+    @GetMapping("/reviews")
+    public ResponseEntity<Page<List<ReviewListResponse>>> getAllReviews(@PageableDefault Pageable pageable) {
+        log.info("pageable = {}", pageable);
+        Page<List<ReviewListResponse>> reviews = reviewServiceForAdmin.getAllReviews(pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/reviews/{id}")
+    public ResponseEntity<ReviewDetailResponse> getReviewById(@PathVariable Long id) {
+        ReviewDetailResponse review = reviewServiceForAdmin.getUserDetail(id);
+        return ResponseEntity.ok(review);
+    }
+
+    @DeleteMapping("/reviews/{id}")
+    public ResponseEntity<Boolean> deleteReview(@PathVariable("id") Long id) {
+        List<String> deleteUploadImages = reviewServiceForAdmin.deleteReview(id);
+        imageService.deleteAllImages(deleteUploadImages);
+        return ResponseEntity.ok(true);
     }
 
     // 페이징
