@@ -12,6 +12,7 @@ import com.kosa.chanzipup.api.admin.controller.response.member.AdminMemberRespon
 import com.kosa.chanzipup.api.admin.controller.response.membership.MembershipCompanyResponse;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeDetailResponseDto;
 import com.kosa.chanzipup.api.admin.controller.response.notice.NoticeListResponseDto;
+import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioDetailResponse;
 import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioListResponse;
 import com.kosa.chanzipup.api.admin.controller.response.review.ReviewDetailResponse;
 import com.kosa.chanzipup.api.admin.controller.response.review.ReviewListResponse;
@@ -21,7 +22,6 @@ import com.kosa.chanzipup.api.admin.service.membership.AdminMembershipService;
 import com.kosa.chanzipup.api.admin.service.notice.NoticeService;
 import com.kosa.chanzipup.api.admin.service.portfolio.PortfolioServiceForAdmin;
 import com.kosa.chanzipup.api.admin.service.review.ReviewServiceForAdmin;
-import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioDetailResponse;
 import com.kosa.chanzipup.application.Page;
 import java.util.List;
 import java.util.Optional;

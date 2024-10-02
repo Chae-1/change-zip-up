@@ -1,7 +1,7 @@
 package com.kosa.chanzipup.api.admin.service.portfolio;
 
+import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioDetailResponse;
 import com.kosa.chanzipup.api.admin.controller.response.portfolio.PortfolioListResponse;
-import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioDetailResponse;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.portfolio.*;

@@ -7,6 +7,7 @@ import com.kosa.chanzipup.api.review.controller.response.ReviewImageResponse;
 import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.review.*;
 import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -32,8 +33,6 @@ public class ReviewServiceForAdmin {
     private final ReviewRepository reviewRepository;
 
     private final JPAQueryFactory factory;
-
-    private final ReviewDetailResponse reviewDetailResponse;
 
     private final ReviewConstructionTypeRepository reviewConstructionTypeRepository;
 
@@ -74,9 +73,10 @@ public class ReviewServiceForAdmin {
                 constructor(ReviewDetailResponse.class, review.id.as("reviewId"), review.content, review.title,
                         review.regDate, review.workStartDate,
                         review.workEndDate, review.rating, review.totalPrice, review.floor,
-                        company.id.as("companyId"), company.companyName,
-                        member.nickName.as("memberNickName"), member.id.as("memberId"),
-                        buildingType.name.as("buildingTypeName"), company.companyLogoUrl, company.address);
+                        company.companyName,
+                        member.nickName.as("memberNickName"),
+                        Expressions.asSimple(reviewImageResponses), Expressions.asSimple(reviewConstructionTypeResponses),
+                        buildingType.name.as("buildingTypeName"));
 
         ReviewDetailResponse reviewDetail = factory.select(constructor)
                 .from(review)
