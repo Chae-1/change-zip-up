@@ -46,6 +46,7 @@ public class PortfolioServiceForAdmin {
                 .stream()
                 .map(portfolio -> new PortfolioListResponse(portfolio, types.get(portfolio.getId())))
                 .toList();
+
         return Page.of(portfolioListResponses, pageSize, pageNumber);
     }
 }

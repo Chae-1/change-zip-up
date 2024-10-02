@@ -54,3 +54,18 @@ jobs:
       - name: Push Docker image to Docker Hub
         run: docker push hyeongil100/changzipup-repo:latest
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Dev
+        uses: appleboy/ssh-action@master
+        with:
+          username: ubuntu
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+            cd /usr/local/bin
+            chmod 777 ./deploy.sh
+            ./deploy.sh
+            docker image prune -f
