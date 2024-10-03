@@ -19,6 +19,7 @@ import com.kosa.chanzipup.api.admin.service.membership.AdminMembershipService;
 import com.kosa.chanzipup.api.admin.service.notice.NoticeService;
 import com.kosa.chanzipup.api.admin.service.portfolio.PortfolioServiceForAdmin;
 import com.kosa.chanzipup.application.Page;
+import com.kosa.chanzipup.domain.payment.RefundService;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +48,8 @@ public class AdminController {
 
     private final PortfolioServiceForAdmin portfolioServiceForAdmin;
 
+    private final RefundService refundService;
+
     @GetMapping("/accounts")
     public void getAllAccounts(@PageableDefault Pageable pageable, AccountSearchCondition condition) {
         log.info("pageable = {}", pageable);
@@ -65,9 +68,19 @@ public class AdminController {
         );
     }
 
+
+    @PostMapping("/memberships/{id}/refund")
+    public ResponseEntity<Boolean> refundMembership(@PathVariable("id") Long membershipId) {
+        String paymentIdByMembership = adminMembershipService.refundMembership(
+                membershipId);// membershipId로 조회한다.
+        refundService.refundBy(paymentIdByMembership);
+        return ResponseEntity.ok(true);
+    }
+
+
     @PostMapping("/notice/create")
     public ResponseEntity<Void> createNotice(@AuthenticationPrincipal UnifiedUserDetails userDetails
-            , @RequestBody NoticeCreateRequestDto noticeCreateRequestDto) {
+            ,@RequestBody NoticeCreateRequestDto noticeCreateRequestDto) {
         String email = userDetails.getUsername();
         noticeService.createNotice(noticeCreateRequestDto, email);
         return ResponseEntity.ok().build();

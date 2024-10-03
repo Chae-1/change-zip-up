@@ -28,4 +28,11 @@ public class AdminMembershipQueryRepository {
                 .orderBy(membership.startDateTime.desc())
                 .fetch();
     }
+
+    public Membership findByIdWithPayment(Long membershipId) {
+        return factory.selectFrom(membership)
+                .leftJoin(membership.payment, payment).fetchJoin()
+                .where(membership.id.eq(membershipId))
+                .fetchOne();
+    }
 }

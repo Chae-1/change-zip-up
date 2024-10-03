@@ -5,6 +5,7 @@ import com.kosa.chanzipup.api.admin.service.membership.query.AdminMembershipQuer
 import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.membership.Membership;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,6 +64,14 @@ public class AdminMembershipService {
     // 멤버십 타입 삭제
     public void deleteMembershipType(Long id) {
         membershipTypeRepository.deleteById(id);
+    }
+
+    public String refundMembership(Long membershipId) {
+        Membership membership = adminMembershipQueryRepository.findByIdWithPayment(membershipId);
+
+        LocalDateTime refundDateTime = LocalDateTime.now();
+        membership.refundPayment(refundDateTime);
+        return membership.getPayment().getImpUid();
     }
 }
 

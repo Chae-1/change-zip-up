@@ -36,6 +36,9 @@ jobs:
           echo "${{secrets.SECRET_PROPERTIES}}" > ./application-secrets-prod.yml
         shell: bash
 
+      - name: listing resources
+        run: ls -la src/main/resources
+
         # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
       # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
       - name: Grant execute permission for gradlew
