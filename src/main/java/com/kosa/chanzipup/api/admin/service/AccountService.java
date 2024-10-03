@@ -3,6 +3,8 @@ package com.kosa.chanzipup.api.admin.service;
 import com.kosa.chanzipup.api.admin.controller.request.AccountSearchCondition;
 import com.kosa.chanzipup.api.admin.controller.response.company.AdminCompanyResponse;
 import com.kosa.chanzipup.api.admin.controller.response.member.AdminMemberResponse;
+import com.kosa.chanzipup.application.Page;
+import com.kosa.chanzipup.domain.account.AccountRole;
 import com.kosa.chanzipup.domain.account.AdminAccountRepository;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
@@ -32,10 +34,10 @@ public class AccountService {
     }
 
     // 모든 멤버 조회
-    public List<AdminMemberResponse> getAllMembers() {
-        List<Member> members = memberRepository.findAll();
+    public Page<List<AdminMemberResponse>> getAllMembers(int pageSize, int pageNumber) {
+        List<Member> members = memberRepository.findByAccountRole(AccountRole.USER);
 
-        return members.stream()
+        return Page.of(members.stream()
                 .map(member -> new AdminMemberResponse(
                         member.getId(),
                         member.getName(),
@@ -45,7 +47,7 @@ public class AccountService {
                         member.getPhoneNumber(),
                         member.isVerified()
                 ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()),pageSize, pageNumber);
     }
 
     // 특정 멤버 상세 조회
@@ -63,10 +65,10 @@ public class AccountService {
     }
 
     // 모든 회사 조회
-    public List<AdminCompanyResponse> getAllCompanies() {
+    public Page<List<AdminCompanyResponse>> getAllCompanies(int pageNumber, int pageSize) {
         List<Company> companies = companyRepository.findAll();
 
-        return companies.stream()
+        return Page.of(companies.stream()
                 .map(company -> new AdminCompanyResponse(
                         company.getId(),
                         company.getCompanyName(),
@@ -80,10 +82,12 @@ public class AccountService {
                         company.getOwner(),
                         company.getRating(),
                         company.getActiveMembership() != null ? company.getActiveMembership().getMembershipName().name() : null,
-                        company.getCreatedDateTime().toLocalDate()
-
+                        company.getCreatedDateTime().toLocalDate(),
+                        company.getConstructionTypes().stream()
+                                .map(companyConstructionType -> companyConstructionType.getConstructionType().getName()) // CompanyConstructionType에서 ConstructionType 추출
+                                .collect(Collectors.toList())
                 ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()), pageSize, pageNumber);
     }
 
     // 특정 회사 상세 조회
@@ -102,8 +106,10 @@ public class AccountService {
                         company.getOwner(),
                         company.getRating(),
                         company.getActiveMembership() != null ? company.getActiveMembership().getMembershipName().name() : null,
-                        company.getCreatedDateTime().toLocalDate()
-
+                        company.getCreatedDateTime().toLocalDate(),
+                        company.getConstructionTypes().stream()
+                                .map(companyConstructionType -> companyConstructionType.getConstructionType().getName()) // CompanyConstructionType에서 ConstructionType 추출
+                                .collect(Collectors.toList())
                 ));
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public class ApiResponse<T> {
 
     private T data;
+
     private HttpStatus httpStatus;
     private String message;
     private int code;

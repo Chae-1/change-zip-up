@@ -2,14 +2,13 @@ package com.kosa.chanzipup.api.admin.service.faq;
 
 import com.kosa.chanzipup.api.admin.controller.request.faq.FAQCreateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.request.faq.FAQUpdateRequestDto;
-import com.kosa.chanzipup.api.admin.controller.request.notice.NoticeUpdateRequestDto;
-import com.kosa.chanzipup.api.admin.controller.response.faq.FAQDetailResponseDto;
-import com.kosa.chanzipup.api.admin.controller.response.faq.FAQListResponseDto;
+import com.kosa.chanzipup.api.admin.controller.response.faq.AdminFAQDetailResponseDto;
+import com.kosa.chanzipup.api.admin.controller.response.faq.AdminFAQListResponseDto;
+import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.account.member.MemberRepository;
 import com.kosa.chanzipup.domain.faq.FAQ;
 import com.kosa.chanzipup.domain.faq.FAQRepository;
-import com.kosa.chanzipup.domain.notice.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
-public class FAQService {
+public class AdminFAQService {
 
     private final MemberRepository memberRepository;
     private final FAQRepository faqRepository;
@@ -45,25 +44,25 @@ public class FAQService {
     }
 
     // 전체 FAQ 조회
-    public List<FAQListResponseDto> getFAQList() {
+    public Page<List<AdminFAQListResponseDto>> getFAQList(int pageNumber, int pageSize) {
         List<FAQ> faqs = faqRepository.findAll();
-        return faqs.stream()
-                .map(faq -> new FAQListResponseDto(
+        return Page.of(faqs.stream()
+                .map(faq -> new AdminFAQListResponseDto(
                         faq.getId(),
                         faq.getTitle(),
                         faq.getContent(),
                         faq.getAuthorNickName(),
                         LocalDate.from(faq.getUpdateDate())
                 ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()), pageSize, pageNumber);
     }
 
     @Transactional
-    public FAQDetailResponseDto getFAQById(Long id) {
+    public AdminFAQDetailResponseDto getFAQById(Long id) {
         FAQ faq = faqRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 FAQ를 찾을 수 없습니다."));
 
-        return new FAQDetailResponseDto(
+        return new AdminFAQDetailResponseDto(
                 faq.getId(),
                 faq.getTitle(),
                 faq.getAuthorNickName(),

@@ -28,4 +28,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("select r from Review r where r.member.email = :email")
     @EntityGraph(attributePaths = {"member", "company", "buildingType"})
     List<Review> findAllByMemberEmailWithAll(@Param("email") String email);
+
+    //같은 쿼리인데 관리자용으로 쓰려고 했어요
+    @Query("select r from Review r left join fetch r.member m"
+            +" left join fetch r.reviewImages images"
+            +" where r.id = :reviewId")
+    Optional<Review> findByIdAndUserEmailForAdmin(@Param("reviewId") Long reviewId);
 }

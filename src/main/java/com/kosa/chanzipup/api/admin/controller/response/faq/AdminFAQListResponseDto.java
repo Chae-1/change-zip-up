@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 
 @Getter
-public class FAQListResponseDto {
+public class AdminFAQListResponseDto {
 
     private Long id;
     private String title;
@@ -15,7 +15,7 @@ public class FAQListResponseDto {
     private LocalDate updateDate;
 
     @Builder
-    public FAQListResponseDto(Long id, String title, String content, String authorName, LocalDate updateDate) {
+    public AdminFAQListResponseDto(Long id, String title, String content, String authorName, LocalDate updateDate) {
         this.id = id;
         this.title = title;
         this.content = content;

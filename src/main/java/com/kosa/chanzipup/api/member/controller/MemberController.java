@@ -27,6 +27,7 @@ public class MemberController {
     @PostMapping
     public ResponseEntity<MemberRegisterResponse> addLocalMember(@RequestBody @Valid MemberRegisterRequest registerRequest) {
         //HTTP 요청의 본문(body)에서 데이터를 가져와서 MemberRegisterRequest 객체로 변환
+
         MemberRegisterResponse savedMember = memberService.registerMember(registerRequest);
         return ResponseEntity.ok(savedMember);
         // HTTP 200 응답반환

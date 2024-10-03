@@ -12,7 +12,6 @@ import java.util.Optional;
 import com.kosa.chanzipup.domain.membership.MembershipType;
 import com.kosa.chanzipup.domain.membership.MembershipTypeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +23,8 @@ public class AdminMembershipService {
     private final AdminMembershipQueryRepository adminMembershipQueryRepository;
     private final MembershipTypeRepository membershipTypeRepository;
 
-    public Page<List<MembershipCompanyResponse>> getAllMembershipCompanies(Pageable pageable) {
+    public Page<List<MembershipCompanyResponse>> getAllMembershipCompanies(int pageSize, int pageNumber) {
         List<Membership> memberships = adminMembershipQueryRepository.getAllMembershipCompany();
-
-        int pageSize = pageable.getPageSize();
-        int pageNumber = pageable.getPageNumber();
 
         List<MembershipCompanyResponse> membershipCompanyResponses = memberships
                 .stream()
@@ -66,6 +62,7 @@ public class AdminMembershipService {
         membershipTypeRepository.deleteById(id);
     }
 
+    @Transactional
     public String refundMembership(Long membershipId) {
         Membership membership = adminMembershipQueryRepository.findByIdWithPayment(membershipId);
 

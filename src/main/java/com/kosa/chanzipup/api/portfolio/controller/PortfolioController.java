@@ -69,8 +69,10 @@ public class PortfolioController {
 
     // 시공사례 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<PortfolioDetailResponse> getPortfolioById(@PathVariable long id) {
-        PortfolioDetailResponse portfolio = portfolioService.getPortfolioById(id);
+    public ResponseEntity<PortfolioDetailResponse> getPortfolioById(@PathVariable long id,
+                                                                    @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+
+        PortfolioDetailResponse portfolio = portfolioService.getPortfolioById(id, userDetails);
         return ResponseEntity.ok(portfolio);
     }
 

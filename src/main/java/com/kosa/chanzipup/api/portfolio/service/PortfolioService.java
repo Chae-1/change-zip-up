@@ -9,6 +9,7 @@ import com.kosa.chanzipup.api.portfolio.controller.response.PortfolioRegisterRes
 
 import com.kosa.chanzipup.application.Page;
 
+import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +108,7 @@ public class PortfolioService {
     }
 
     // 시공사례 상세 조회
-    public PortfolioDetailResponse getPortfolioById(Long id) {
+    public PortfolioDetailResponse getPortfolioById(Long id, UnifiedUserDetails userDetails) {
         Portfolio portfolio = portfolioRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid portfolio ID: " + id));
 
