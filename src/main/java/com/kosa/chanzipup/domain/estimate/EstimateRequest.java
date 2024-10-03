@@ -137,4 +137,8 @@ public class EstimateRequest extends BaseEntity {
             throw new IllegalArgumentException("estimate가 존재하지 않습니다.");
         });
     }
+
+    public void writtenReview() {
+        this.status = EstimateRequestStatus.WRITTENREVIEW;
+    }
 }
