@@ -154,7 +154,7 @@ public class EstimateQueryService {
                 .leftJoin(estimate.company, company)
                 .leftJoin(estimate.estimateRequest, estimateRequest).fetchJoin() // 1
                 .leftJoin(estimate.estimatePrices, estimatePrice).fetchJoin()
-                .where(estimateRequest.id.eq(requestId), estimate.estimateStatus.eq(EstimateStatus.SENT)) // requestId 에 대한 요청이면서 업체가 보낸 견적이면
+                .where(estimateRequest.id.eq(requestId), estimate.estimateStatus.in(EstimateStatus.SENT, COMPLETE)) // requestId 에 대한 요청이면서 업체가 보낸 견적이면
                 .fetch();
 
         Map<Company, List<Estimate>> companyEstimates = fetch.stream()
