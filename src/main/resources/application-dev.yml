@@ -15,6 +15,7 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
 
+
 domain:
   address: http://localhost:8080
 target:
