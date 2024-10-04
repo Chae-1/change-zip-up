@@ -10,6 +10,7 @@ import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
 import com.kosa.chanzipup.domain.membership.MembershipRegisterException;
 import com.kosa.chanzipup.domain.payment.PaymentResult;
 
+import com.kosa.chanzipup.domain.payment.RefundService;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -31,6 +32,8 @@ public class MembershipController {
     private final MembershipService membershipService;
 
     private final PaymentService paymentService;
+
+    private final RefundService refundService;
 
     @PostMapping
     public ApiResponse<MembershipResponse> subscribeToMembership(@AuthenticationPrincipal UserDetails userDetails,
@@ -61,4 +64,14 @@ public class MembershipController {
     public ResponseEntity<Boolean> isMembershipCompany(@AuthenticationPrincipal UnifiedUserDetails userDetails) {
         return ResponseEntity.ok(membershipService.isMembershipCompany(userDetails.getUsername()));
     }
+
+
+    @PatchMapping("/{membershipId}/refund")
+    public ResponseEntity<Boolean> refundMembership(@AuthenticationPrincipal UnifiedUserDetails userDetails,
+                                                    @PathVariable("membershipId") Long membershipId) {
+        String uid = membershipService.refundMembership(membershipId);
+        refundService.refundBy(uid);
+        return ResponseEntity.ok(true);
+    }
+
 }

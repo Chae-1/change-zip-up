@@ -84,4 +84,14 @@ public class MembershipService {
 
         return membership.isPresent();
     }
+
+    @Transactional
+    public String refundMembership(Long membershipId) {
+        Membership membership = membershipRepository.findByIdWithPayment(membershipId)
+                .orElseThrow(() -> new IllegalArgumentException());
+
+        membership.refundPayment(LocalDateTime.now());
+
+        return membership.getPayment().getImpUid();
+    }
 }

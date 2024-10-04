@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class MembershipHistories {
+    private Long id;
     private int price;
     private String typeName;
     private LocalDate startDate;
@@ -19,6 +20,7 @@ public class MembershipHistories {
 
     public MembershipHistories(Membership membership) {
         MembershipType membershipType = membership.getMembershipType();
+        this.id = membership.getId();
         Company company = membership.getCompany();
         this.price = membershipType.getPrice();
         this.typeName = String.valueOf(membershipType.getName());
