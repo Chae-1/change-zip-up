@@ -7,12 +7,13 @@ import com.kosa.chanzipup.api.memberships.service.MembershipService;
 import com.kosa.chanzipup.api.payment.controller.request.PaymentConfirmation;
 import com.kosa.chanzipup.api.payment.service.PaymentService;
 import com.kosa.chanzipup.config.security.userdetail.UnifiedUserDetails;
-import com.kosa.chanzipup.domain.membership.MembershipId;
 import com.kosa.chanzipup.domain.membership.MembershipRegisterException;
 import com.kosa.chanzipup.domain.payment.PaymentResult;
 
 import jakarta.validation.Valid;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class MembershipController {
 
     private final MembershipService membershipService;
+
     private final PaymentService paymentService;
 
     @PostMapping
@@ -50,6 +52,13 @@ public class MembershipController {
     @PreAuthorize("ROLE_COMPANY")
     public ResponseEntity<List<MembershipHistories>> getAllMembershipHistories(@AuthenticationPrincipal
                                                                                UnifiedUserDetails userDetails) {
-        return ResponseEntity.ok(membershipService.getAllMembershipHistories(userDetails.getUsername()));
+        return ResponseEntity.ok(membershipService
+                .getAllMembershipHistories(userDetails.getUsername()));
+    }
+
+
+    @GetMapping("/isjoin")
+    public ResponseEntity<Boolean> isMembershipCompany(@AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        return ResponseEntity.ok(membershipService.isMembershipCompany(userDetails.getUsername()));
     }
 }

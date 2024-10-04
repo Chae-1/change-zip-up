@@ -133,9 +133,9 @@ public class EstimateQueryService {
 
         List<EstimateRequest> requests = factory.select(estimateRequest)
                 .from(estimateRequest)
-                .leftJoin(estimateRequest.member, member).fetchJoin() // 1
-                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin() // 1
-                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin() // n
+                .leftJoin(estimateRequest.member, member).fetchJoin()
+                .leftJoin(estimateRequest.buildingType, buildingType).fetchJoin()
+                .leftJoin(estimateRequest.constructionTypes, estimateConstructionType).fetchJoin()
                 .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
                 .where(member.email.eq(userEmail),
                         estimateRequest.status.eq(status))
@@ -156,6 +156,7 @@ public class EstimateQueryService {
                 .leftJoin(estimate.estimatePrices, estimatePrice).fetchJoin()
                 .where(estimateRequest.id.eq(requestId), estimate.estimateStatus.in(EstimateStatus.SENT, COMPLETE)) // requestId 에 대한 요청이면서 업체가 보낸 견적이면
                 .fetch();
+
 
         Map<Company, List<Estimate>> companyEstimates = fetch.stream()
                 .collect(groupingBy(Estimate::getCompany, toList()));

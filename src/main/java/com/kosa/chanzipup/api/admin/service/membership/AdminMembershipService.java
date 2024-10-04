@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminMembershipService {
 
     private final AdminMembershipQueryRepository adminMembershipQueryRepository;
+
     private final MembershipTypeRepository membershipTypeRepository;
 
     public Page<List<MembershipCompanyResponse>> getAllMembershipCompanies(int pageSize, int pageNumber) {
@@ -69,6 +70,13 @@ public class AdminMembershipService {
         LocalDateTime refundDateTime = LocalDateTime.now();
         membership.refundPayment(refundDateTime);
         return membership.getPayment().getImpUid();
+    }
+    
+    @Transactional
+    public boolean updateMembershipPrice(Long membershipId, int price) {
+        Membership membership = adminMembershipQueryRepository.findByIdWithPayment(membershipId);
+        membership.updatePrice(price);
+        return true;
     }
 }
 

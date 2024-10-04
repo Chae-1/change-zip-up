@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.api.admin.controller;
 
 import com.kosa.chanzipup.api.admin.controller.request.AccountSearchCondition;
+import com.kosa.chanzipup.api.admin.controller.request.UpdateMembershipPrice;
 import com.kosa.chanzipup.api.admin.controller.request.faq.FAQCreateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.request.faq.FAQUpdateRequestDto;
 import com.kosa.chanzipup.api.admin.controller.request.notice.AdminNoticeCreateRequestDto;
@@ -256,6 +257,14 @@ public class AdminController {
     @DeleteMapping("/membership/{id}")
     public ResponseEntity<Void> deleteMembershipType(@PathVariable Long id) {
         adminMembershipService.deleteMembershipType(id);
+        return ResponseEntity.ok().build();
+    }
+
+    // 멤버십 타입 삭제
+    @PatchMapping("/membership/{id}/price")
+    public ResponseEntity<Boolean> updateMembershipPrice(@PathVariable Long id,
+                                                         @RequestBody UpdateMembershipPrice price) {
+        adminMembershipService.updateMembershipPrice(id, price.getPrice());
         return ResponseEntity.ok().build();
     }
 }

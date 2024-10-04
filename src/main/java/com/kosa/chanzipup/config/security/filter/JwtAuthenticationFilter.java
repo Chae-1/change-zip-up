@@ -21,6 +21,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import static com.kosa.chanzipup.config.security.jwt.TokenType.ACCESS;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -43,11 +45,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // email로 Account 정보를 조회한다.
         try {
             if (accessToken != null) {
-                String email = jwtProvider.extractEmail(accessToken, TokenType.ACCESS);
+                String email = jwtProvider.extractEmail(accessToken, ACCESS);
                 // email이 존재하지 않거나, 인증 상태가 아니면,
                 if (email != null || SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                    if (jwtProvider.validateToken(accessToken, userDetails, TokenType.ACCESS)) {
+                    if (jwtProvider.validateToken(accessToken, userDetails, ACCESS)) {
                         UsernamePasswordAuthenticationToken authenticationToken =
                                 new UsernamePasswordAuthenticationToken(userDetails, null,
                                         userDetails.getAuthorities());
@@ -56,7 +58,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                 }
             }
-
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException ex) {
             String requestURI = request.getRequestURI();

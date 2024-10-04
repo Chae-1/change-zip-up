@@ -31,6 +31,7 @@ public class AdminMembershipQueryRepository {
 
     public Membership findByIdWithPayment(Long membershipId) {
         return factory.selectFrom(membership)
+                .leftJoin(membership.membershipType, membershipType).fetchJoin()
                 .leftJoin(membership.payment, payment).fetchJoin()
                 .where(membership.id.eq(membershipId))
                 .fetchOne();

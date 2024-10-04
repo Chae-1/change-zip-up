@@ -31,6 +31,7 @@ public class CompanyController {
 
     private final CompanyQueryService companyQueryService;
 
+
     // 업체 등록
     @PostMapping
     public ResponseEntity<CompanyRegisterResponse> addCompany(@Valid CompanyRegisterRequest registerRequest) {
@@ -86,4 +87,5 @@ public class CompanyController {
         String email = userDetails.getUsername();
         return ResponseEntity.ok(companyService.updateCompany(email, request));
     }
+
 }

@@ -62,4 +62,8 @@ public class Membership extends BaseEntity {
         payment.cancel();
         endDateTime = refundDateTime;
     }
+
+    public void updatePrice(int price) {
+        membershipType.updatePrice(price);
+    }
 }

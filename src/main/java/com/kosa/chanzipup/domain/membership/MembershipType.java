@@ -23,4 +23,8 @@ public class MembershipType {
         this.name = name;
         this.price = price;
     }
+
+    public void updatePrice(int price) {
+        this.price = price;
+    }
 }

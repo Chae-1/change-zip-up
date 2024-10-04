@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,7 @@ public class MembershipService {
 
     @Transactional
     public MembershipResponse registerMembership(PaymentResult paymentResult) {
+
         // 1. membership을 가입할 수 없다.
         Company company = companyRepository.findById(paymentResult.getCompanyId())
                 .orElseThrow(() -> new CompanyException("존재하지 않는 회사 정보입니다."));
@@ -63,11 +65,23 @@ public class MembershipService {
     }
 
     public List<MembershipHistories> getAllMembershipHistories(String email) {
+
         List<Membership> companyMemberships = membershipRepository.findAllByUserEmail(email);
 
         return companyMemberships
                 .stream()
                 .map(MembershipHistories::new)
                 .toList();
+    }
+
+    public Boolean isMembershipCompany(String username) {
+
+        List<Membership> memberships = membershipRepository.findAllByUserEmail(username);
+
+        Optional<Membership> membership = memberships.stream()
+                .filter(Membership::isValid)
+                .findFirst();
+
+        return membership.isPresent();
     }
 }

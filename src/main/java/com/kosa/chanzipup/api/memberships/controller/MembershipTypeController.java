@@ -17,12 +17,8 @@ public class MembershipTypeController {
 
     private final MembershipTypeService membershipTypeService;
 
-    // Query
     @GetMapping
     public ApiResponse<List<MembershipTypeResponse>> getAllMemberShips() {
         return ApiResponse.ok(membershipTypeService.getAllMemberShips());
     }
-
-
-
 }
