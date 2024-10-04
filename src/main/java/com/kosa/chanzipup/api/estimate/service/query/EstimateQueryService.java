@@ -246,7 +246,7 @@ public class EstimateQueryService {
                 .leftJoin(estimate.estimatePrices, estimatePrice).fetchJoin() // n
                 .leftJoin(estimatePrice.constructionType, estimateConstructionType).fetchJoin()
                 .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin()
-                .where(company.email.eq(companyEmail), estimate.estimateStatus.in(ACCEPTED, REJECTED, SENT))
+                .where(company.email.eq(companyEmail), estimate.estimateStatus.in(COMPLETE, ACCEPTED, REJECTED, SENT))
                 .fetchJoin()
                 .fetch();
 
