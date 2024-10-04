@@ -22,5 +22,9 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
             " where m.id = :membershipId")
     Optional<Membership> findByIdWithPayment(@Param("membershipId") Long membershipId);
 
+    @Query("select m from Membership m " +
+            " left join fetch m.company c " +
+            " where c.email = :email " +
+            " order by m.startDateTime desc")
     List<Membership> findAllByUserEmailOrderByStartDateTimeDesc(@Param("email") String email);
 }
