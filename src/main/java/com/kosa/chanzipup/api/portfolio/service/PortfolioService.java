@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -108,74 +109,93 @@ public class PortfolioService {
     }
 
     // 시공사례 상세 조회
-    public PortfolioDetailResponse getPortfolioById(Long id, UnifiedUserDetails userDetails) {
-        Portfolio portfolio = portfolioRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid portfolio ID: " + id));
+    public PortfolioDetailResponse getPortfolioById(Long id,
+                                                    UnifiedUserDetails userDetails) {
 
-        // 시공 서비스 이름들 가져오기
-        List<String> services = new ArrayList<>();
-        for (PortfolioConstructionType constructionType : portfolio.getConstructionTypes()) {
-            services.add(constructionType.getConstructionType().getName());
+            Portfolio portfolio = portfolioRepository.findByIdWithCompany(id)
+                    .orElseThrow(() -> new IllegalArgumentException());
+
+            List<String> services = portfolioConstructionTypeRepository
+                    .findByPortfolioId(portfolio.getId())
+                    .stream()
+                    .map(PortfolioConstructionType::getConstructionType)
+                    .map(ConstructionType::getName)
+                    .toList();
+
+        Company portfolioCompany = portfolio.getCompany();
+        if (userDetails != null) {
+            if (portfolioCompany.getEmail().equals(userDetails.getUsername())) {
+                return new PortfolioDetailResponse(portfolio, services, true);
+            }
         }
+        return new PortfolioDetailResponse(portfolio, services, false);
 
-        // 빌딩 타입 이름 가져오기
-        String buildingTypeName = (portfolio.getBuildingType() != null) ? portfolio.getBuildingType().getName() : "Unknown Building Type";
-
-        // Account에서 회사 정보 가져오기 (Account가 Company인 경우)
-        Company company = portfolio.getCompany();
-        Long companyId = company.getId();
-        String companyPhone = company.getPhoneNumber();
-
-        // Company가 존재하는지 확인하여 가져오기
-        Optional<Company> optionalCompany = companyRepository.findById(companyId);
-        if (optionalCompany.isPresent()) {
-            Company findCompany = optionalCompany.get();
-            String companyName = findCompany.getCompanyName();
-            String companyAddress = findCompany.getAddress();
-            String companyLogo = findCompany.getCompanyLogoUrl();
-
-            return new PortfolioDetailResponse(
-                    portfolio.getId(),
-                    portfolio.getTitle(),
-                    portfolio.getContent(),
-                    portfolio.getFloor(),
-                    portfolio.getProjectBudget(),
-                    portfolio.getProjectLocation(),
-                    portfolio.getStartDate(),
-                    portfolio.getEndDate(),
-                    buildingTypeName,
-                    services,
-                    companyId,
-                    companyName,
-                    companyAddress,
-                    companyPhone,
-                    companyLogo,
-                    portfolio.getCreatedAt(),
-                    portfolio.getUpdatedAt()
-            );
-        } else {
-            // Company가 아니면 일반 Account 정보를 반환
-            return new PortfolioDetailResponse(
-                    portfolio.getId(),
-                    portfolio.getTitle(),
-                    portfolio.getContent(),
-                    portfolio.getFloor(),
-                    portfolio.getProjectBudget(),
-                    portfolio.getProjectLocation(),
-                    portfolio.getStartDate(),
-                    portfolio.getEndDate(),
-                    buildingTypeName,
-                    services,
-                    companyId,
-                    company.getName(),
-                    "No Address",
-                    companyPhone,
-                    "",
-                    portfolio.getCreatedAt(),
-                    portfolio.getUpdatedAt()
-            );
+//        Portfolio portfolio = portfolioRepository.findById(id)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid portfolio ID: " + id));
+//
+//        // 시공 서비스 이름들 가져오기
+//        List<String> services = new ArrayList<>();
+//        for (PortfolioConstructionType constructionType : portfolio.getConstructionTypes()) {
+//            services.add(constructionType.getConstructionType().getName());
+//        }
+//
+//        // 빌딩 타입 이름 가져오기
+//        String buildingTypeName = (portfolio.getBuildingType() != null) ? portfolio.getBuildingType().getName() : "Unknown Building Type";
+//
+//        // Account에서 회사 정보 가져오기 (Account가 Company인 경우)
+//        Company company = portfolio.getCompany();
+//        Long companyId = company.getId();
+//        String companyPhone = company.getPhoneNumber();
+//
+//        // Company가 존재하는지 확인하여 가져오기
+//        Optional<Company> optionalCompany = companyRepository.findById(companyId);
+//        if (optionalCompany.isPresent()) {
+//            Company findCompany = optionalCompany.get();
+//            String companyName = findCompany.getCompanyName();
+//            String companyAddress = findCompany.getAddress();
+//            String companyLogo = findCompany.getCompanyLogoUrl();
+//
+//            return new PortfolioDetailResponse(
+//                    portfolio.getId(),
+//                    portfolio.getTitle(),
+//                    portfolio.getContent(),
+//                    portfolio.getFloor(),
+//                    portfolio.getProjectBudget(),
+//                    portfolio.getProjectLocation(),
+//                    portfolio.getStartDate(),
+//                    portfolio.getEndDate(),
+//                    buildingTypeName,
+//                    services,
+//                    companyId,
+//                    companyName,
+//                    companyAddress,
+//                    companyPhone,
+//                    companyLogo,
+//                    portfolio.getCreatedAt(),
+//                    portfolio.getUpdatedAt()
+//            );
+//        } else {
+//            // Company가 아니면 일반 Account 정보를 반환
+//            return new PortfolioDetailResponse(
+//                    portfolio.getId(),
+//                    portfolio.getTitle(),
+//                    portfolio.getContent(),
+//                    portfolio.getFloor(),
+//                    portfolio.getProjectBudget(),
+//                    portfolio.getProjectLocation(),
+//                    portfolio.getStartDate(),
+//                    portfolio.getEndDate(),
+//                    buildingTypeName,
+//                    services,
+//                    companyId,
+//                    company.getName(),
+//                    "No Address",
+//                    companyPhone,
+//                    "",
+//                    portfolio.getCreatedAt(),
+//                    portfolio.getUpdatedAt()
+//            );
         }
-    }
 
     @Transactional
     public String updatePortfolio(Long portfolioId, PortfolioUpdateRequest portfolioRequest) {

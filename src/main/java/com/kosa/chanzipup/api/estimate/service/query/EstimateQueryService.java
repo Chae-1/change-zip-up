@@ -34,6 +34,7 @@ import static java.util.stream.Collectors.*;
 @Transactional(readOnly = true)
 @Slf4j
 public class EstimateQueryService {
+
     private final JPAQueryFactory factory;
 
     public List<EstimateRequestResponse> getEstimateRequestResponsesOn(String companyEmail, EstimateRequestStatus status) {
