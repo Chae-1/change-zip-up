@@ -69,6 +69,6 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
             cd /usr/local/bin
-            chmod 777 ./deploy.sh
-            ./deploy.sh
+            sudo chmod 777 ./deploy.sh
+            sudo ./deploy.sh
             docker image prune -f
