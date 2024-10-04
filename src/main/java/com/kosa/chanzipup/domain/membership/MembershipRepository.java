@@ -13,6 +13,7 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
             + "left join fetch m.company c "
             + "left join fetch m.membershipType type "
             + "where c.email = :email "
+            + "order by m.startDateTime desc"
     )
     List<Membership> findAllByUserEmail(@Param("email") String email);
 
@@ -20,4 +21,6 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
             " left join fetch m.payment p " +
             " where m.id = :membershipId")
     Optional<Membership> findByIdWithPayment(@Param("membershipId") Long membershipId);
+
+    List<Membership> findAllByUserEmailOrderByStartDateTimeDesc(@Param("email") String email);
 }

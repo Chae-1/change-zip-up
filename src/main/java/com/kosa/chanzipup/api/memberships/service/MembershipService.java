@@ -66,7 +66,7 @@ public class MembershipService {
 
     public List<MembershipHistories> getAllMembershipHistories(String email) {
 
-        List<Membership> companyMemberships = membershipRepository.findAllByUserEmail(email);
+        List<Membership> companyMemberships = membershipRepository.findAllByUserEmailOrderByStartDateTimeDesc(email);
 
         return companyMemberships
                 .stream()
@@ -76,7 +76,7 @@ public class MembershipService {
 
     public Boolean isMembershipCompany(String username) {
 
-        List<Membership> memberships = membershipRepository.findAllByUserEmail(username);
+        List<Membership> memberships = membershipRepository.findAllByUserEmailOrderByStartDateTimeDesc(username);
 
         Optional<Membership> membership = memberships.stream()
                 .filter(Membership::isValid)
