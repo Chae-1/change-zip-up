@@ -6,7 +6,6 @@ import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.company.CompanyRepository;
 import com.kosa.chanzipup.domain.portfolio.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.kosa.chanzipup.application.Page;
@@ -33,11 +32,8 @@ public class PortfolioServiceForAdmin {
     private final PortFolioImageRepository portFolioImageRepository;
 
     // 목록 조회
-    public Page<List<PortfolioListResponse>> getAllPortfolios(Pageable pageable) {
+    public Page<List<PortfolioListResponse>> getAllPortfolios(int pageSize, int pageNumber) {
         List<Portfolio> portfolios = portfolioRepository.findAllWithImages();
-
-        int pageSize = pageable.getPageSize();
-        int pageNumber = pageable.getPageNumber();
 
         List<Long> portfolioIds = portfolios.stream()
                 .map(Portfolio::getId)

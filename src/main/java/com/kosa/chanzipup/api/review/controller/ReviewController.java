@@ -1,5 +1,6 @@
 package com.kosa.chanzipup.api.review.controller;
 
+import com.kosa.chanzipup.api.estimate.service.EstimateRequestService;
 import com.kosa.chanzipup.api.review.controller.query.ReviewQueryService;
 import com.kosa.chanzipup.api.review.controller.request.ReviewRegisterRequest;
 import com.kosa.chanzipup.api.review.controller.response.ReviewDetail;
@@ -36,12 +37,16 @@ public class ReviewController {
     private final ReviewQueryService reviewQueryService;
 
     private final ReviewImagesService reviewImagesService;
+    private final EstimateRequestService estimateRequestService;
 
 
-   @PostMapping
+    @PostMapping
     public ResponseEntity<ReviewRegisterResponse> createReview(@AuthenticationPrincipal UnifiedUserDetails userDetails,
                                                                @RequestBody ReviewRegisterRequest request) {
         log.info("review startDate = {}", request.getWorkStartDate());
+
+        // EstimateRequest 상태 업데이트
+        estimateRequestService.updateStatusToWrittenReview(request.getRequestId());
 
         return ResponseEntity.ok(reviewService.registerReview(request, userDetails.getName()));
     }

@@ -1,16 +1,16 @@
 package com.kosa.chanzipup.api.review.controller.request;
 
-import com.kosa.chanzipup.domain.review.ReviewImages;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 public class ReviewRegisterRequest {
+
+    private Long requestId;
 
     @NotBlank(message = "제목은 반드시 입력되어야 합니다.")
     private String title;

@@ -5,13 +5,13 @@ import com.kosa.chanzipup.api.admin.service.membership.query.AdminMembershipQuer
 import com.kosa.chanzipup.application.Page;
 import com.kosa.chanzipup.domain.membership.Membership;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import com.kosa.chanzipup.domain.membership.MembershipType;
 import com.kosa.chanzipup.domain.membership.MembershipTypeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +23,8 @@ public class AdminMembershipService {
     private final AdminMembershipQueryRepository adminMembershipQueryRepository;
     private final MembershipTypeRepository membershipTypeRepository;
 
-    public Page<List<MembershipCompanyResponse>> getAllMembershipCompanies(Pageable pageable) {
+    public Page<List<MembershipCompanyResponse>> getAllMembershipCompanies(int pageSize, int pageNumber) {
         List<Membership> memberships = adminMembershipQueryRepository.getAllMembershipCompany();
-
-        int pageSize = pageable.getPageSize();
-        int pageNumber = pageable.getPageNumber();
 
         List<MembershipCompanyResponse> membershipCompanyResponses = memberships
                 .stream()
@@ -63,6 +60,15 @@ public class AdminMembershipService {
     // 멤버십 타입 삭제
     public void deleteMembershipType(Long id) {
         membershipTypeRepository.deleteById(id);
+    }
+
+    @Transactional
+    public String refundMembership(Long membershipId) {
+        Membership membership = adminMembershipQueryRepository.findByIdWithPayment(membershipId);
+
+        LocalDateTime refundDateTime = LocalDateTime.now();
+        membership.refundPayment(refundDateTime);
+        return membership.getPayment().getImpUid();
     }
 }
 

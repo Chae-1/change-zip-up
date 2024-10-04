@@ -57,4 +57,9 @@ public class Membership extends BaseEntity {
     public MembershipName getMembershipName() {
         return membershipType.getName();
     }
+
+    public void refundPayment(LocalDateTime refundDateTime) {
+        payment.cancel();
+        endDateTime = refundDateTime;
+    }
 }

@@ -23,7 +23,6 @@ import static com.kosa.chanzipup.domain.estimate.EstimateStatus.ACCEPTED;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.COMPLETE;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.REJECTED;
 import static com.kosa.chanzipup.domain.estimate.EstimateStatus.SENT;
-import static com.kosa.chanzipup.domain.estimate.QEstimate.*;
 import static com.kosa.chanzipup.domain.estimate.QEstimate.estimate;
 import static com.kosa.chanzipup.domain.estimate.QEstimateConstructionType.estimateConstructionType;
 import static com.kosa.chanzipup.domain.estimate.QEstimatePrice.estimatePrice;
@@ -129,7 +128,7 @@ public class EstimateQueryService {
         return estimateConstructionResponses;
     }
 
-    public List<EstimateRequestResponse> getAllEstimateRequestByUser(String userEmail, EstimateRequestStatus status) {
+    public List<EstimateRequestStatusResponse> getAllEstimateRequestByUser(String userEmail, EstimateRequestStatus status) {
 
         List<EstimateRequest> requests = factory.select(estimateRequest)
                 .from(estimateRequest)
@@ -143,7 +142,7 @@ public class EstimateQueryService {
 
 
         return requests.stream()
-                .map(estimateRequest -> new EstimateRequestResponse(estimateRequest, false))
+                .map(estimateRequest -> new EstimateRequestStatusResponse(estimateRequest, false, status))
                 .toList();
     }
 
@@ -264,7 +263,7 @@ public class EstimateQueryService {
                 .leftJoin(estimateConstructionType.constructionType, constructionType).fetchJoin() // n -  1
                 .where(estimateRequest.id.eq(requestId),
                         estimate.estimateStatus.eq(COMPLETE),
-                        estimateRequest.status.eq(EstimateRequestStatus.COMPLETE))
+                        estimateRequest.status.in(EstimateRequestStatus.COMPLETE, EstimateRequestStatus.WRITTENREVIEW))
                 .fetchOne();
 
         // findEstimate에서 조회된 companyId가 필요하다.

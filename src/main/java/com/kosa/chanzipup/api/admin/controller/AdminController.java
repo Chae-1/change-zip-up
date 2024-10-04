@@ -23,6 +23,7 @@ import com.kosa.chanzipup.api.admin.service.notice.AdminNoticeService;
 import com.kosa.chanzipup.api.admin.service.portfolio.PortfolioServiceForAdmin;
 import com.kosa.chanzipup.api.admin.service.review.ReviewServiceForAdmin;
 import com.kosa.chanzipup.application.Page;
+import com.kosa.chanzipup.domain.payment.RefundService;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,11 +53,11 @@ public class AdminController {
 
     private final PortfolioServiceForAdmin portfolioServiceForAdmin;
 
+    private final RefundService refundService;
     private final ImageService imageService;
 
     private final ReviewServiceForAdmin reviewServiceForAdmin;
 
-    // 페이징
     @GetMapping("/accounts")
     public void getAllAccounts(@PageableDefault Pageable pageable, AccountSearchCondition condition) {
         log.info("pageable = {}", pageable);
@@ -66,14 +67,20 @@ public class AdminController {
 
 
     @GetMapping("/memberships")
-    public ResponseEntity<Page<List<MembershipCompanyResponse>>> getAllMembershipAccounts(
-            @PageableDefault Pageable pageable
-    ) {
+    public ResponseEntity<Page<List<MembershipCompanyResponse>>> getAllMembershipAccounts(@PageableDefault Pageable pageable) {
         log.info("pageable = {}", pageable);
-        return ResponseEntity.ok(
-                adminMembershipService.getAllMembershipCompanies(pageable)
-        );
+        return ResponseEntity.ok(adminMembershipService.getAllMembershipCompanies(pageable.getPageSize(), pageable.getPageNumber()));
     }
+
+
+    @PostMapping("/memberships/{id}/refund")
+    public ResponseEntity<Boolean> refundMembership(@PathVariable("id") Long membershipId) {
+        String paymentIdByMembership = adminMembershipService.refundMembership(
+                membershipId);// membershipId로 조회한다.
+        refundService.refundBy(paymentIdByMembership);
+        return ResponseEntity.ok(true);
+    }
+
 
     @PostMapping("/notice/create")
     public ResponseEntity<Void> createNotice(@AuthenticationPrincipal UnifiedUserDetails userDetails
@@ -119,7 +126,6 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
-    // /list?page=0&size=5
     @GetMapping("/faq/list")
     public ResponseEntity<Page<List<AdminFAQListResponseDto>>> listFAQ(Pageable pageable) {
         Page<List<AdminFAQListResponseDto>> faqList = adminFaqService.getFAQList(pageable.getPageNumber(), pageable.getPageSize());
@@ -152,7 +158,7 @@ public class AdminController {
     @GetMapping("/portfolios")
     public ResponseEntity<Page<List<PortfolioListResponse>>> getAllPortfolios(@PageableDefault Pageable pageable) {
         log.info("pageable = {}", pageable);
-        Page<List<PortfolioListResponse>> portfolios = portfolioServiceForAdmin.getAllPortfolios(pageable);
+        Page<List<PortfolioListResponse>> portfolios = portfolioServiceForAdmin.getAllPortfolios(pageable.getPageSize(), pageable.getPageNumber());
         return ResponseEntity.ok(portfolios);
     }
 
@@ -172,7 +178,7 @@ public class AdminController {
     @GetMapping("/reviews")
     public ResponseEntity<Page<List<ReviewListResponse>>> getAllReviews(@PageableDefault Pageable pageable) {
         log.info("pageable = {}", pageable);
-        Page<List<ReviewListResponse>> reviews = reviewServiceForAdmin.getAllReviews(pageable);
+        Page<List<ReviewListResponse>> reviews = reviewServiceForAdmin.getAllReviews(pageable.getPageSize(), pageable.getPageNumber());
         return ResponseEntity.ok(reviews);
     }
 
@@ -189,10 +195,9 @@ public class AdminController {
         return ResponseEntity.ok(true);
     }
 
-    // 페이징
     @GetMapping("/members")
-    public ResponseEntity<List<AdminMemberResponse>> getAllMembers() {
-        List<AdminMemberResponse> members = accountService.getAllMembers();
+    public ResponseEntity<Page<List<AdminMemberResponse>>> getAllMembers(Pageable pageable) {
+        Page<List<AdminMemberResponse>> members = accountService.getAllMembers(pageable.getPageSize(), pageable.getPageNumber());
         return ResponseEntity.ok(members);
     }
 
@@ -203,8 +208,8 @@ public class AdminController {
     }
 
     @GetMapping("/companies")
-    public ResponseEntity<List<AdminCompanyResponse>> getAllCompanies() {
-        List<AdminCompanyResponse> companies = accountService.getAllCompanies();
+    public ResponseEntity<Page<List<AdminCompanyResponse>>> getAllCompanies(Pageable pageable) {
+        Page<List<AdminCompanyResponse>> companies = accountService.getAllCompanies(pageable.getPageNumber(), pageable.getPageSize());
         return ResponseEntity.ok(companies);
     }
 
