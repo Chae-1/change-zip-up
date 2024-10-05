@@ -73,7 +73,8 @@ public class AdminMembershipService {
     }
     
     @Transactional
-    public boolean updateMembershipPrice(Long membershipId, int price) {
+    public boolean updateMembershipPrice(Long membershipId,
+                                         int price) {
         Membership membership = adminMembershipQueryRepository.findByIdWithPayment(membershipId);
         membership.updatePrice(price);
         return true;
