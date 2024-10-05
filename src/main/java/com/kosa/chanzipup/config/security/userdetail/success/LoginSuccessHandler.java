@@ -119,13 +119,14 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     private void sendRefreshTokenUsingCookie(String refreshToken, HttpServletResponse response) {
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setPath("/"); // 쿠키의 유효 범위
-        refreshTokenCookie.setHttpOnly(true); //
-        refreshTokenCookie.setSecure(false);
-        refreshTokenCookie.setMaxAge(REFRESH_EXPIRY_DURATION); //
+//        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+//        refreshTokenCookie.setPath("/"); // 쿠키의 유효 범위
+//        refreshTokenCookie.setHttpOnly(true);
+//        refreshTokenCookie.setSecure(true);
+//        refreshTokenCookie.setMaxAge(REFRESH_EXPIRY_DURATION);
 
-        response.addCookie(refreshTokenCookie);
+        response.addHeader("Set-Cookie",
+                "refreshToken=" + refreshToken + "; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=" + REFRESH_EXPIRY_DURATION);
     }
 
     @Getter

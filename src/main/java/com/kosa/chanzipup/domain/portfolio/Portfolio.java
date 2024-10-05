@@ -30,7 +30,7 @@ public class Portfolio extends BaseEntity {
     private String title;
 
     @Lob
-    @Column(name = "content", columnDefinition = "TEXT")
+    @Column(name = "content", columnDefinition = "LONGTEXT")
     private String content;
 
     private int floor;
