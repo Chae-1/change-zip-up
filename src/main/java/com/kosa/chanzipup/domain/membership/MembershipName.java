@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum MembershipName {
     NO(0),
-    BASIC(100),
-    PREMIUM(150);
+    BASIC(10000),
+    PREMIUM(20000);
 
     private final int price;
 }
