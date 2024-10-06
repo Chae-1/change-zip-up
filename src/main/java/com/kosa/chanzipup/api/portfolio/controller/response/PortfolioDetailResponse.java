@@ -66,7 +66,7 @@ public class PortfolioDetailResponse {
 
         Company company = portfolio.getCompany();
         this.companyId = company.getId();
-        this.companyName = company.getName();
+        this.companyName = company.getCompanyName();
         this.companyAddress = company.getAddress();
         this.companyPhone = company.getPhoneNumber();
         this.companyLogo = company.getCompanyLogoUrl();
