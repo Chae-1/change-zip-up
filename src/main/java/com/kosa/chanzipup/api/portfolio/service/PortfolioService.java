@@ -23,12 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -241,5 +238,23 @@ public class PortfolioService {
         portFolioImageRepository.deleteAllByPortfolioId(portfolio.getId());
 
         return deletePortfolioUrls;
+    }
+
+    public Page<List<PortfolioListResponse>> getMyPagePortfoliosWithPage(int pageNumber, int pageSize, String email) {
+        List<Portfolio> portfolios = portfolioRepository.findAllWithImagesByCompanyEmail(email);
+
+        List<Long> portfolioIds = portfolios.stream()
+                .map(Portfolio::getId)
+                .toList();
+
+        Map<Long, List<PortfolioConstructionType>> types = portfolioConstructionTypeRepository
+                .findByPortfolioIdIn(portfolioIds)
+                .stream()
+                .collect(Collectors.groupingBy(type -> type.getPortfolio().getId(), toList()));
+
+        return Page.of(portfolios
+                .stream()
+                .map(portfolio -> new PortfolioListResponse(portfolio, types.get(portfolio.getId())))
+                .toList(), pageSize, pageNumber);
     }
 }

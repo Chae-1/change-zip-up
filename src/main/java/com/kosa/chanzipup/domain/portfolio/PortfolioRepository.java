@@ -15,6 +15,15 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
     List<Portfolio> findAllWithImages();
 
 
+
+    @Query("select p from Portfolio p "
+            + "left join p.company c "
+            + "left join fetch p.buildingType b "
+            + "left join fetch p.portfolioImages images "
+            + "where c.email = :email")
+    List<Portfolio> findAllWithImagesByCompanyEmail(@Param("email") String email);
+
+
     @Query("select p from Portfolio p " +
             "left join p.company c " +
             "where c.email =:email and p.id = :portfolioId")

@@ -66,6 +66,13 @@ public class PortfolioController {
         return ResponseEntity.ok(portfolioService.getAllPortfoliosWithPage(pageable.getPageNumber(), pageable.getPageSize()));
     }
 
+    @GetMapping("/mypage")
+    public ResponseEntity<Page<List<PortfolioListResponse>>> listPortfoliosWithPage(Pageable pageable,
+                                                                                    @AuthenticationPrincipal UnifiedUserDetails userDetails) {
+        return ResponseEntity.ok(portfolioService.getMyPagePortfoliosWithPage(pageable.getPageNumber(),
+                pageable.getPageSize(), userDetails.getUsername()));
+    }
+
 
     // 시공사례 상세 조회
     @GetMapping("/{id}")
