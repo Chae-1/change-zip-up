@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toMap;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.estimate.Estimate;
 import com.kosa.chanzipup.domain.estimate.EstimateRequest;
+import com.kosa.chanzipup.domain.estimate.EstimateRequestStatus;
 import com.kosa.chanzipup.domain.estimate.EstimateStatus;
 import java.time.LocalDate;
 import java.util.Map;
@@ -16,6 +17,8 @@ public class EstimateResponse {
     private Long estimateId;
 
     private EstimateStatus estimateStatus;
+
+    private EstimateRequestStatus estimateRequestStatus;
 
     private Map<String, Integer> constructionPrices;
 
@@ -34,6 +37,7 @@ public class EstimateResponse {
 
         this.estimateId = estimate.getId();
         this.estimateStatus = estimate.getEstimateStatus();
+        this.estimateRequestStatus = estimateRequest.getStatus();
 
 
         this.memberResponse = new SimpleMemberResponse(member);
