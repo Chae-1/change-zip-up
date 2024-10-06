@@ -273,7 +273,7 @@ public class EstimateQueryService {
                 .from(estimate)
                 .leftJoin(estimate.company, company)
                 .where(company.id.eq(findEstimate.getCompany().getId()),
-                        estimate.estimateStatus.eq(EstimateStatus.COMPLETE))
+                        estimate.estimateStatus.in(EstimateStatus.COMPLETE))
                 .fetchOne();
 
         return new EstimateDetailResponse(findEstimate, countOfCompleteEstimate);

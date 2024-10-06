@@ -15,6 +15,8 @@ import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.buildingtype.BuildingTypeRepository;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionTypeRepository;
+import com.kosa.chanzipup.domain.estimate.EstimateRequest;
+import com.kosa.chanzipup.domain.estimate.EstimateRequestRepository;
 import com.kosa.chanzipup.domain.review.*;
 
 import java.time.LocalDateTime;
@@ -40,7 +42,8 @@ public class ReviewService {
     private final ConstructionTypeRepository constructionTypeRepository;
     private final CompanyRepository companyRepository;
     private final ReviewImagesRepository reviewImagesRepository;
-    private final ImageService imageService;
+    private final EstimateRequestRepository requestRepository;
+
 
     @Transactional
     public ReviewRegisterResponse registerReview(ReviewRegisterRequest request, String email) {
@@ -55,15 +58,18 @@ public class ReviewService {
         BuildingType buildingType = buildingTypeRepository.findById(request.getBuildingTypeId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 건물 종류입니다."));
 
+        Long estimateRequestId = request.getRequestId();
+        EstimateRequest estimateRequest = requestRepository.findById(estimateRequestId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ㄱ시공 요청입니다."));
+
         // 시공 서비스 타입
         List<ConstructionType> constructionTypes = constructionTypeRepository.findByIdIn(request.getConstructionTypes());
 
         Review review = Review.ofNewReview(request.getTitle(), LocalDateTime.now(), request.getWorkStartDate(),
                 request.getWorkEndDate(), request.getRating(), member, company,
-                buildingType, constructionTypes, request.getTotalPrice(), request.getFloor());
+                buildingType, constructionTypes, request.getTotalPrice(), request.getFloor(), estimateRequest);
 
         reviewRepository.save(review);
-
         updateCompanyRating(company);
 
         return new ReviewRegisterResponse(review.getId());
@@ -152,6 +158,9 @@ public class ReviewService {
     public List<String> deleteReview(Long reviewId, String userEmail) {
         Review review = reviewRepository.findByIdAndUserEmail(reviewId, userEmail)
                 .orElseThrow(() -> new IllegalArgumentException("삭제 할 수 없습니다."));
+
+        EstimateRequest estimateRequest = review.getEstimateRequest();
+        estimateRequest.complete();
 
         List<String> imageUrls = review.getReviewImages()
                 .stream()

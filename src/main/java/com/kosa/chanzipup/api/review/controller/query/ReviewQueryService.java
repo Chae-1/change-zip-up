@@ -97,7 +97,6 @@ public class ReviewQueryService {
         if (userDetails == null) {
             return Expressions.asBoolean(false);
         }
-
         Account findMember = accountRepository.findByEmail(userDetails.getName())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 정보입니다."));
 

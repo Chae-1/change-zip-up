@@ -49,7 +49,7 @@ public class RefreshTokenService {
     }
 
     public String reIssueAccessToken(String refreshToken) {
-        RefreshToken issuedRefreshToken = refreshTokenRepository.findByToken(refreshToken)
+            RefreshToken issuedRefreshToken = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new IllegalArgumentException("재발급 요청 실패"));
 
         if (issuedRefreshToken.isExpired(LocalDateTime.now())) {

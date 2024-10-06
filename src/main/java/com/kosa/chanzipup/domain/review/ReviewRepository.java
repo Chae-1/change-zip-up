@@ -20,7 +20,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("select r from Review r left join r.company c where c.id = :companyId")
     List<Review> findByCompanyId(@Param("companyId") Long companyId);
 
-    @Query("select r from Review r left join fetch r.member m"
+    @Query("select r from Review r left join fetch r.member m "
+            + "left join fetch r.estimateRequest request"
             +" left join fetch r.reviewImages images"
             +" where r.id = :reviewId and m.email = :userEmail")
     Optional<Review> findByIdAndUserEmail(@Param("reviewId") Long reviewId, @Param("userEmail") String userEmail);

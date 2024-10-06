@@ -134,7 +134,7 @@ public class EstimateRequest extends BaseEntity {
             estimate.complete();
             this.status = EstimateRequestStatus.COMPLETE;
         }, () -> {
-            throw new IllegalArgumentException("estimate가 존재하지 않습니다.");
+            this.status = EstimateRequestStatus.COMPLETE;
         });
     }
 

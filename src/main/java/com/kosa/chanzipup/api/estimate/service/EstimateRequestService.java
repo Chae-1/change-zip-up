@@ -139,6 +139,5 @@ public class EstimateRequestService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 요청을 찾을 수 없습니다. ID: " + requestId));
 
         estimateRequest.writtenReview();
-        // JPA의 변경 감지(Dirty Checking)에 의해 자동으로 DB에 반영됩니다.
     }
 }

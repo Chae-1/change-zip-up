@@ -1,6 +1,7 @@
 package com.kosa.chanzipup.application.images;
 
 import java.util.List;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -34,7 +35,8 @@ public class S3ImageService implements ImageService {
     @Override
     public String store(String detailPath, MultipartFile file) {
         try {
-            String fileName = file.getOriginalFilename();
+            String prefix = UUID.randomUUID().toString().substring(0, 8);
+            String fileName = String.format("%s_%s", prefix, file.getOriginalFilename());
             String fileUri = String.format("%s/%s", detailPath, fileName);
 
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -65,7 +67,7 @@ public class S3ImageService implements ImageService {
 
             return new ByteArrayResource(data);
         } catch (Exception e) {
-            log.error("업로드 실패");
+            log.error("가져오기 실패");
             throw new RuntimeException(e);
         }
     }

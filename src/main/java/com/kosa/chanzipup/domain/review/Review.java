@@ -4,6 +4,7 @@ import com.kosa.chanzipup.domain.account.company.Company;
 import com.kosa.chanzipup.domain.account.member.Member;
 import com.kosa.chanzipup.domain.buildingtype.BuildingType;
 import com.kosa.chanzipup.domain.constructiontype.ConstructionType;
+import com.kosa.chanzipup.domain.estimate.EstimateRequest;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -53,6 +54,10 @@ public class Review {
     @JoinColumn(name = "building_type_id")
     private BuildingType buildingType;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estimate_request_id")
+    private EstimateRequest estimateRequest;
+
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewConstructionType> reviewConstructionTypes = new ArrayList<>();
 
@@ -63,7 +68,7 @@ public class Review {
     @Builder
     private Review(String title, String content, LocalDateTime regDate, LocalDate workStartDate, LocalDate workEndDate,
                    int rating, Member member, Company company,
-                   BuildingType buildingType, List<ConstructionType> constructionTypes, Long totalPrice, int floor
+                   BuildingType buildingType, List<ConstructionType> constructionTypes, Long totalPrice, int floor, EstimateRequest request
     ) {
         constructionTypes = (constructionTypes == null) ? Collections.emptyList() : constructionTypes;
 
@@ -81,9 +86,11 @@ public class Review {
         this.buildingType = buildingType;
         this.totalPrice = totalPrice;
         this.floor = floor;
+        this.estimateRequest = request;
     }
 
-    public static Review ofNewReview(String title, LocalDateTime regDate, LocalDate workStartDate, LocalDate workEndDate,
+    public static Review ofNewReview(String title, LocalDateTime regDate, LocalDate workStartDate,
+                                     LocalDate workEndDate,
                                      int rating, Member member, Company company, BuildingType buildingType,
                                      List<ConstructionType> constructionTypes, Long totalPrice, int floor) {
 
@@ -99,6 +106,27 @@ public class Review {
                 .constructionTypes(constructionTypes)
                 .totalPrice(totalPrice)
                 .floor(floor)
+                .build();
+    }
+
+    public static Review ofNewReview(String title, LocalDateTime regDate, LocalDate workStartDate,
+                                     LocalDate workEndDate,
+                                     int rating, Member member, Company company, BuildingType buildingType,
+                                     List<ConstructionType> constructionTypes, Long totalPrice, int floor, EstimateRequest request) {
+
+        return Review.builder()
+                .title(title)
+                .regDate(regDate)
+                .workStartDate(workStartDate)
+                .workEndDate(workEndDate)
+                .rating(rating)
+                .member(member)
+                .company(company)
+                .buildingType(buildingType)
+                .constructionTypes(constructionTypes)
+                .totalPrice(totalPrice)
+                .floor(floor)
+                .request(request)
                 .build();
     }
 
