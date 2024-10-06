@@ -9,7 +9,9 @@ import java.util.Optional;
 
 public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
 
-    @Query("select p from Portfolio p left join fetch p.buildingType b left join fetch p.portfolioImages images")
+    @Query("select p from Portfolio p "
+            + "left join fetch p.buildingType b"
+            + " left join fetch p.portfolioImages images")
     List<Portfolio> findAllWithImages();
 
 
