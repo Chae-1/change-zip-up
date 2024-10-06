@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PortFolioImageRepository extends JpaRepository<PortfolioImage, Long> {
-    @Query("select pi from PortfolioImage pi  ")
+    @Query("select pi from PortfolioImage pi left join pi.portfolio p where p.id = :id")
     List<PortfolioImage> findAllByPortFolioId(Long id);
 
     @Modifying
